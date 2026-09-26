@@ -66,7 +66,7 @@ Touch devices get the same four directions on a D-pad. Small screens also show r
 - Talk to Tess. Saying no plays a short decline branch and returns to the decision.
 - Post the announcement, read the feed, and meet Tess by the town co-op. Reinstate the policy, hold a four-round clown-school Zoom meeting, or stay quiet.
 - Other neighbors offer optional conversations. Story choices determine ally and visitor waves.
-- Bump the bar's sewing table to choose an N95, cloth mask, novelty mask, or no mask. N95s have a raised bridge and center seam; cloth masks have pleats; novelty masks have a grin and cheek tabs. Color, pattern, and accessory remain visible on your character, with straps visible from behind.
+- Bump the bar's sewing table to choose an N95, cloth mask, novelty mask, or no mask. N95s have a raised bridge and center seam; cloth masks have pleats; novelty masks have a grin and cheek tabs. Each mask has a dark outline and light straps so it reads on the small character sprite. Sage green is the starting color; color, pattern, and accessory stay customizable.
 - Saturday escalates through nine incidents: a thieving raccoon, reply-all printer, conga annexation, rival petitions, accidental national livestream, campaigning goose, exes with the aux cord, escaped slideshow, and municipal line dance.
 - Chase moving incidents and bump them to choose a practical fix or a ridiculous escalation. Paperwork knocks you around; stamina cushions the impact. Matching tool stations offer another way to resolve each problem.
 - Dance and karaoke incidents use timed arrow sequences. Dialogue and performances pause the room. A missed sequence can be retried. Clown allies shorten sequences.

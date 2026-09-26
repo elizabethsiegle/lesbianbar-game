@@ -106,6 +106,15 @@ test("each selected mask stays distinct on the gameplay character, including rea
     backs.push(await headPixels(page, 448, 313, 2));
     await press(page, "ArrowDown");
     fronts.push(await headPixels(page, 448, 351, 2));
+    const edge = await page.evaluate(() =>
+      Array.from(
+        document
+          .getElementById("game")
+          .getContext("2d")
+          .getImageData(448 + 3 * 2, 351 + 6 * 2, 1, 1).data,
+      ).slice(0, 3),
+    );
+    expect(edge).toEqual(base === 3 ? [239, 169, 117] : [25, 21, 34]);
   }
   expect(new Set(fronts).size).toBe(4);
   expect(new Set(backs).size).toBe(4);
