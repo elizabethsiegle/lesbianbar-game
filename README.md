@@ -69,13 +69,17 @@ Touch devices get the same four directions on a D-pad. Small screens also show r
 ## Story mode
 
 - Start with 500 points. Choose a mask, then join the clown-school Zoom call.
+- The seven-beat route bar tracks the opening call, three recesses, Saturday, the reporter, and the final call. Finish the route for an ending; Story Mode has no timer.
 - Three recesses give you two errands each. Each of five side quests takes two errands; you cannot finish them all. There is no real-time deadline while reading.
+- The quest board previews the best available points for each step. Clean errands earn 150–450 points and unlock higher-value Zoom and Saturday answers. Use all six errands before rejoining.
 - Willow needs a practical access plan. Dottie offers a clown benefit. Nora needs verified facts. Ruth wants queer trivia back. Tess needs ticket sales that cover rent.
 - Quest rewards unlock answers in later Zoom calls and plans for Saturday. Failed errands cost points and close without their reward. Repeating a completed quest earns nothing.
 - Handle unmuted auditions, Pat's 87 slides, disputed breakout rooms, the rent debate, and the final policy vote. Nora returns to ask what changed.
 - Promising an access plan earns 100 points now. Completing it before Saturday earns another 450; breaking the promise loses 450. The notebook tracks evidence, promises, and score changes.
 - Keep masks required, use the completed patio plan, run the optional trial, or retreat to clown school. Saturday depends on the bookings, rehearsal, and relationships you prepared.
 - End with one last Zoom meeting: adjourn with receipts, enroll in clown school, or establish a permanent subcommittee. Then see your tally, ending, initials entry, and global scores.
+
+Any ending completes the story. For the compromise ending, stay at the bar, adjourn the final call, and finish with profit at least 40, trust at least 65, and chaos no higher than 60. Final meters add score bonuses even on other routes.
 
 In story mode, N95s provide five stamina, cloth masks provide three and ten trust, and novelty masks provide one and a 200-point bonus for a rehearsed clown benefit. Call-out pile-ons drain stamina; each call-out beyond the remaining hearts costs 75 points, two trust, and two chaos. Recess restores one heart up to the mask's limit. Stamina also unlocks patient follow-up answers. Evidence and honest answers let every mask choice finish the story. These are game mechanics, not health claims.
 

@@ -1033,6 +1033,7 @@
             id: "access",
             name: "WILLOW / THE PATIO IS NOT A POLICY",
             reward: "Access plan: protects your promise on Zoom.",
+            bestPoints: [150, 350],
             steps: [
               "Hear Willow's access needs",
               "Set up the patio + free masks",
@@ -1042,24 +1043,28 @@
             id: "clowns",
             name: "DOTTIE / HONK FOR THE RENT",
             reward: "Clown benefit: ticket money and a school refuge.",
+            bestPoints: [150, 350],
             steps: ["Visit the clown school", "Rehearse the benefit show"],
           },
           {
             id: "notes",
             name: "NORA / ON THE RECORD",
             reward: "Verified notes: stronger answers to the Globe.",
+            bestPoints: [200, 450],
             steps: ["Check the reporter's draft", "Give a sourced follow-up"],
           },
           {
             id: "trivia",
             name: "RUTH / SAVE QUEER TRIVIA",
             reward: "Regulars: a full room without a viral stunt.",
+            bestPoints: [150, 350],
             steps: ["Rescue Ruth's trivia binder", "Invite the regulars back"],
           },
           {
             id: "tickets",
             name: "TESS / THE RENT IS NOT A VIBE",
             reward: "Paid tickets: proof the bar can cover its bills.",
+            bestPoints: [150, 350],
             steps: ["Read the actual rent bill", "Run an advance ticket sale"],
           },
         ];
@@ -1088,8 +1093,8 @@
             [
               "You own Last Ditch, the town's lesbian bar. Rent is due Sunday. You post a mask-optional Saturday trial, with masks welcome. The replies arrive before the punctuation.",
               "Nora Ink, a fictional Boston Globe reporter, wants a story by midnight. The clown school lends you its Zoom account. Unfortunately, it also lends you its audition link.",
-              "Keep the bar open and your promises believable. Start with 500 points. Good decisions earn points; bad quotes and broken promises lose them. Final bar meters add bonuses.",
-              "Three Zoom recesses. Two errands each. Five side quests, two steps apiece. Call-out pile-ons drain stamina hearts; overflow costs points. Recess restores one heart. Choose your mask, then join the call.",
+              "Finish three Zoom recesses, Saturday, and the final call to reach an ending. For the compromise: stay at the bar, adjourn, and finish with profit 40+, trust 65+, chaos 60 or less.",
+              "Start with 500 points. Six errands can finish three two-step quests. Clean steps earn points and unlock bigger Zoom answers. Final meters add bonuses. Call-outs drain mask hearts; recess restores one. No clock while choosing.",
             ],
             null,
             () => {
@@ -1212,6 +1217,48 @@
           if (adventure.recessRecovery) sfx("level");
           openQuestHub();
         }
+        const ADVENTURE_BEATS = [
+          "zoom-open",
+          "zoom-slides",
+          "zoom-breakouts",
+          "zoom-quote",
+          "saturday-fundraiser",
+          "saturday-reporter",
+          "zoom-adjourn",
+        ];
+        const ADVENTURE_NEXT = [
+          "OPENING ZOOM",
+          "ACCESS PLAN",
+          "RENT PLAN",
+          "POLICY VOTE",
+          "SATURDAY",
+          "REPORTER",
+          "FINAL ZOOM",
+          "FINISHED",
+        ];
+        function adventureProgress() {
+          const completed = ADVENTURE_BEATS.filter((id) =>
+            adventure.resolved.has(id),
+          ).length;
+          return {
+            completed,
+            total: ADVENTURE_BEATS.length,
+            next: ADVENTURE_NEXT[completed],
+          };
+        }
+        function questStepPoints(quest, step) {
+          if (
+            quest.id === "notes" &&
+            step === 1 &&
+            !(
+              adventure.flags.timeline ||
+              adventure.flags.access ||
+              adventure.flags.tickets
+            )
+          )
+            return 100;
+          return quest.bestPoints[step];
+        }
         function questMenu() {
           return [
             ...QUESTS.map((q) => {
@@ -1231,7 +1278,10 @@
                       "/2: " +
                       q.steps[progress] +
                       ". " +
-                      q.reward,
+                      q.reward +
+                      " Best available: +" +
+                      questStepPoints(q, progress) +
+                      " this step.",
                 action: () => visitQuest(q.id),
               };
             }),
@@ -1261,7 +1311,8 @@
           talk(
             "YOUR NOTEBOOK / NO ERRAND COST",
             [
-              "GOAL: pay the rent without losing your community. Profit 40+, trust 65+, chaos 60 or less earns the compromise ending. Every meter also changes your final bonus.",
+              "GOAL: finish the Zoom rounds, Saturday, and the final call. Any ending completes the game. For the compromise: stay at the bar, adjourn, and finish with profit 40+, trust 65+, chaos 60 or less. Every meter changes your final bonus.",
+              "POINTS: six errands can finish three quests. Clean quest steps earn 150-450 points; completed plans unlock stronger Zoom and Saturday choices. Use your errands before rejoining. No story clock.",
               "EVIDENCE: " +
                 (completed.join(" ") ||
                   "None yet. Finish a two-step quest to bring something real to Zoom."),
@@ -4714,7 +4765,32 @@
         }
         function drawAdventureStatus() {
           if (!adventure) return;
-          rect(575, 71, 344, 23, C.ink);
+          const progress = adventureProgress();
+          for (let i = 0; i < progress.total; i++)
+            rect(
+              27 + i * 130,
+              67,
+              126,
+              5,
+              i < progress.completed
+                ? C.mint
+                : i === progress.completed
+                  ? C.peach
+                  : C.plum,
+            );
+          text(
+            "ROUTE " +
+              progress.completed +
+              "/" +
+              progress.total +
+              " / NEXT: " +
+              progress.next,
+            30,
+            78,
+            1,
+            C.peach,
+          );
+          rect(575, 74, 344, 20, C.ink);
           text(
             "SCORE " + String(adventure.points).padStart(5, "0"),
             898,
@@ -4785,14 +4861,22 @@
             adventure.remaining ? C.mint : C.pink,
           );
           text(
-            "RECESS: +" +
+            "COMPROMISE: STAY / PROFIT 40+ / TRUST 65+ / CHAOS 60 MAX",
+            370,
+            153,
+            1,
+            C.mint,
+          );
+          text(
+            "RECESS +" +
               adventure.recessRecovery +
-              " HEART. TWO-STEP QUESTS. NO CLOCK.",
+              " HEART / 2 ERRANDS NOW / 6 TOTAL / NO CLOCK",
             53,
             178,
             1,
             C.blue,
           );
+          text("QUESTS UNLOCK +450 ZOOM ANSWERS", 675, 178, 1, C.mint);
           const entries = questMenu();
           entries.forEach((entry, i) => {
             const y = 198 + i * 41;
@@ -4820,7 +4904,12 @@
                   ? adventure.flags[q.id]
                     ? "REWARD EARNED"
                     : "NO REWARD"
-                  : "STEP " + (progress + 1) + "/2 / 1 ERRAND"
+                  : adventure.remaining
+                    ? "STEP " +
+                      (progress + 1) +
+                      "/2 / 1 ERRAND / BEST +" +
+                      questStepPoints(q, progress)
+                    : "NO ERRANDS / REJOIN ZOOM"
                 : i === 5
                   ? "NEXT MAIN STORY SCENE"
                   : "FREE / READ ANY TIME",
@@ -5589,7 +5678,7 @@
             text(body, 253, y + 43, 1, C.blue);
           });
           paragraph(
-            "Story: six errands, five side quests, recurring Zoom calls. Call-out pile-ons drain stamina hearts; each unabsorbed call-out costs 75 points. Recess restores one heart. CHAOS MODE is the separate timed arcade game.",
+            "Story: finish three Zoom recesses, Saturday, and the final call. The top bar tracks the route; there is no story timer. Use six errands to finish up to three quests. Clean steps score and unlock bigger answers. For the compromise: stay at the bar, adjourn, then profit 40+, trust 65+, chaos 60 max. CHAOS MODE is timed.",
             62,
             528,
             835,
@@ -5672,6 +5761,7 @@
               "/2 · RESTORED " +
               adventure.recessRecovery +
               " HEART\n" +
+              "COMPROMISE: STAY · PROFIT 40+ · TRUST 65+ · CHAOS 60 MAX\n" +
               questMenu()
                 .map(
                   (entry, i) => (i === menuIndex ? "→ " : "  ") + entry.label,
@@ -5811,13 +5901,20 @@
               "FOR THE PLACES THAT MAKE ROOM.\nAnd the people who keep them open.\nInspired by Annalisa Quinn's Boston Globe reporting. Last Ditch in Greenfield is real; game characters and dialogue are invented.\nThank you for playing. Any arrow returns to the title.";
           else if (screen === "help")
             value =
-              "FOUR KEYS. THAT'S IT.\nSTORY: keep the bar open through the clown-school Zoom call.\nSix errands. Five side quests. Evidence unlocks answers.\nCall-out pile-ons drain stamina. No hearts left? Each extra call-out costs 75 points. Recess restores one heart.\n↑↓ chooses. → confirms. ← goes back or opens your notebook.\nCHAOS MODE: the separate timed arcade shift.\n← or → returns to the title.";
+              "FOUR KEYS. THAT'S IT.\nSTORY: finish three Zoom recesses, Saturday, and one final call. The top bar tracks progress; no story timer.\nSix errands can finish three quests. Clean steps earn points and unlock bigger answers. Stay at the bar, adjourn, then profit 40+, trust 65+, chaos 60 max earns the compromise ending.\n↑↓ chooses. → confirms. ← goes back or opens your notebook.\nCHAOS MODE: the timed arcade shift.\n← or → returns to the title.";
           if (
             adventure &&
             !["title", "leaderboard", "credits", "help"].includes(screen)
-          )
+          ) {
+            const progress = adventureProgress();
             value =
-              "SCORE " +
+              "ROUTE " +
+              progress.completed +
+              "/" +
+              progress.total +
+              " · NEXT " +
+              progress.next +
+              " · SCORE " +
               adventure.points +
               " · STAMINA " +
               adventure.stamina +
@@ -5827,6 +5924,7 @@
               adventure.callouts +
               "\n" +
               value;
+          }
           if (readout.textContent !== value) readout.textContent = value;
           const hud = document.getElementById("mobile-hud"),
             hudText =

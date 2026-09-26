@@ -62,10 +62,26 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await press(page, "ArrowDown", 4);
   await press(page);
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "zoom");
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "ROUTE 0/7 · NEXT OPENING ZOOM",
+  );
   await page.screenshot({ path: "test-results/adventure-zoom.png" });
   await choose(page);
   await hub(page);
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "ROUTE 1/7 · NEXT ACCESS PLAN",
+  );
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "COMPROMISE: STAY · PROFIT 40+ · TRUST 65+ · CHAOS 60 MAX",
+  );
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "Best available: +150 this step",
+  );
+  await page.screenshot({ path: "test-results/adventure-plan.png" });
   await quest(page, 0);
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "Best available: +350 this step",
+  );
   await quest(page, 0);
   await expect(page.locator("#mobile-readout")).toContainText("ERRANDS 0/2");
   await page.screenshot({ path: "test-results/adventure-quests.png" });
@@ -74,6 +90,9 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await until(page, "PAT / SHARING THE WRONG SCREEN");
   await choose(page);
   await hub(page);
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "ROUTE 2/7 · NEXT RENT PLAN",
+  );
   await quest(page, 4);
   await quest(page, 4);
   await rejoin(page);
@@ -81,6 +100,9 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await until(page, "DOTTIE / THE BREAKOUT ROOMS");
   await choose(page);
   await hub(page);
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "ROUTE 3/7 · NEXT POLICY VOTE",
+  );
   await quest(page, 2);
   await quest(page, 2);
   await rejoin(page);
@@ -88,13 +110,25 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await until(page, "NORA / BEFORE I FILE");
   await choose(page);
   await until(page, "TESS / THE RENT ENVELOPE");
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "ROUTE 4/7 · NEXT SATURDAY",
+  );
   await choose(page, 2);
   await until(page, "NORA / ONE LAST FOLLOW-UP");
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "ROUTE 5/7 · NEXT REPORTER",
+  );
   await choose(page);
   await until(page, "11:58 PM");
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "ROUTE 6/7 · NEXT FINAL ZOOM",
+  );
   await choose(page);
   await until(page, "SHIFT COMPLETE");
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "tally");
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "ROUTE 7/7 · NEXT FINISHED",
+  );
   await page.screenshot({ path: "test-results/adventure-tally.png" });
   await press(page, "ArrowRight", 2);
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "ending");

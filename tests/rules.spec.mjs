@@ -30,7 +30,7 @@ async function model() {
   };
   const insertion = `globalThis.game = {
     resetGame, startArcade, updateArcade, useStation, spawnWave, spawnPatron, spawnIncident, resolveIncident, incidentPoints, confrontIncident, startChallenge, challengeInput, jostle, serve, pickEnding, finishArcade, input,
-    startAdventure, visitQuest, rejoinZoom, adventureZoom, startAdventureSaturday, adventurePoints, questMenu, adventureNotebook,
+    startAdventure, visitQuest, rejoinZoom, adventureZoom, startAdventureSaturday, adventurePoints, adventureProgress, questMenu, adventureNotebook,
     state: () => ({ meters, factions, mask, arcade, adventure, score, ending, player, screen, dialog, shown, policy }),
     setup: (values) => {
       if (values.meters) meters = values.meters;
@@ -350,6 +350,21 @@ test("quests spend finite errands, back is free, and repeat visits cannot farm p
   pick(game);
   expect(game.state().adventure.round).toBe(1);
   expect(game.state().adventure.remaining).toBe(2);
+});
+
+test("route progress follows story beats and quest previews show available points", async () => {
+  const game = await adventureGame();
+  expect(game.adventureProgress()).toEqual({
+    completed: 1,
+    total: 7,
+    next: "ACCESS PLAN",
+  });
+  expect(game.questMenu()[0].detail).toContain("Best available: +150");
+  game.visitQuest("notes");
+  pick(game, 1);
+  expect(game.questMenu()[2].detail).toContain("Best available: +100");
+  game.state().adventure.flags.access = true;
+  expect(game.questMenu()[2].detail).toContain("Best available: +450");
 });
 
 test("failed errands lose real points and never grant the successful quest evidence", async () => {
