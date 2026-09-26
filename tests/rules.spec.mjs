@@ -378,15 +378,44 @@ test("locked evidence and stamina answers cannot be selected; every mask can pro
     expect(game.state().adventure.points).toBe(before);
     pick(game, 1);
     expect(game.state().adventure.promises.access).toBe(true);
-    if (base === 3) {
+    if (base >= 2) {
       pick(game);
       expect(game.state().dialog.speaker).toContain("PAT");
       pick(game, 1);
     } else pick(game);
     expect(game.state().screen).toBe("quests");
-    expect(game.state().adventure.stamina).toBe(
-      Math.max(0, [5, 3, 1, 0][base] - 1),
-    );
+    expect(game.state().adventure.stamina).toBe([4, 2, 1, 0][base]);
+  }
+});
+
+test("call-out waves drain each mask's hearts, charge for overflow, and recover once per recess", async () => {
+  const expected = [
+    { afterFirst: 3, afterRecess: 3, points: 300, trust: 66, chaos: 25 },
+    { afterFirst: 1, afterRecess: 1, points: 300, trust: 76, chaos: 25 },
+    { afterFirst: 0, afterRecess: 1, points: 150, trust: 62, chaos: 29 },
+    { afterFirst: 0, afterRecess: 0, points: 75, trust: 60, chaos: 31 },
+  ];
+  for (let base = 0; base < 4; base++) {
+    const game = await adventureGame(base);
+    expect(game.state().adventure.stamina).toBe([5, 3, 1, 0][base]);
+    game.rejoinZoom();
+    pick(game, 1);
+    pick(game, 2);
+    expect(game.state().adventure.stamina).toBe(expected[base].afterFirst);
+    expect(game.state().adventure.callouts).toBe(2);
+    pick(game, 2);
+    expect(game.state().screen).toBe("quests");
+    expect(game.state().adventure.stamina).toBe(expected[base].afterRecess);
+    expect(game.state().adventure.recessRecovery).toBe(base === 3 ? 0 : 1);
+    expect(game.state().adventure.callouts).toBe(3);
+    expect(game.state().adventure.points).toBe(expected[base].points);
+    expect(game.state().meters.trust).toBe(expected[base].trust);
+    expect(game.state().meters.chaos).toBe(expected[base].chaos);
+    expect(
+      game
+        .state()
+        .adventure.ledger.filter((entry) => entry.label === "Call-out pile-on"),
+    ).toHaveLength(base < 2 ? 0 : 2);
   }
 });
 

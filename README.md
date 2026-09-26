@@ -77,7 +77,7 @@ Touch devices get the same four directions on a D-pad. Small screens also show r
 - Keep masks required, use the completed patio plan, run the optional trial, or retreat to clown school. Saturday depends on the bookings, rehearsal, and relationships you prepared.
 - End with one last Zoom meeting: adjourn with receipts, enroll in clown school, or establish a permanent subcommittee. Then see your tally, ending, initials entry, and global scores.
 
-In story mode, N95s provide five stamina, cloth masks provide three and ten trust, and novelty masks provide one and a 200-point bonus for a rehearsed clown benefit. Stamina unlocks patient follow-up answers. Evidence and honest answers let every mask choice finish the story. Stats are game mechanics.
+In story mode, N95s provide five stamina, cloth masks provide three and ten trust, and novelty masks provide one and a 200-point bonus for a rehearsed clown benefit. Call-out pile-ons drain stamina; each call-out beyond the remaining hearts costs 75 points, two trust, and two chaos. Recess restores one heart up to the mask's limit. Stamina also unlocks patient follow-up answers. Evidence and honest answers let every mask choice finish the story. These are game mechanics, not health claims.
 
 ## Chaos mode and original RPG scenes
 
