@@ -1070,6 +1070,8 @@
             round: 0,
             remaining: 2,
             stamina: 0,
+            callouts: 0,
+            recessRecovery: 0,
             progress: Object.fromEntries(QUESTS.map((q) => [q.id, 0])),
             flags: {},
             promises: {},
@@ -1087,7 +1089,7 @@
               "You own Last Ditch, the town's lesbian bar. Rent is due Sunday. You post a mask-optional Saturday trial, with masks welcome. The replies arrive before the punctuation.",
               "Nora Ink, a fictional Boston Globe reporter, wants a story by midnight. The clown school lends you its Zoom account. Unfortunately, it also lends you its audition link.",
               "Keep the bar open and your promises believable. Start with 500 points. Good decisions earn points; bad quotes and broken promises lose them. Final bar meters add bonuses.",
-              "Three Zoom recesses. Two errands each. Five side quests, two steps apiece. You cannot do everything. Choose your mask, then join the call.",
+              "Three Zoom recesses. Two errands each. Five side quests, two steps apiece. Call-out pile-ons drain stamina hearts; overflow costs points. Recess restores one heart. Choose your mask, then join the call.",
             ],
             null,
             () => {
@@ -1098,10 +1100,10 @@
         }
         function adventureMaskDetail() {
           return [
-            "5 STAMINA. HELPS WITH LONG FOLLOW-UPS.",
-            "3 STAMINA. +10 COMMUNITY TRUST.",
-            "1 STAMINA. +200 AT A REHEARSED CLOWN SHOW.",
-            "0 STAMINA. EVIDENCE STILL UNLOCKS GOOD ANSWERS.",
+            "5 HEARTS FOR CALL-OUTS AND LONG FOLLOW-UPS.",
+            "3 HEARTS. +10 COMMUNITY TRUST.",
+            "1 HEART. +200 AT A REHEARSED CLOWN SHOW.",
+            "0 HEARTS. EVIDENCE STILL UNLOCKS GOOD ANSWERS.",
           ][mask.base];
         }
         function equipAdventureMask() {
@@ -1119,6 +1121,36 @@
           sfx(delta < 0 ? "bad" : "level");
           return (delta >= 0 ? "+" : "") + delta + " POINTS";
         }
+        function adventureCallouts(count) {
+          const spent = Math.min(adventure.stamina, count);
+          const overflow = count - spent;
+          adventure.stamina -= spent;
+          adventure.callouts += count;
+          sfx("bad");
+          let result =
+            count +
+            " CALL-OUT" +
+            (count === 1 ? "" : "S") +
+            ". STAMINA -" +
+            spent +
+            ". " +
+            adventure.stamina +
+            "/" +
+            MASKS[mask.base].stamina +
+            " HEARTS LEFT.";
+          if (overflow) {
+            change(0, -2 * overflow, 2 * overflow);
+            result +=
+              " NO HEARTS LEFT: " +
+              adventurePoints(-75 * overflow, "Call-out pile-on") +
+              ". TRUST -" +
+              2 * overflow +
+              "; CHAOS +" +
+              2 * overflow +
+              ".";
+          }
+          return result;
+        }
         function adventureEvent(
           id,
           speaker,
@@ -1133,7 +1165,14 @@
             body,
             options.map((option) => ({
               label:
-                (option.available === false ? "LOCKED: " : "") + option.label,
+                (option.available === false ? "LOCKED: " : "") +
+                option.label +
+                (option.callouts
+                  ? " / " +
+                    option.callouts +
+                    " CALL-OUT" +
+                    (option.callouts === 1 ? "" : "S")
+                  : ""),
               disabled: option.available === false,
               requirement: option.requirement || option.label,
               action: () => {
@@ -1142,9 +1181,12 @@
                 if (option.apply) option.apply();
                 change(...option.effect);
                 const result = adventurePoints(option.points, option.reason);
+                const callouts = option.callouts
+                  ? adventureCallouts(option.callouts)
+                  : null;
                 talk(
                   result + " / " + option.reason.toUpperCase(),
-                  option.result,
+                  callouts ? [option.result, callouts] : option.result,
                   null,
                   after,
                 );
@@ -1161,6 +1203,13 @@
         }
         function beginRecess() {
           adventure.remaining = 2;
+          const before = adventure.stamina;
+          adventure.stamina = Math.min(
+            MASKS[mask.base].stamina,
+            adventure.stamina + 1,
+          );
+          adventure.recessRecovery = adventure.stamina - before;
+          if (adventure.recessRecovery) sfx("level");
           openQuestHub();
         }
         function questMenu() {
@@ -1224,6 +1273,10 @@
                   : "No outstanding patio promise.") +
                 " STAMINA: " +
                 adventure.stamina +
+                "/" +
+                MASKS[mask.base].stamina +
+                ". CALL-OUTS: " +
+                adventure.callouts +
                 ". ERRANDS LEFT THIS RECESS: " +
                 adventure.remaining +
                 ".",
@@ -1304,6 +1357,7 @@
                   },
                   {
                     label: "MAKE A NEW SURVEY [-150]",
+                    callouts: 1,
                     points: -150,
                     effect: [0, -5, 6],
                     reason: "Survey number seven",
@@ -1330,6 +1384,7 @@
                   },
                   {
                     label: "PHOTOGRAPH THE BOXES [-250]",
+                    callouts: 1,
                     points: -250,
                     effect: [2, -8, 10],
                     reason: "A photo is not a setup",
@@ -1357,6 +1412,7 @@
                   },
                   {
                     label: "ANNOUNCE 200 CLOWNS [-150]",
+                    callouts: 1,
                     points: -150,
                     effect: [4, -3, 12],
                     reason: "Capacity is a number",
@@ -1383,6 +1439,7 @@
                   },
                   {
                     label: "LET THEM IMPROVISE [-200]",
+                    callouts: 1,
                     points: -200,
                     effect: [-3, -2, 12],
                     reason: "Unrehearsed mime landlord",
@@ -1410,6 +1467,7 @@
                   },
                   {
                     label: "CALL EVERYTHING OFF RECORD [-200]",
+                    callouts: 1,
                     points: -200,
                     effect: [0, -4, 7],
                     reason: "No agreed ground rules",
@@ -1450,6 +1508,7 @@
                   },
                   {
                     label: "DECLARE YOURSELF MAYOR OF MASKS [-300]",
+                    callouts: 2,
                     points: -300,
                     effect: [5, -7, 15],
                     reason: "An extremely usable quote",
@@ -1474,6 +1533,7 @@
                   },
                   {
                     label: "ASK THE INTERNET TO REPLACE IT [-150]",
+                    callouts: 1,
                     points: -150,
                     effect: [0, -5, 6],
                     reason: "Local history is local",
@@ -1500,6 +1560,7 @@
                   },
                   {
                     label: "REPLACE TRIVIA WITH AN INFLUENCER [-250]",
+                    callouts: 1,
                     points: -250,
                     effect: [-3, -8, 10],
                     reason: "The influencer invoices you",
@@ -1524,6 +1585,7 @@
                   },
                   {
                     label: "BUY A VIRAL PROMOTION [-250]",
+                    callouts: 1,
                     points: -250,
                     effect: [-8, 0, 8],
                     reason: "Engagement does not pay rent",
@@ -1549,6 +1611,7 @@
                   },
                   {
                     label: "ACCEPT HONKCOIN [-350]",
+                    callouts: 1,
                     points: -350,
                     effect: [-12, -4, 12],
                     reason: "The sponsor is a PDF",
@@ -1595,6 +1658,7 @@
                 },
                 {
                   label: "HONK TO ESTABLISH A QUORUM [+100]",
+                  callouts: 1,
                   points: 100,
                   effect: [2, 1, 8],
                   reason: "Quorum by honk",
@@ -1606,6 +1670,7 @@
                 },
                 {
                   label: "READ ALL 400 CHAT MESSAGES [-250]",
+                  callouts: 2,
                   points: -250,
                   effect: [-3, -4, 10],
                   reason: "You have become the chat",
@@ -1633,6 +1698,7 @@
                 },
                 {
                   label: "PROMISE A PLAN BY SATURDAY [+100]",
+                  callouts: 1,
                   points: 100,
                   effect: [0, 3, 4],
                   reason: "A promise on record",
@@ -1644,6 +1710,7 @@
                 },
                 {
                   label: "SAY EVERYONE IS WELCOME [-250]",
+                  callouts: 2,
                   points: -250,
                   effect: [3, -9, 10],
                   reason: "Welcome needs a way in",
@@ -1680,6 +1747,7 @@
                     },
                     {
                       label: "LET ALL 87 SLIDES HAPPEN [-200]",
+                      callouts: 1,
                       points: -200,
                       effect: [-3, -2, 8],
                       reason: "Death by transitions",
@@ -1722,6 +1790,7 @@
                 },
                 {
                   label: "COUNT LIKES AS TICKET SALES [-300]",
+                  callouts: 2,
                   points: -300,
                   effect: [-6, -6, 12],
                   reason: "The landlord does not accept likes",
@@ -1745,6 +1814,7 @@
                     },
                     {
                       label: "CALL IT AN IMMERSIVE MASK DISCOURSE [-150]",
+                      callouts: 1,
                       points: -150,
                       effect: [4, -4, 9],
                       reason: "You have invented a worse flyer",
@@ -1799,6 +1869,7 @@
                 },
                 {
                   label: "MASK-OPTIONAL. KEEP THE PLAN CLEAR. [+100]",
+                  callouts: 1,
                   points: 100,
                   effect: [8, -7, 5],
                   reason: "The trial goes ahead",
@@ -1838,6 +1909,7 @@
                     },
                     {
                       label: "THE ONLY CIRCUS WITH A LIQUOR LICENSE [+300]",
+                      callouts: 2,
                       points: 300,
                       effect: [10, -7, 18],
                       reason: "A headline, unfortunately",
@@ -1930,6 +2002,7 @@
               },
               {
                 label: "RUN A SMALL WALK-IN NIGHT [-150]",
+                callouts: 1,
                 points: -150,
                 effect: [-7, 2, 3],
                 reason: "No bookings ready",
@@ -1979,6 +2052,7 @@
               },
               {
                 label: "CLAIM ALL 400 COMMENTS WERE CUSTOMERS [-350]",
+                callouts: 2,
                 points: -350,
                 effect: [2, -8, 12],
                 reason: "Nora can count",
@@ -4649,7 +4723,14 @@
             C.cream,
             "right",
           );
-          text("♥ " + adventure.stamina, 590, 80, 1, C.mint);
+          text(
+            "♥ " + adventure.stamina + "/" + MASKS[mask.base].stamina,
+            590,
+            80,
+            1,
+            C.mint,
+          );
+          text("CALL-OUTS " + adventure.callouts, 665, 80, 1, C.peach);
         }
         function drawAdventureBar(x, y, width) {
           panel(x, y, width, 180, C.brown, C.plum);
@@ -4704,7 +4785,9 @@
             adventure.remaining ? C.mint : C.pink,
           );
           text(
-            "EACH QUEST HAS TWO STEPS. NO REAL-TIME CLOCK.",
+            "RECESS: +" +
+              adventure.recessRecovery +
+              " HEART. TWO-STEP QUESTS. NO CLOCK.",
             53,
             178,
             1,
@@ -4757,6 +4840,7 @@
               3,
               i < adventure.stamina ? C.mint : C.plum,
             );
+          text("CALL-OUTS " + adventure.callouts, 685, 469, 1, C.peach);
           panel(52, 489, 853, 107, C.ink, C.plum);
           paragraph(entries[menuIndex].detail, 71, 505, 815, 2, C.cream, 22);
           const receipt = adventure.ledger[adventure.ledger.length - 1];
@@ -5497,7 +5581,7 @@
             text(body, 253, y + 43, 1, C.blue);
           });
           paragraph(
-            "Story: six errands, five side quests, recurring Zoom calls. Earn points for evidence and follow-through. Lose points for bad quotes and broken promises. CHAOS MODE is the separate timed arcade game.",
+            "Story: six errands, five side quests, recurring Zoom calls. Call-out pile-ons drain stamina hearts; each unabsorbed call-out costs 75 points. Recess restores one heart. CHAOS MODE is the separate timed arcade game.",
             62,
             528,
             835,
@@ -5577,7 +5661,9 @@
               (adventure.round + 1) +
               "/3 · ERRANDS " +
               adventure.remaining +
-              "/2\n" +
+              "/2 · RESTORED " +
+              adventure.recessRecovery +
+              " HEART\n" +
               questMenu()
                 .map(
                   (entry, i) => (i === menuIndex ? "→ " : "  ") + entry.label,
@@ -5717,7 +5803,7 @@
               "FOR THE PLACES THAT MAKE ROOM.\nAnd the people who keep them open.\nFictional people. Real community spirit.\nThank you for playing. Any arrow returns to the title.";
           else if (screen === "help")
             value =
-              "FOUR KEYS. THAT'S IT.\nSTORY: keep the bar open through the clown-school Zoom call.\nSix errands. Five side quests. Evidence unlocks answers.\nEarn points for follow-through. Lose them for broken promises.\n↑↓ chooses. → confirms. ← goes back or opens your notebook.\nMasks give stamina or other bonuses.\nCHAOS MODE: the separate timed arcade shift.\n← or → returns to the title.";
+              "FOUR KEYS. THAT'S IT.\nSTORY: keep the bar open through the clown-school Zoom call.\nSix errands. Five side quests. Evidence unlocks answers.\nCall-out pile-ons drain stamina. No hearts left? Each extra call-out costs 75 points. Recess restores one heart.\n↑↓ chooses. → confirms. ← goes back or opens your notebook.\nCHAOS MODE: the separate timed arcade shift.\n← or → returns to the title.";
           if (
             adventure &&
             !["title", "leaderboard", "credits", "help"].includes(screen)
@@ -5727,6 +5813,10 @@
               adventure.points +
               " · STAMINA " +
               adventure.stamina +
+              "/" +
+              MASKS[mask.base].stamina +
+              " · CALL-OUTS " +
+              adventure.callouts +
               "\n" +
               value;
           if (readout.textContent !== value) readout.textContent = value;

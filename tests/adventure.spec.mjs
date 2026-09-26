@@ -152,3 +152,31 @@ test("mobile quest board exposes choices, points, and the notebook without spend
     390,
   );
 });
+
+test("visible stamina falls through repeated call-outs and returns during recess", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await press(page, "ArrowRight", 2);
+  await until(page, "BASE: N95");
+  await press(page, "ArrowDown", 4);
+  await press(page);
+  await choose(page);
+  await hub(page);
+  await rejoin(page);
+  await choose(page, 1);
+  await choose(page, 2);
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "STAMINA 3/5 · CALL-OUTS 2",
+  );
+  await until(page, "PAT / SHARING THE WRONG SCREEN");
+  await choose(page, 2);
+  await hub(page);
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "STAMINA 3/5 · CALL-OUTS 3",
+  );
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "RESTORED 1 HEART",
+  );
+  await page.screenshot({ path: "test-results/adventure-callouts.png" });
+});
