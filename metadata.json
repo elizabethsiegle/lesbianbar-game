@@ -1,0 +1,42 @@
+{
+  "cli_version": "0.11.2",
+  "checkpoint_id": "01M3FKDV0DF9CJ2CAZ578YMBDM",
+  "strategy": "manual-commit",
+  "branch": "fix/last-ditch-mask-sprites",
+  "checkpoints_count": 4,
+  "files_touched": [
+    "lesbianbar-game/.gitignore",
+    "lesbianbar-game/README.md",
+    "lesbianbar-game/package-lock.json",
+    "lesbianbar-game/package.json",
+    "lesbianbar-game/playwright.config.mjs",
+    "lesbianbar-game/public/index.html",
+    "lesbianbar-game/scripts/test-server.mjs",
+    "lesbianbar-game/src/index.ts",
+    "lesbianbar-game/src/leaderboard.ts",
+    "lesbianbar-game/src/validation.ts",
+    "lesbianbar-game/tests/api.spec.mjs",
+    "lesbianbar-game/tests/game.spec.mjs",
+    "lesbianbar-game/tests/rules.spec.mjs",
+    "lesbianbar-game/tsconfig.json",
+    "lesbianbar-game/worker-configuration.d.ts",
+    "lesbianbar-game/wrangler.jsonc"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 479115,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 6456576,
+    "output_tokens": 95159,
+    "api_call_count": 60,
+    "subagent_tokens_complete": true
+  }
+}

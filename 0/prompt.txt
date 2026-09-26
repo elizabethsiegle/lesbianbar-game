@@ -1,0 +1,322 @@
+Build a comedic 8-bit retro browser RPG called "LAST DITCH: A WESTERN MASS BAR SAGA," deployed on Cloudflare Workers with a global leaderboard powered by Durable Objects.
+
+VISUAL & AUDIO STYLE
+- Classic NES/8-bit aesthetic: chunky pixel art, limited 16-color palette, pixel fonts, blocky sprites
+- Cozy small-town Western Massachusetts vibe in pixel form: flannel, fall foliage, string lights, co-op bulletin boards, a neon "OPEN" sign
+- Dialogue in classic RPG text boxes with letter-by-letter text and a blip sound effect
+- Chiptune soundtrack (generated with the Web Audio API): a cozy bar theme, a tense "controversy" theme, a goofy calliope-style clown theme for the Zoom town hall, and an upbeat boss-battle theme for Saturday night
+- Retro sound effects for menu moves, selections, level-ups, and meter changes
+- Title screen with blinking "PRESS ANY ARROW" and pixel art of the bar exterior
+
+CONTROLS (ARROW KEYS ONLY)
+The entire game is playable with only the four arrow keys:
+- Movement: arrow keys move the player sprite on a tile grid
+- Interacting: walk into an NPC, door, or object to interact with it (bump-to-interact)
+- Advancing dialogue: any arrow key advances text boxes
+- Menus and choices: UP/DOWN to highlight an option, RIGHT to confirm, LEFT to go back
+- Mask editor: UP/DOWN to pick a category, LEFT/RIGHT to cycle options, RIGHT on "DONE" to confirm
+- Leaderboard initials: classic arcade entry, UP/DOWN cycles letters, RIGHT moves to the next letter, LEFT goes back
+- Show a small on-screen control hint in the corner of every screen (e.g., "↑↓ choose → confirm")
+- On touch devices, display an on-screen pixel-art D-pad that maps to the same four directions
+- Prevent arrow keys from scrolling the page
+
+PREMISE
+The player is the owner of Last Ditch Bar, a beloved, COVID-conscious lesbian bar in a small Western Massachusetts town where everyone cares deeply about rules, process, and community input. Profits are down. The owner considers going mask-optional for one Saturday night, and the town completely loses its mind. The player must survive the fallout and keep the bar alive.
+
+TONE
+Affectionate satire in the spirit of Parks and Rec town meetings. The humor comes from escalation: a small policy change snowballs into petitions, a Zoom town hall, rival factions, and a Saturday-night siege. Every faction is lovable and absurd, including the player. Never mock disability, illness, or anyone's genuine health needs. Masks are portrayed as a legitimate choice with real gameplay benefits. All characters, comments, and names are fictional.
+
+HUD
+Three pixel-art meters always visible at the top of the screen:
+- PROFIT (coin icon)
+- COMMUNITY TRUST (heart icon)
+- CHAOS (lightning bolt icon)
+Every choice visibly shifts the meters with a retro sound effect.
+
+PART 1: STORY MODE (choose your own adventure)
+Top-down RPG scenes. The player walks around the bar and town, bumping into characters to trigger dialogue and choices.
+
+CHAPTER 1: THE DECISION
+- The pixel bar manager says profits are down and suggests going mask-optional. Choices: YES / NO
+  - NO leads to a short "slow decline" branch where the bar struggles in funny ways (the jukebox breaks, only one regular shows up, a raccoon moves in), then loops back to the decision
+- "Saturday night seems good. Let's post it!" Choice: POST IT
+- The announcement goes live. Show an 8-bit social media feed the player scrolls with UP/DOWN, full of invented comments that escalate from polite concern to 40-paragraph essays, a dog account weighing in, someone posting a spreadsheet, and a person asking if trivia night is still on
+
+CHAPTER 2: THE CONTROVERSY
+- "We have to address this. What do we do?" Choices: REINSTATE MASK POLICY / HOLD A TOWN HALL / SAY NOTHING AND HOPE IT BLOWS OVER
+- The town hall takes place on Zoom, shown as a pixel-art grid of video tiles, hosted on the only account anyone could find: the local clown school's. Clown students keep joining by accident. Include dialogue choices for handling unmuted chaos, breakout rooms, a moderator in full clown makeup, and someone presenting a slideshow nobody asked for
+- Choices determine which factions become allies or enemies on Saturday night
+
+MASK CUSTOMIZATION SCREEN
+Before Saturday night, the player designs their mask in a pixel-art editor: base type, colors, patterns (flannel, stripes, polka dots, tiny rainbow), and accessories (patches, sequins, clown nose attachment). Each base type has a STAMINA stat shown as pixel hearts:
+- N95: high stamina, reduces "sick day" penalties
+- Cloth mask: medium stamina, bonus to community trust
+- Novelty mask: low stamina, huge vibe bonus
+- No mask: no stamina bonus, slightly faster movement
+Masking should feel like a smart strategy, not a punchline.
+
+PART 2: SATURDAY NIGHT (arcade mode)
+A fast-paced 8-bit time-management game. The player moves around the bar with the arrow keys and bumps into things to act:
+- Bump into waiting patrons to serve drinks before their patience bars run out
+- Bump into the DJ booth, light switch, and karaoke machine to keep the VIBE meter up
+- Fend off waves of protesters, petitioners, and confused clowns by bumping into power-up stations: free snacks, a heartfelt apology, a strongly worded chalkboard sign, a surprise line dance
+- Enemy and ally waves depend on the player's Part 1 choices
+- Final "boss": the head of the neighborhood listserv arrives with a clipboard and is defeated through a dialogue battle (UP/DOWN to pick responses, RIGHT to confirm), not combat
+
+SCORING
+Final score = Part 2 arcade points + bonuses from the final PROFIT, COMMUNITY TRUST, and CHAOS values (low chaos earns a bonus). Show a tally screen with each bonus counting up in classic arcade style.
+
+ENDINGS
+Multiple endings based on the final meter values, each with a pixel-art ending screen:
+- The bar thrives with a compromise policy everyone grudgingly accepts
+- The bar becomes a clown school annex
+- The bar goes viral nationally
+- The town forms a subcommittee to study the incident forever
+Every ending should feel warm, with the community still intact. After the ending, go to initials entry, then the leaderboard, then credits.
+
+LEADERBOARD (DURABLE OBJECTS)
+- Global top-10 high score table styled like a classic arcade cabinet screen
+- Players enter 3-letter initials with the arrow keys
+- Each entry stores: initials, score, ending achieved, mask type, and timestamp
+- Viewable from the title screen (menu option "HIGH SCORES") and after each game
+- Filter out offensive initials with a server-side blocklist, replacing them with "???"
+- Server-side validation: reject scores outside the game's maximum possible range, reject malformed input, and rate-limit submissions per IP (e.g., 5 per minute)
+
+TECHNICAL ARCHITECTURE
+- Cloudflare Worker written in TypeScript (or JavaScript) serving the game and the API
+- Serve the frontend (single HTML file with inline CSS and JavaScript, pixel art drawn on canvas) as Workers static assets
+- One Durable Object class, "Leaderboard," using SQLite-backed Durable Object storage, with a single named instance ("global") so all players share one board
+- API routes handled by the Worker and forwarded to the Durable Object:
+  - GET /api/leaderboard → returns the top 10 scores as JSON
+  - POST /api/score → validates and submits a score, returns the player's rank
+- Frontend handles API failures gracefully: if the leaderboard can't load, show "HIGH SCORES OFFLINE" and let the player keep playing
+- Include a complete wrangler.toml (or wrangler.jsonc) with the assets directory, the Durable Object binding, and the migration declaring the Leaderboard class as a SQLite-backed class
+- Include a README with step-by-step setup: install Wrangler, run locally with "npx wrangler dev," and deploy with "npx wrangler deploy"
+
+DELIVERABLES
+- Worker entry file (src/index.ts)
+- Durable Object class (can live in the same file or src/leaderboard.ts)
+- Frontend game (public/index.html)
+- wrangler.toml / wrangler.jsonc
+- package.json
+- README.md
+
+Keep the writing short and punchy throughout.
+
+---
+
+Build a comedic 8-bit retro browser RPG called "LAST DITCH: A WESTERN MASS BAR SAGA," deployed on Cloudflare Workers with a global leaderboard powered by Durable Objects.
+
+VISUAL & AUDIO STYLE
+- Classic NES/8-bit aesthetic: chunky pixel art, limited 16-color palette, pixel fonts, blocky sprites
+- Cozy small-town Western Massachusetts vibe in pixel form: flannel, fall foliage, string lights, co-op bulletin boards, a neon "OPEN" sign
+- Dialogue in classic RPG text boxes with letter-by-letter text and a blip sound effect
+- Chiptune soundtrack (generated with the Web Audio API): a cozy bar theme, a tense "controversy" theme, a goofy calliope-style clown theme for the Zoom town hall, and an upbeat boss-battle theme for Saturday night
+- Retro sound effects for menu moves, selections, level-ups, and meter changes
+- Title screen with blinking "PRESS ANY ARROW" and pixel art of the bar exterior
+
+CONTROLS (ARROW KEYS ONLY)
+The entire game is playable with only the four arrow keys:
+- Movement: arrow keys move the player sprite on a tile grid
+- Interacting: walk into an NPC, door, or object to interact with it (bump-to-interact)
+- Advancing dialogue: any arrow key advances text boxes
+- Menus and choices: UP/DOWN to highlight an option, RIGHT to confirm, LEFT to go back
+- Mask editor: UP/DOWN to pick a category, LEFT/RIGHT to cycle options, RIGHT on "DONE" to confirm
+- Leaderboard initials: classic arcade entry, UP/DOWN cycles letters, RIGHT moves to the next letter, LEFT goes back
+- Show a small on-screen control hint in the corner of every screen (e.g., "↑↓ choose → confirm")
+- On touch devices, display an on-screen pixel-art D-pad that maps to the same four directions
+- Prevent arrow keys from scrolling the page
+
+PREMISE
+The player is the owner of Last Ditch Bar, a beloved, COVID-conscious lesbian bar in a small Western Massachusetts town where everyone cares deeply about rules, process, and community input. Profits are down. The owner considers going mask-optional for one Saturday night, and the town completely loses its mind. The player must survive the fallout and keep the bar alive.
+
+TONE
+Affectionate satire in the spirit of Parks and Rec town meetings. The humor comes from escalation: a small policy change snowballs into petitions, a Zoom town hall, rival factions, and a Saturday-night siege. Every faction is lovable and absurd, including the player. Never mock disability, illness, or anyone's genuine health needs. Masks are portrayed as a legitimate choice with real gameplay benefits. All characters, comments, and names are fictional.
+
+HUD
+Three pixel-art meters always visible at the top of the screen:
+- PROFIT (coin icon)
+- COMMUNITY TRUST (heart icon)
+- CHAOS (lightning bolt icon)
+Every choice visibly shifts the meters with a retro sound effect.
+
+PART 1: STORY MODE (choose your own adventure)
+Top-down RPG scenes. The player walks around the bar and town, bumping into characters to trigger dialogue and choices.
+
+CHAPTER 1: THE DECISION
+- The pixel bar manager says profits are down and suggests going mask-optional. Choices: YES / NO
+  - NO leads to a short "slow decline" branch where the bar struggles in funny ways (the jukebox breaks, only one regular shows up, a raccoon moves in), then loops back to the decision
+- "Saturday night seems good. Let's post it!" Choice: POST IT
+- The announcement goes live. Show an 8-bit social media feed the player scrolls with UP/DOWN, full of invented comments that escalate from polite concern to 40-paragraph essays, a dog account weighing in, someone posting a spreadsheet, and a person asking if trivia night is still on
+
+CHAPTER 2: THE CONTROVERSY
+- "We have to address this. What do we do?" Choices: REINSTATE MASK POLICY / HOLD A TOWN HALL / SAY NOTHING AND HOPE IT BLOWS OVER
+- The town hall takes place on Zoom, shown as a pixel-art grid of video tiles, hosted on the only account anyone could find: the local clown school's. Clown students keep joining by accident. Include dialogue choices for handling unmuted chaos, breakout rooms, a moderator in full clown makeup, and someone presenting a slideshow nobody asked for
+- Choices determine which factions become allies or enemies on Saturday night
+
+MASK CUSTOMIZATION SCREEN
+Before Saturday night, the player designs their mask in a pixel-art editor: base type, colors, patterns (flannel, stripes, polka dots, tiny rainbow), and accessories (patches, sequins, clown nose attachment). Each base type has a STAMINA stat shown as pixel hearts:
+- N95: high stamina, reduces "sick day" penalties
+- Cloth mask: medium stamina, bonus to community trust
+- Novelty mask: low stamina, huge vibe bonus
+- No mask: no stamina bonus, slightly faster movement
+Masking should feel like a smart strategy, not a punchline.
+
+PART 2: SATURDAY NIGHT (arcade mode)
+A fast-paced 8-bit time-management game. The player moves around the bar with the arrow keys and bumps into things to act:
+- Bump into waiting patrons to serve drinks before their patience bars run out
+- Bump into the DJ booth, light switch, and karaoke machine to keep the VIBE meter up
+- Fend off waves of protesters, petitioners, and confused clowns by bumping into power-up stations: free snacks, a heartfelt apology, a strongly worded chalkboard sign, a surprise line dance
+- Enemy and ally waves depend on the player's Part 1 choices
+- Final "boss": the head of the neighborhood listserv arrives with a clipboard and is defeated through a dialogue battle (UP/DOWN to pick responses, RIGHT to confirm), not combat
+
+SCORING
+Final score = Part 2 arcade points + bonuses from the final PROFIT, COMMUNITY TRUST, and CHAOS values (low chaos earns a bonus). Show a tally screen with each bonus counting up in classic arcade style.
+
+ENDINGS
+Multiple endings based on the final meter values, each with a pixel-art ending screen:
+- The bar thrives with a compromise policy everyone grudgingly accepts
+- The bar becomes a clown school annex
+- The bar goes viral nationally
+- The town forms a subcommittee to study the incident forever
+Every ending should feel warm, with the community still intact. After the ending, go to initials entry, then the leaderboard, then credits.
+
+LEADERBOARD (DURABLE OBJECTS)
+- Global top-10 high score table styled like a classic arcade cabinet screen
+- Players enter 3-letter initials with the arrow keys
+- Each entry stores: initials, score, ending achieved, mask type, and timestamp
+- Viewable from the title screen (menu option "HIGH SCORES") and after each game
+- Filter out offensive initials with a server-side blocklist, replacing them with "???"
+- Server-side validation: reject scores outside the game's maximum possible range, reject malformed input, and rate-limit submissions per IP (e.g., 5 per minute)
+
+TECHNICAL ARCHITECTURE
+- Cloudflare Worker written in TypeScript (or JavaScript) serving the game and the API
+- Serve the frontend (single HTML file with inline CSS and JavaScript, pixel art drawn on canvas) as Workers static assets
+- One Durable Object class, "Leaderboard," using SQLite-backed Durable Object storage, with a single named instance ("global") so all players share one board
+- API routes handled by the Worker and forwarded to the Durable Object:
+  - GET /api/leaderboard → returns the top 10 scores as JSON
+  - POST /api/score → validates and submits a score, returns the player's rank
+- Frontend handles API failures gracefully: if the leaderboard can't load, show "HIGH SCORES OFFLINE" and let the player keep playing
+- Include a complete wrangler.toml (or wrangler.jsonc) with the assets directory, the Durable Object binding, and the migration declaring the Leaderboard class as a SQLite-backed class
+- Include a README with step-by-step setup: install Wrangler, run locally with "npx wrangler dev," and deploy with "npx wrangler deploy"
+
+DELIVERABLES
+- Worker entry file (src/index.ts)
+- Durable Object class (can live in the same file or src/leaderboard.ts)
+- Frontend game (public/index.html)
+- wrangler.toml / wrangler.jsonc
+- package.json
+- README.md
+
+Keep the writing short and punchy throughout.
+
+---
+
+Build a comedic 8-bit retro browser RPG called "LAST DITCH: A WESTERN MASS BAR SAGA," deployed on Cloudflare Workers with a global leaderboard powered by Durable Objects.
+
+VISUAL & AUDIO STYLE
+- Classic NES/8-bit aesthetic: chunky pixel art, limited 16-color palette, pixel fonts, blocky sprites
+- Cozy small-town Western Massachusetts vibe in pixel form: flannel, fall foliage, string lights, co-op bulletin boards, a neon "OPEN" sign
+- Dialogue in classic RPG text boxes with letter-by-letter text and a blip sound effect
+- Chiptune soundtrack (generated with the Web Audio API): a cozy bar theme, a tense "controversy" theme, a goofy calliope-style clown theme for the Zoom town hall, and an upbeat boss-battle theme for Saturday night
+- Retro sound effects for menu moves, selections, level-ups, and meter changes
+- Title screen with blinking "PRESS ANY ARROW" and pixel art of the bar exterior
+
+CONTROLS (ARROW KEYS ONLY)
+The entire game is playable with only the four arrow keys:
+- Movement: arrow keys move the player sprite on a tile grid
+- Interacting: walk into an NPC, door, or object to interact with it (bump-to-interact)
+- Advancing dialogue: any arrow key advances text boxes
+- Menus and choices: UP/DOWN to highlight an option, RIGHT to confirm, LEFT to go back
+- Mask editor: UP/DOWN to pick a category, LEFT/RIGHT to cycle options, RIGHT on "DONE" to confirm
+- Leaderboard initials: classic arcade entry, UP/DOWN cycles letters, RIGHT moves to the next letter, LEFT goes back
+- Show a small on-screen control hint in the corner of every screen (e.g., "↑↓ choose → confirm")
+- On touch devices, display an on-screen pixel-art D-pad that maps to the same four directions
+- Prevent arrow keys from scrolling the page
+
+PREMISE
+The player is the owner of Last Ditch Bar, a beloved, COVID-conscious lesbian bar in a small Western Massachusetts town where everyone cares deeply about rules, process, and community input. Profits are down. The owner considers going mask-optional for one Saturday night, and the town completely loses its mind. The player must survive the fallout and keep the bar alive.
+
+TONE
+Affectionate satire in the spirit of Parks and Rec town meetings. The humor comes from escalation: a small policy change snowballs into petitions, a Zoom town hall, rival factions, and a Saturday-night siege. Every faction is lovable and absurd, including the player. Never mock disability, illness, or anyone's genuine health needs. Masks are portrayed as a legitimate choice with real gameplay benefits. All characters, comments, and names are fictional.
+
+HUD
+Three pixel-art meters always visible at the top of the screen:
+- PROFIT (coin icon)
+- COMMUNITY TRUST (heart icon)
+- CHAOS (lightning bolt icon)
+Every choice visibly shifts the meters with a retro sound effect.
+
+PART 1: STORY MODE (choose your own adventure)
+Top-down RPG scenes. The player walks around the bar and town, bumping into characters to trigger dialogue and choices.
+
+CHAPTER 1: THE DECISION
+- The pixel bar manager says profits are down and suggests going mask-optional. Choices: YES / NO
+  - NO leads to a short "slow decline" branch where the bar struggles in funny ways (the jukebox breaks, only one regular shows up, a raccoon moves in), then loops back to the decision
+- "Saturday night seems good. Let's post it!" Choice: POST IT
+- The announcement goes live. Show an 8-bit social media feed the player scrolls with UP/DOWN, full of invented comments that escalate from polite concern to 40-paragraph essays, a dog account weighing in, someone posting a spreadsheet, and a person asking if trivia night is still on
+
+CHAPTER 2: THE CONTROVERSY
+- "We have to address this. What do we do?" Choices: REINSTATE MASK POLICY / HOLD A TOWN HALL / SAY NOTHING AND HOPE IT BLOWS OVER
+- The town hall takes place on Zoom, shown as a pixel-art grid of video tiles, hosted on the only account anyone could find: the local clown school's. Clown students keep joining by accident. Include dialogue choices for handling unmuted chaos, breakout rooms, a moderator in full clown makeup, and someone presenting a slideshow nobody asked for
+- Choices determine which factions become allies or enemies on Saturday night
+
+MASK CUSTOMIZATION SCREEN
+Before Saturday night, the player designs their mask in a pixel-art editor: base type, colors, patterns (flannel, stripes, polka dots, tiny rainbow), and accessories (patches, sequins, clown nose attachment). Each base type has a STAMINA stat shown as pixel hearts:
+- N95: high stamina, reduces "sick day" penalties
+- Cloth mask: medium stamina, bonus to community trust
+- Novelty mask: low stamina, huge vibe bonus
+- No mask: no stamina bonus, slightly faster movement
+Masking should feel like a smart strategy, not a punchline.
+
+PART 2: SATURDAY NIGHT (arcade mode)
+A fast-paced 8-bit time-management game. The player moves around the bar with the arrow keys and bumps into things to act:
+- Bump into waiting patrons to serve drinks before their patience bars run out
+- Bump into the DJ booth, light switch, and karaoke machine to keep the VIBE meter up
+- Fend off waves of protesters, petitioners, and confused clowns by bumping into power-up stations: free snacks, a heartfelt apology, a strongly worded chalkboard sign, a surprise line dance
+- Enemy and ally waves depend on the player's Part 1 choices
+- Final "boss": the head of the neighborhood listserv arrives with a clipboard and is defeated through a dialogue battle (UP/DOWN to pick responses, RIGHT to confirm), not combat
+
+SCORING
+Final score = Part 2 arcade points + bonuses from the final PROFIT, COMMUNITY TRUST, and CHAOS values (low chaos earns a bonus). Show a tally screen with each bonus counting up in classic arcade style.
+
+ENDINGS
+Multiple endings based on the final meter values, each with a pixel-art ending screen:
+- The bar thrives with a compromise policy everyone grudgingly accepts
+- The bar becomes a clown school annex
+- The bar goes viral nationally
+- The town forms a subcommittee to study the incident forever
+Every ending should feel warm, with the community still intact. After the ending, go to initials entry, then the leaderboard, then credits.
+
+LEADERBOARD (DURABLE OBJECTS)
+- Global top-10 high score table styled like a classic arcade cabinet screen
+- Players enter 3-letter initials with the arrow keys
+- Each entry stores: initials, score, ending achieved, mask type, and timestamp
+- Viewable from the title screen (menu option "HIGH SCORES") and after each game
+- Filter out offensive initials with a server-side blocklist, replacing them with "???"
+- Server-side validation: reject scores outside the game's maximum possible range, reject malformed input, and rate-limit submissions per IP (e.g., 5 per minute)
+
+TECHNICAL ARCHITECTURE
+- Cloudflare Worker written in TypeScript (or JavaScript) serving the game and the API
+- Serve the frontend (single HTML file with inline CSS and JavaScript, pixel art drawn on canvas) as Workers static assets
+- One Durable Object class, "Leaderboard," using SQLite-backed Durable Object storage, with a single named instance ("global") so all players share one board
+- API routes handled by the Worker and forwarded to the Durable Object:
+  - GET /api/leaderboard → returns the top 10 scores as JSON
+  - POST /api/score → validates and submits a score, returns the player's rank
+- Frontend handles API failures gracefully: if the leaderboard can't load, show "HIGH SCORES OFFLINE" and let the player keep playing
+- Include a complete wrangler.toml (or wrangler.jsonc) with the assets directory, the Durable Object binding, and the migration declaring the Leaderboard class as a SQLite-backed class
+- Include a README with step-by-step setup: install Wrangler, run locally with "npx wrangler dev," and deploy with "npx wrangler deploy"
+
+DELIVERABLES
+- Worker entry file (src/index.ts)
+- Durable Object class (can live in the same file or src/leaderboard.ts)
+- Frontend game (public/index.html)
+- wrangler.toml / wrangler.jsonc
+- package.json
+- README.md
+
+Keep the writing short and punchy throughout.
+
+---
+
+needs mor chaos. the game is mainly about serving people which isn't that fun
