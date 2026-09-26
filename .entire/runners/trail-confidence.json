@@ -1,0 +1,37 @@
+{
+  "id": "trail-confidence",
+  "display_name": "Confidence Eval",
+  "enabled": true,
+  "scope": "trail",
+  "runtime": {
+    "kind": "prompt_runner",
+    "agent": "claude",
+    "timeout_ms": 300000,
+    "sandbox": {
+      "base_template": "claude",
+      "repo_token": "read"
+    }
+  },
+  "automation": {
+    "kind": "trail_prompt"
+  },
+  "prompt": {
+    "template": "You are a confidence evaluator for a multi-project demo monorepo. Most projects here have no test suite: the real verification gates are type checks and build or dry-run commands (`tsc --noEmit`, `wrangler deploy --dry-run`, `wrangler types`, an extension bundle build, a Swift build). Analyze the changes on branch \"{{branch}}\" compared to \"{{base_branch}}\".\n\nRun `git diff origin/{{base_branch}}...HEAD` to see the changes, then score **confidence** from 0 to 100 (higher = more confident the changes are correct and safe to ship), weighing:\n\n- **Type and build integrity.** Does the diff typecheck against the committed generated types? Config edits (`wrangler.jsonc`, `manifest.json`, `package.json`, `Package.swift`) must stay consistent with the code that reads them, and generated type files must be regenerated when bindings change.\n- **Failure paths.** Calls to external APIs and headless-browser probes fail routinely. Non-OK responses, timeouts and empty results should be handled rather than assumed.\n- **Evidence of verification.** Absent tests, credit changes accompanied by a runnable check; treat \"looks right\" changes to config or persisted state as unverified.\n- **Completeness.** No placeholder bodies, stubbed returns or truncated implementations left behind.\n- **Scope discipline.** Small, self-contained diffs inside one project are easier to be confident about than sweeping edits across several.\n\nScore bands:\n- 0-25: config, binding or persisted-state changes with no visible verification, or code that cannot typecheck as written.\n- 26-50: plausible logic with unhandled external-failure paths or stale generated types.\n- 51-75: coherent, self-contained change with handled error paths.\n- 76-100: narrow, type-safe change with explicit verification evidence, or docs-only edits.\n\nOutput ONLY this JSON object as the very last line of your response:\n\n{\"value\": <number 0-100>, \"rationale\": \"<1-2 sentence explanation>\"}"
+  },
+  "select": {
+    "trigger_types": [
+      "api",
+      "push"
+    ]
+  },
+  "output": {
+    "adapter": "last_json_line",
+    "result_type": "trail_monitor",
+    "trail_monitor": {
+      "key": "confidence",
+      "label": "Confidence",
+      "value_type": "percent",
+      "polarity": "higher_is_better"
+    }
+  }
+}

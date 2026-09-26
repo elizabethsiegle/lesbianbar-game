@@ -1,0 +1,37 @@
+{
+  "id": "trail-security",
+  "display_name": "Security Review",
+  "enabled": true,
+  "scope": "trail",
+  "runtime": {
+    "kind": "prompt_runner",
+    "agent": "claude",
+    "timeout_ms": 300000,
+    "sandbox": {
+      "base_template": "claude",
+      "repo_token": "read"
+    }
+  },
+  "automation": {
+    "kind": "trail_prompt"
+  },
+  "prompt": {
+    "template": "You are a security risk evaluator for a multi-project demo monorepo containing Cloudflare Workers apps, an MV3 Chrome extension, and client-side pages. Analyze the changes on branch \"{{branch}}\" compared to \"{{base_branch}}\".\n\nRun `git diff origin/{{base_branch}}...HEAD` to see the changes, then score **security risk** from 0 to 100 (review adversarially; higher = more suspicious or insecure), weighing:\n\n- **Credential exposure.** API tokens, keys or account identifiers in tracked source, config, generated output or client bundles. Watch for credentials echoed into logs, error messages or HTTP responses, and for ignore rules being relaxed on files that hold secrets.\n- **Untrusted input reaching output.** Worker handlers that interpolate user input or scraped third-party page content into HTML responses without escaping, and DOM sinks in extension or page scripts.\n- **Storage query construction.** Durable Object SQLite queries built by string concatenation from request input instead of bound parameters.\n- **Open access.** Permissive CORS, unauthenticated endpoints that spend metered resources (headless browser sessions, external API quota), missing rate limits, or a handler that will fetch an arbitrary caller-supplied URL.\n- **Extension privilege.** Broadened `permissions` or `host_permissions`, new content-script matches, or remote code execution paths in an MV3 bundle.\n- **Third-party data handling.** Scraped or fetched personal data persisted or logged beyond what the feature needs.\n\nScore bands:\n- 0-20: no credential, input-handling or permission surface touched.\n- 21-50: new external input or storage path, handled with escaping and bound parameters.\n- 51-75: unescaped untrusted output, permissive CORS, concatenated storage queries, or an unauthenticated metered endpoint.\n- 76-100: credentials in tracked files or client output, a caller-controlled fetch target, or materially broadened extension privileges.\n\nOutput ONLY this JSON object as the very last line of your response:\n\n{\"value\": <number 0-100>, \"rationale\": \"<1-2 sentence explanation>\"}"
+  },
+  "select": {
+    "trigger_types": [
+      "api",
+      "push"
+    ]
+  },
+  "output": {
+    "adapter": "last_json_line",
+    "result_type": "trail_monitor",
+    "trail_monitor": {
+      "key": "security",
+      "label": "Security",
+      "value_type": "percent",
+      "polarity": "lower_is_better"
+    }
+  }
+}

@@ -1,0 +1,4430 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#191522" />
+    <meta
+      name="description"
+      content="One lesbian bar. One policy change. An entire town with reply-all privileges. An arrow-key-only, 8-bit Western Mass RPG."
+    />
+    <title>LAST DITCH — A Western Mass Bar Saga</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #191522;
+        --panel: #292333;
+        --muted: #a18d9b;
+        --cream: #f6e5bf;
+        --peach: #efa975;
+        --pink: #d5798d;
+        --green: #a8bb87;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--ink);
+        color: var(--cream);
+        font-family: "Courier New", monospace;
+        min-height: 100svh;
+        background-image: radial-gradient(
+          ellipse at 50% 20%,
+          #352638 0,
+          transparent 65%
+        );
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+      }
+      button:focus-visible,
+      canvas:focus-visible {
+        outline: 2px solid var(--peach);
+        outline-offset: 5px;
+      }
+      .site {
+        width: min(1040px, calc(100% - 56px));
+        margin: 0 auto;
+      }
+      header {
+        height: 94px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+      }
+      .brand-mark {
+        width: 29px;
+        height: 29px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+        image-rendering: pixelated;
+        transform: rotate(-3deg);
+      }
+      .brand-mark i {
+        background: var(--pink);
+      }
+      .brand-mark i:nth-child(1) {
+        grid-area: 1/1/3/3;
+      }
+      .brand-mark i:nth-child(2) {
+        grid-area: 1/4/3/6;
+      }
+      .brand-mark i:nth-child(3) {
+        grid-area: 2/2/5/5;
+      }
+      .brand-mark i:nth-child(4) {
+        grid-area: 5/3/6/4;
+      }
+      .brand-title {
+        font-weight: 700;
+        font-size: 15px;
+        letter-spacing: 2px;
+      }
+      .brand-sub {
+        font-size: 9px;
+        letter-spacing: 2px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+      .header-right {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+      .edition {
+        font-size: 10px;
+        color: var(--muted);
+        letter-spacing: 1px;
+      }
+      .sound {
+        border: 1px solid #534253;
+        background: transparent;
+        padding: 10px 13px;
+        font-size: 10px;
+        letter-spacing: 1px;
+      }
+      .sound:hover {
+        background: #352b3d;
+      }
+      main {
+        padding-top: 8px;
+      }
+      .cabinet {
+        border: 2px solid #69515e;
+        background: #211a2a;
+        padding: 9px;
+        box-shadow:
+          0 0 0 5px #100f19,
+          0 20px 60px #100f1970;
+        position: relative;
+      }
+      .cabinet:before,
+      .cabinet:after {
+        content: "+";
+        position: absolute;
+        color: #b59082;
+        font-size: 11px;
+        top: -8px;
+        background: var(--ink);
+        padding: 0 2px;
+      }
+      .cabinet:before {
+        left: 12px;
+      }
+      .cabinet:after {
+        right: 12px;
+      }
+      .screen {
+        position: relative;
+        border: 2px solid #0e101b;
+        background: #191522;
+      }
+      canvas {
+        width: 100%;
+        display: block;
+        aspect-ratio: 3/2;
+        image-rendering: pixelated;
+        touch-action: none;
+      }
+      .scanlines {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          0deg,
+          #00000009 0px,
+          #00000009 1px,
+          transparent 1px,
+          transparent 4px
+        );
+        opacity: 0.5;
+      }
+      .under-screen {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 23px 2px 17px;
+      }
+      .tagline {
+        font-size: 11px;
+        color: #d2b9b0;
+        letter-spacing: 1px;
+      }
+      .tagline span {
+        color: var(--pink);
+      }
+      .controls {
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--muted);
+      }
+      kbd {
+        font: 14px monospace;
+        color: var(--cream);
+        border: 1px solid #68505c;
+        box-shadow: 0 2px 0 #463643;
+        padding: 2px 5px;
+        background: #292333;
+      }
+      .details {
+        display: flex;
+        justify-content: space-between;
+        border-top: 1px solid #3a2d3e;
+        padding: 20px 2px 28px;
+        font-size: 10px;
+        line-height: 1.8;
+        color: var(--muted);
+      }
+      .details p {
+        margin: 0;
+      }
+      .dot {
+        color: var(--green);
+      }
+      .dpad {
+        display: none;
+        grid-template-columns: repeat(3, 54px);
+        grid-template-rows: repeat(2, 48px);
+        gap: 5px;
+        justify-content: center;
+        padding-bottom: 24px;
+      }
+      .dpad button {
+        border: 2px solid #826274;
+        background: #352638;
+        box-shadow: 0 4px 0 #0e101b;
+        font-size: 25px;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      .dpad button:active {
+        background: #685064;
+        transform: translateY(2px);
+      }
+      .dpad [data-dir="up"] {
+        grid-column: 2;
+      }
+      .dpad [data-dir="left"] {
+        grid-column: 1;
+        grid-row: 2;
+      }
+      .dpad [data-dir="down"] {
+        grid-column: 2;
+        grid-row: 2;
+      }
+      .dpad [data-dir="right"] {
+        grid-column: 3;
+        grid-row: 2;
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      @media (pointer: coarse), (max-width: 700px) {
+        .dpad {
+          display: grid;
+        }
+        .site {
+          width: calc(100% - 20px);
+        }
+        header {
+          height: 72px;
+        }
+        .edition {
+          display: none;
+        }
+        .brand-sub {
+          font-size: 8px;
+          letter-spacing: 1px;
+        }
+        .brand-title {
+          font-size: 12px;
+        }
+        .sound {
+          font-size: 9px;
+          padding: 9px;
+        }
+        .cabinet {
+          padding: 4px;
+        }
+        .under-screen {
+          padding: 18px 0;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+        .tagline {
+          font-size: 9px;
+        }
+        .details {
+          font-size: 9px;
+          gap: 15px;
+        }
+        .details p:last-child {
+          text-align: right;
+        }
+        .controls {
+          font-size: 10px;
+        }
+      }
+      .mobile-readout,
+      .mobile-hud {
+        display: none;
+      }
+      @media (max-width: 700px) {
+        .mobile-readout {
+          display: block;
+          white-space: pre-line;
+          border-left: 2px solid var(--pink);
+          padding: 12px 14px;
+          margin: 17px 0 8px;
+          background: #242438;
+          color: var(--cream);
+          font-size: 12px;
+          line-height: 1.6;
+        }
+        .mobile-hud {
+          display: flex;
+          justify-content: space-between;
+          font-size: 10px;
+          gap: 8px;
+          padding: 0 2px 15px;
+          color: var(--peach);
+        }
+        .under-screen {
+          display: none;
+        }
+        .dpad {
+          position: sticky;
+          bottom: 0;
+          z-index: 2;
+          background: #191522ed;
+          padding: 12px 0 18px;
+        }
+        .details {
+          padding-top: 10px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .scanlines {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="site">
+      <header>
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"
+            ><i></i><i></i><i></i><i></i
+          ></span>
+          <div>
+            <div class="brand-title">LAST DITCH</div>
+            <div class="brand-sub">A WESTERN MASS BAR SAGA</div>
+          </div>
+        </div>
+        <div class="header-right">
+          <span class="edition">AN 8-BIT SMALL-TOWN EPIC</span
+          ><button class="sound" id="sound" aria-pressed="false">
+            ♪ SOUND ON
+          </button>
+        </div>
+      </header>
+      <main>
+        <div class="mobile-hud" id="mobile-hud" aria-hidden="true"></div>
+        <div class="cabinet">
+          <div class="screen">
+            <canvas
+              id="game"
+              width="960"
+              height="640"
+              tabindex="0"
+              role="application"
+              aria-label="Last Ditch RPG. Use the four arrow keys. Up and down choose, right confirms, left goes back. Walk into people and objects to interact."
+              aria-describedby="game-status"
+              >Your browser needs canvas to play Last Ditch.</canvas
+            >
+            <div class="scanlines" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div
+          id="game-status"
+          class="sr-only"
+          aria-live="polite"
+          aria-atomic="true"
+        ></div>
+        <div
+          class="mobile-readout"
+          id="mobile-readout"
+          aria-hidden="true"
+        ></div>
+        <div class="under-screen">
+          <div class="tagline">
+            SMALL TOWN. BIG FEELINGS. <span>QUESTIONABLE WI-FI.</span>
+          </div>
+          <div class="controls">
+            <span><kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd></span>
+            FOUR KEYS. ALL THE DRAMA.
+          </div>
+        </div>
+        <nav class="dpad" aria-label="Touch game controls">
+          <button data-dir="up" aria-label="Up">↑</button
+          ><button data-dir="left" aria-label="Left">←</button
+          ><button data-dir="down" aria-label="Down">↓</button
+          ><button data-dir="right" aria-label="Right">→</button>
+        </nav>
+        <footer class="details">
+          <p>
+            <span class="dot">●</span> ONE BAR. EVERYONE BELONGS.<br />Fictional
+            town. Fictional people. Very real committee energy.
+          </p>
+          <p>
+            STORY + ARCADE · 6–8 MIN<br />MADE FOR THE COMMUNITY, AND THE BIT.
+          </p>
+        </footer>
+      </main>
+    </div>
+    <script>
+      (() => {
+        "use strict";
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d", { alpha: false });
+        const live = document.getElementById("game-status");
+        const soundButton = document.getElementById("sound");
+        const C = {
+          ink: "#191522",
+          night: "#242438",
+          purple: "#403349",
+          plum: "#654655",
+          brown: "#855448",
+          rust: "#b56b52",
+          orange: "#df8d58",
+          peach: "#efa975",
+          cream: "#f6e5bf",
+          pink: "#d5798d",
+          rose: "#a65370",
+          mint: "#a8bb87",
+          green: "#607c67",
+          teal: "#456367",
+          blue: "#788b9a",
+          white: "#fff3dc",
+        };
+        const GLYPHS = {
+          A: [14, 17, 17, 31, 17, 17, 17],
+          B: [30, 17, 17, 30, 17, 17, 30],
+          C: [14, 17, 16, 16, 16, 17, 14],
+          D: [30, 17, 17, 17, 17, 17, 30],
+          E: [31, 16, 16, 30, 16, 16, 31],
+          F: [31, 16, 16, 30, 16, 16, 16],
+          G: [14, 17, 16, 23, 17, 17, 15],
+          H: [17, 17, 17, 31, 17, 17, 17],
+          I: [31, 4, 4, 4, 4, 4, 31],
+          J: [7, 2, 2, 2, 18, 18, 12],
+          K: [17, 18, 20, 24, 20, 18, 17],
+          L: [16, 16, 16, 16, 16, 16, 31],
+          M: [17, 27, 21, 21, 17, 17, 17],
+          N: [17, 25, 25, 21, 19, 19, 17],
+          O: [14, 17, 17, 17, 17, 17, 14],
+          P: [30, 17, 17, 30, 16, 16, 16],
+          Q: [14, 17, 17, 17, 21, 18, 13],
+          R: [30, 17, 17, 30, 20, 18, 17],
+          S: [15, 16, 16, 14, 1, 1, 30],
+          T: [31, 4, 4, 4, 4, 4, 4],
+          U: [17, 17, 17, 17, 17, 17, 14],
+          V: [17, 17, 17, 17, 17, 10, 4],
+          W: [17, 17, 17, 21, 21, 21, 10],
+          X: [17, 17, 10, 4, 10, 17, 17],
+          Y: [17, 17, 10, 4, 4, 4, 4],
+          Z: [31, 1, 2, 4, 8, 16, 31],
+          0: [14, 17, 19, 21, 25, 17, 14],
+          1: [4, 12, 4, 4, 4, 4, 14],
+          2: [14, 17, 1, 2, 4, 8, 31],
+          3: [30, 1, 1, 14, 1, 1, 30],
+          4: [2, 6, 10, 18, 31, 2, 2],
+          5: [31, 16, 16, 30, 1, 1, 30],
+          6: [14, 16, 16, 30, 17, 17, 14],
+          7: [31, 1, 2, 4, 8, 8, 8],
+          8: [14, 17, 17, 14, 17, 17, 14],
+          9: [14, 17, 17, 15, 1, 1, 14],
+          ".": [0, 0, 0, 0, 0, 6, 6],
+          ",": [0, 0, 0, 0, 6, 6, 4],
+          ":": [0, 6, 6, 0, 6, 6, 0],
+          ";": [0, 6, 6, 0, 6, 6, 4],
+          "!": [4, 4, 4, 4, 4, 0, 4],
+          "?": [14, 17, 1, 2, 4, 0, 4],
+          "'": [4, 4, 8, 0, 0, 0, 0],
+          '"': [10, 10, 10, 0, 0, 0, 0],
+          "-": [0, 0, 0, 31, 0, 0, 0],
+          "+": [0, 4, 4, 31, 4, 4, 0],
+          "/": [1, 2, 2, 4, 8, 8, 16],
+          "(": [2, 4, 8, 8, 8, 4, 2],
+          ")": [8, 4, 2, 2, 2, 4, 8],
+          "[": [14, 8, 8, 8, 8, 8, 14],
+          "]": [14, 2, 2, 2, 2, 2, 14],
+          "&": [12, 18, 20, 8, 21, 18, 13],
+          "=": [0, 0, 31, 0, 31, 0, 0],
+          "#": [10, 31, 10, 10, 31, 10, 0],
+          "%": [25, 26, 2, 4, 8, 11, 19],
+          "@": [14, 17, 23, 21, 23, 16, 14],
+          _: [0, 0, 0, 0, 0, 0, 31],
+          "<": [1, 2, 4, 8, 4, 2, 1],
+          ">": [16, 8, 4, 2, 4, 8, 16],
+          "|": [4, 4, 4, 4, 4, 4, 4],
+          "*": [0, 21, 14, 31, 14, 21, 0],
+          "↑": [4, 14, 21, 4, 4, 4, 4],
+          "↓": [4, 4, 4, 4, 21, 14, 4],
+          "←": [0, 4, 8, 31, 8, 4, 0],
+          "→": [0, 4, 2, 31, 2, 4, 0],
+          "♥": [0, 10, 31, 31, 31, 14, 4],
+          "♦": [4, 14, 31, 31, 14, 4, 0],
+          "♪": [6, 5, 4, 4, 28, 28, 8],
+          " ": [],
+        };
+        const rect = (x, y, w, h, color) => {
+          ctx.fillStyle = color;
+          ctx.fillRect(
+            Math.round(x),
+            Math.round(y),
+            Math.ceil(w),
+            Math.ceil(h),
+          );
+        };
+        function text(value, x, y, s = 2, color = C.cream, align = "left") {
+          const str = String(value).toUpperCase();
+          if (align === "center")
+            x -= Math.floor(((str.length * 6 - 1) * s) / 2);
+          if (align === "right") x -= (str.length * 6 - 1) * s;
+          ctx.fillStyle = color;
+          for (let n = 0; n < str.length; n++) {
+            const rows = GLYPHS[str[n]] || GLYPHS["?"];
+            for (let r = 0; r < rows.length; r++)
+              for (let b = 0; b < 5; b++)
+                if (rows[r] & (1 << (4 - b)))
+                  ctx.fillRect(
+                    Math.round(x + n * 6 * s + b * s),
+                    Math.round(y + r * s),
+                    s,
+                    s,
+                  );
+          }
+        }
+        function wrap(value, width, s = 2) {
+          const max = Math.floor(width / (6 * s));
+          const lines = [];
+          for (const paragraph of String(value).split("\n")) {
+            let line = "";
+            for (const word of paragraph.split(" ")) {
+              if (line.length + word.length + 1 > max && line) {
+                lines.push(line);
+                line = word;
+              } else line += (line ? " " : "") + word;
+            }
+            lines.push(line);
+          }
+          return lines;
+        }
+        function paragraph(
+          value,
+          x,
+          y,
+          width,
+          s = 2,
+          color = C.cream,
+          lineHeight = 22,
+        ) {
+          const lines = wrap(value, width, s);
+          lines.forEach((line, i) =>
+            text(line, x, y + i * lineHeight, s, color),
+          );
+          return y + lines.length * lineHeight;
+        }
+        function panel(x, y, w, h, color = C.night, border = C.plum) {
+          rect(x - 3, y - 3, w + 6, h + 6, C.ink);
+          rect(x, y, w, h, border);
+          rect(x + 2, y + 2, w - 4, h - 4, color);
+          rect(x + 6, y + 6, w - 12, 1, border);
+        }
+        function heart(x, y, s, color = C.pink) {
+          text("♥", x, y, s, color);
+        }
+        function coin(x, y, s = 2) {
+          rect(x + s, y, 5 * s, 7 * s, C.orange);
+          rect(x, y + s, 7 * s, 5 * s, C.orange);
+          rect(x + s, y + s, 5 * s, 5 * s, C.peach);
+          rect(x + 3 * s, y + s, s, 5 * s, C.brown);
+        }
+        function bolt(x, y, s = 2) {
+          [
+            [3, 0, 3, 1],
+            [2, 1, 3, 2],
+            [1, 3, 5, 1],
+            [3, 4, 2, 1],
+            [2, 5, 2, 1],
+            [1, 6, 2, 1],
+          ].forEach((v) =>
+            rect(x + v[0] * s, y + v[1] * s, v[2] * s, v[3] * s, C.peach),
+          );
+        }
+        function line(x1, y1, x2, y2, color, width = 2) {
+          ctx.strokeStyle = color;
+          ctx.lineWidth = width;
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+        }
+        const clamp = (n, min = 0, max = 100) =>
+          Math.min(max, Math.max(min, n));
+        const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const audio = {
+          ctx: null,
+          master: null,
+          muted: false,
+          theme: "cozy",
+          step: 0,
+          next: 0,
+        };
+        const themes = {
+          cozy: {
+            tempo: 0.24,
+            notes: [
+              60, 64, 67, 72, 71, 67, 64, 62, 60, 64, 69, 72, 74, 72, 67, 64,
+            ],
+            bass: [48, 48, 45, 43],
+          },
+          controversy: {
+            tempo: 0.17,
+            notes: [
+              57, 60, 64, 60, 58, 61, 65, 61, 57, 60, 64, 67, 65, 64, 60, 58,
+            ],
+            bass: [45, 46, 45, 40],
+          },
+          clown: {
+            tempo: 0.16,
+            notes: [
+              72, 67, 64, 67, 74, 69, 65, 69, 76, 72, 67, 72, 77, 74, 71, 67,
+            ],
+            bass: [48, 55, 50, 55],
+          },
+          boss: {
+            tempo: 0.115,
+            notes: [
+              60, 60, 67, 72, 70, 67, 65, 63, 65, 65, 72, 77, 75, 72, 70, 67,
+            ],
+            bass: [36, 39, 41, 43],
+          },
+        };
+        function tone(
+          note,
+          duration = 0.07,
+          volume = 0.035,
+          type = "square",
+          when = 0,
+        ) {
+          if (!audio.ctx || audio.muted || audio.ctx.state !== "running")
+            return;
+          const at = when || audio.ctx.currentTime;
+          const osc = audio.ctx.createOscillator();
+          const gain = audio.ctx.createGain();
+          osc.type = type;
+          osc.frequency.value = 440 * 2 ** ((note - 69) / 12);
+          gain.gain.setValueAtTime(0, at);
+          gain.gain.linearRampToValueAtTime(volume, at + 0.006);
+          gain.gain.exponentialRampToValueAtTime(0.0001, at + duration);
+          osc.connect(gain);
+          gain.connect(audio.master);
+          osc.start(at);
+          osc.stop(at + duration + 0.01);
+          osc.onended = () => {
+            osc.disconnect();
+            gain.disconnect();
+          };
+        }
+        function startAudio() {
+          try {
+            if (!audio.ctx) {
+              const AudioContext =
+                window.AudioContext || window.webkitAudioContext;
+              if (!AudioContext) return;
+              audio.ctx = new AudioContext();
+              audio.master = audio.ctx.createGain();
+              audio.master.gain.value = audio.muted ? 0 : 0.65;
+              audio.master.connect(audio.ctx.destination);
+              audio.next = audio.ctx.currentTime;
+            }
+            if (audio.ctx.state === "suspended")
+              void audio.ctx.resume().catch(() => {});
+          } catch {
+            audio.muted = true;
+            updateSound();
+          }
+        }
+        function sfx(kind) {
+          const notes = {
+            move: [65],
+            select: [72, 79],
+            blip: [76],
+            meter: [60, 67],
+            bad: [44, 40],
+            level: [72, 76, 79, 84],
+            serve: [79, 84],
+          };
+          (notes[kind] || notes.move).forEach((n, i) =>
+            tone(
+              n,
+              0.08,
+              0.045,
+              "square",
+              audio.ctx ? audio.ctx.currentTime + i * 0.06 : 0,
+            ),
+          );
+        }
+        function music() {
+          if (
+            !audio.ctx ||
+            audio.ctx.state !== "running" ||
+            audio.muted ||
+            paused
+          )
+            return;
+          const song = themes[audio.theme];
+          const now = audio.ctx.currentTime;
+          if (audio.next < now - 0.2) audio.next = now;
+          while (audio.next < now + 0.08) {
+            const step = audio.step++;
+            tone(
+              song.notes[step % 16],
+              song.tempo * 0.8,
+              0.023,
+              audio.theme === "clown" ? "triangle" : "square",
+              audio.next,
+            );
+            if (step % 4 === 0)
+              tone(
+                song.bass[Math.floor(step / 4) % 4],
+                song.tempo * 2.5,
+                0.045,
+                "triangle",
+                audio.next,
+              );
+            if (step % 2 === 0)
+              tone(30, song.tempo * 0.18, 0.025, "sawtooth", audio.next);
+            audio.next += song.tempo;
+          }
+        }
+        function setTheme(name) {
+          if (audio.theme === name) return;
+          audio.theme = name;
+          audio.step = 0;
+          audio.next = audio.ctx ? audio.ctx.currentTime : 0;
+        }
+        function updateSound() {
+          soundButton.textContent = audio.muted ? "♪ SOUND OFF" : "♪ SOUND ON";
+          soundButton.setAttribute("aria-pressed", String(audio.muted));
+          if (audio.master) audio.master.gain.value = audio.muted ? 0 : 0.65;
+        }
+        function toggleSound() {
+          startAudio();
+          audio.muted = !audio.muted;
+          updateSound();
+          try {
+            localStorage.setItem("lastditch.muted", String(audio.muted));
+          } catch {}
+        }
+        try {
+          audio.muted = localStorage.getItem("lastditch.muted") === "true";
+        } catch {}
+        updateSound();
+        soundButton.addEventListener("click", toggleSound);
+
+        let screen = "title",
+          world = "bar",
+          stage = "decision",
+          time = 0,
+          last = 0,
+          held = null,
+          repeatAt = 0,
+          paused = false,
+          titleAwake = false,
+          menuIndex = 0,
+          dialog = null,
+          feedIndex = 0,
+          zoomRound = 0;
+        let meters = { profit: 45, trust: 72, chaos: 12 },
+          shown = { ...meters },
+          meterDelta = [0, 0, 0],
+          deltaUntil = 0;
+        let player = { x: 10, y: 6, dir: "down" },
+          visited = new Set(),
+          refused = false,
+          factions = { care: 0, clown: 0, petition: 0 },
+          policy = "optional",
+          toast = "",
+          toastUntil = 0;
+        let mask = { base: 0, color: 0, pattern: 0, accessory: 0 },
+          maskRow = 0,
+          arcade = null,
+          bossRound = 0,
+          bossWins = 0,
+          score = 0,
+          tallyAge = 0,
+          ending = "committee";
+        let initials = [0, 0, 0],
+          initialPos = 0,
+          submissionId = "",
+          submitStatus = "idle",
+          submitError = "",
+          submitChoice = 0,
+          board = [],
+          boardStatus = "loading",
+          boardFromRun = false,
+          rank = null,
+          requestGeneration = 0;
+        const MASKS = [
+          {
+            id: "n95",
+            label: "N95",
+            stamina: 5,
+            detail: "HIGH STAMINA. SMALLER SICK-DAY PENALTIES.",
+            color: C.cream,
+          },
+          {
+            id: "cloth",
+            label: "CLOTH MASK",
+            stamina: 3,
+            detail: "MEDIUM STAMINA. +10 COMMUNITY TRUST.",
+            color: C.mint,
+          },
+          {
+            id: "novelty",
+            label: "NOVELTY MASK",
+            stamina: 1,
+            detail: "LOW STAMINA. +30 STARTING VIBE.",
+            color: C.pink,
+          },
+          {
+            id: "none",
+            label: "NO MASK",
+            stamina: 0,
+            detail: "NO STAMINA BONUS. MOVE A LITTLE FASTER.",
+            color: C.peach,
+          },
+        ];
+        const COLOR_OPTIONS = [
+          ["DUSTY ROSE", C.pink],
+          ["SAGE GREEN", C.mint],
+          ["SUNSET", C.orange],
+          ["LAVENDER", C.blue],
+          ["CREAM", C.cream],
+        ];
+        const PATTERNS = ["FLANNEL", "STRIPES", "POLKA DOTS", "TINY RAINBOW"];
+        const ACCESSORIES = ["PATCH", "SEQUINS", "CLOWN NOSE", "NONE"];
+        const ENDINGS = {
+          compromise: {
+            title: "THE GRUDGING COMPROMISE",
+            subtitle: "NOBODY LOVES EVERY DETAIL. EVERYBODY COMES BACK.",
+            body: "Masked early hours. A breezy patio. Free N95s. The policy fits on one chalkboard. Tess cries into the balanced books.",
+            tag: "THE BAR THRIVES",
+          },
+          clown: {
+            title: "HIGHER HONK EDUCATION",
+            subtitle: "LAST DITCH, NOW WITH A CLOWN SCHOOL ANNEX.",
+            body: "Tuition pays the rent. The jukebox gets tenure. Quiet hours stay quiet; the honking has an approved schedule.",
+            tag: "CLOWN SCHOOL ANNEX",
+          },
+          viral: {
+            title: "LOCAL BAR, NATIONAL DISCOURSE",
+            subtitle: "THE INTERNET ARRIVES. THE REGULARS STAY.",
+            body: "A million views. Six think pieces. Ruth still has her usual stool. You use the merch money for better air filters.",
+            tag: "NATIONALLY VIRAL",
+          },
+          committee: {
+            title: "THE ETERNAL SUBCOMMITTEE",
+            subtitle: "THEY WILL STUDY THIS UNTIL THE SUN GOES OUT.",
+            body: "The meeting never ends. Neither does the snack tab. The bar survives on recurring room bookings. A motion to hug passes.",
+            tag: "COMMITTEE FOREVER",
+          },
+        };
+        function announce(value) {
+          live.textContent = value;
+        }
+        function setScreen(value) {
+          screen = value;
+          canvas.dataset.screen = value;
+          canvas.dataset.stage = stage;
+          held = null;
+          menuIndex = 0;
+          announce(
+            value === "title" ? "Last Ditch. Press any arrow to start." : value,
+          );
+        }
+        function notify(value) {
+          toast = value;
+          toastUntil = time + 3.8;
+          announce(value);
+        }
+        function change(profit, trust, chaos) {
+          const old = { ...meters };
+          meters.profit = clamp(meters.profit + profit);
+          meters.trust = clamp(meters.trust + trust);
+          meters.chaos = clamp(meters.chaos + chaos);
+          meterDelta = [
+            meters.profit - old.profit,
+            meters.trust - old.trust,
+            meters.chaos - old.chaos,
+          ];
+          deltaUntil = time + 2.2;
+          sfx(profit + trust - chaos < 0 ? "bad" : "meter");
+        }
+        function talk(
+          speaker,
+          pages,
+          choices = null,
+          after = null,
+          back = null,
+        ) {
+          held = null;
+          dialog = {
+            speaker,
+            pages: Array.isArray(pages) ? pages : [pages],
+            page: 0,
+            chars: 0,
+            choices,
+            index: 0,
+            after,
+            back,
+            lastBlip: 0,
+          };
+          announce(
+            speaker +
+              ": " +
+              dialog.pages[0] +
+              (choices
+                ? " Choices: " + choices.map((c) => c.label).join(", ")
+                : ""),
+          );
+        }
+        const choice = (label, effect, action) => ({ label, effect, action });
+        function chooseDialog(dir) {
+          const value = dialog.pages[dialog.page];
+          if (dialog.chars < value.length) {
+            dialog.chars = value.length;
+            return;
+          }
+          if (dialog.page < dialog.pages.length - 1) {
+            dialog.page++;
+            dialog.chars = 0;
+            announce(dialog.speaker + ": " + dialog.pages[dialog.page]);
+            sfx("move");
+            return;
+          }
+          if (dialog.choices) {
+            if (dir === "up" || dir === "down") {
+              dialog.index =
+                (dialog.index +
+                  (dir === "up" ? -1 : 1) +
+                  dialog.choices.length) %
+                dialog.choices.length;
+              sfx("move");
+              return;
+            }
+            if (dir === "left") {
+              if (dialog.back) {
+                const fn = dialog.back;
+                dialog = null;
+                fn();
+              } else {
+                dialog.page = 0;
+                dialog.chars = 0;
+              }
+              return;
+            }
+            if (dir !== "right") return;
+            const selected = dialog.choices[dialog.index];
+            dialog = null;
+            sfx("select");
+            if (selected.effect) change(...selected.effect);
+            selected.action();
+          } else {
+            const next = dialog.after;
+            dialog = null;
+            sfx("move");
+            if (next) next();
+          }
+        }
+        function resetGame() {
+          meters = { profit: 45, trust: 72, chaos: 12 };
+          shown = { ...meters };
+          factions = { care: 0, clown: 0, petition: 0 };
+          policy = "optional";
+          visited = new Set();
+          refused = false;
+          stage = "decision";
+          world = "bar";
+          player = { x: 10, y: 6, dir: "down" };
+          mask = { base: 0, color: 0, pattern: 0, accessory: 0 };
+          arcade = null;
+          score = 0;
+          rank = null;
+          toast = "";
+          dialog = null;
+          setTheme("cozy");
+          setScreen("world");
+          talk("YOU, OWNER / OCCASIONAL PLUMBER", [
+            "Last Ditch. A beloved lesbian bar in a town with three co-ops and no indoor voices.",
+            "The rent is due. The cider is local. The spreadsheet is not looking local enough.",
+            "Walk into Tess at the bar. She has an idea. That is usually how these things start.",
+          ]);
+        }
+        function decision() {
+          talk(
+            "TESS / BAR MANAGER",
+            "Profits are down. What if Saturday were mask-optional? One night. Surely a town with nine mediation circles can discuss this calmly.",
+            [
+              choice("YES", [6, -6, 12], () =>
+                talk(
+                  "TESS",
+                  "Saturday night seems good. Let's post it!",
+                  [
+                    choice("POST IT", [4, -6, 12], () => {
+                      stage = "feed";
+                      feedIndex = 0;
+                      setTheme("controversy");
+                      setScreen("feed");
+                    }),
+                  ],
+                  null,
+                  decision,
+                ),
+              ),
+              choice("NO", refused ? [-4, 0, 2] : [-8, 4, 3], () => {
+                refused = true;
+                talk(
+                  "ONE EXTREMELY SLOW WEEK",
+                  [
+                    "The jukebox breaks. It now plays one note, in a minor key.",
+                    "Ruth is the only regular tonight. She orders one seltzer and a second coaster.",
+                    "A raccoon moves into the coat check. It requests a W-9.",
+                    "Tess: Okay. New week. Same rent. Shall we revisit the idea?",
+                  ],
+                  null,
+                  decision,
+                );
+              }),
+            ],
+            null,
+            () => {},
+          );
+        }
+        const FEED = [
+          [
+            "LAST DITCH BAR",
+            "Saturday: trying a mask-optional night. Masks welcome. Patio open. Please be kind.",
+            "1 MIN AGO / 3 REPLIES",
+          ],
+          [
+            "WILLOW_WINDOWBOX",
+            "Could we keep a masked hour? Some of us need it to be here. Also, your pretzels are excellent.",
+            "2 MIN AGO / 12 REPLIES",
+          ],
+          [
+            "FERN_AND_CONDITIONS",
+            'A few brief thoughts. (1/40) First, a working definition of "Saturday."',
+            "3 MIN AGO / 48 REPLIES",
+          ],
+          [
+            "BEANS_THE_DOG",
+            "I am a dog. My position is that the floor should contain more cheese.",
+            "4 MIN AGO / 109 LIKES",
+          ],
+          [
+            "PIVOT_TABLE_PAT",
+            "Made a spreadsheet. Seventeen tabs. Please do not edit the tab called FEELINGS_FINAL_FINAL.",
+            "5 MIN AGO / 3 EDIT CONFLICTS",
+          ],
+          [
+            "CRICKET_TWO_STEP",
+            "Dance committee here. We support room to move AND a patio. Please stop replying all to the doodle poll.",
+            "6 MIN AGO / 81 REPLIES",
+          ],
+          [
+            "DOTTIE_SELTZER",
+            "Our clown school has a paid Zoom account. Just saying. The meeting ID does contain HONK.",
+            "8 MIN AGO / 206 REPLIES",
+          ],
+          [
+            "RUTH_USUAL_PLEASE",
+            "Is trivia still on? I have been studying rivers.",
+            "9 MIN AGO / 0 ANSWERS",
+          ],
+          [
+            "NEIGHBORHOOD_MOD",
+            "Comments paused while we draft the guidelines for drafting comment guidelines.",
+            "10 MIN AGO / 999+ REPLIES",
+          ],
+        ];
+        function toTown() {
+          stage = "controversy";
+          world = "town";
+          player = { x: 10, y: 7, dir: "up" };
+          setScreen("world");
+          talk(
+            "TESS",
+            "The post has more replies than we have chairs. Meet me by the co-op. We need a plan.",
+          );
+        }
+        function controversy() {
+          talk(
+            "TESS / NOW ALSO A CRISIS MANAGER",
+            "We have to address this. What do we do?",
+            [
+              choice("REINSTATE MASK POLICY", [-8, 18, -15], () => {
+                policy = "masked";
+                factions.care += 2;
+                factions.petition++;
+                talk(
+                  "TESS",
+                  "Masks stay. Willow brings an air filter. Someone starts a petition to thank us for responding to the petition.",
+                  null,
+                  prepare,
+                );
+              }),
+              choice("HOLD A TOWN HALL", [-3, 5, 12], () => {
+                zoomRound = 0;
+                setTheme("clown");
+                setScreen("zoom");
+                nextZoom();
+              }),
+              choice("SAY NOTHING. HOPE IT BLOWS OVER.", [7, -16, 20], () => {
+                policy = "silent";
+                factions.petition--;
+                talk(
+                  "YOUR PHONE",
+                  "It does not blow over. Someone prints the silence and staples it to a telephone pole.",
+                  null,
+                  prepare,
+                );
+              }),
+            ],
+            null,
+            () => {},
+          );
+        }
+        const ZOOM = [
+          {
+            speaker: "DOTTIE SELTZER / MODERATOR",
+            body: "Welcome to the clown school Zoom. I am a trained facilitator. The makeup is also professional. Someone is unmuted inside a tuba.",
+            options: [
+              ["ONE MIC. EVERY VOICE GETS A TURN.", [-2, 9, -8], "care"],
+              ["HONK IF YOU CAN HEAR ME.", [2, 2, 10], "clown"],
+              ["READ THE ENTIRE CHAT ALOUD.", [-3, -3, 12], "petition"],
+            ],
+          },
+          {
+            speaker: "DOTTIE / BREAKOUT ROOM ENTHUSIAST",
+            body: "Three clown students just joined Balloon Animals 201. Our breakout rooms need names and, apparently, adult supervision.",
+            options: [
+              ["ACCESS NEEDS + QUIET SPACE", [-3, 10, -6], "care"],
+              ["SNACKS + FEELINGS", [3, 5, 4], "clown"],
+              ["ONE GIANT ROOM CALLED CONSENSUS", [-2, -4, 12], "petition"],
+            ],
+          },
+          {
+            speaker: "PAT / UNREQUESTED SLIDESHOW",
+            body: 'I prepared 87 slides. Slide one: "Airflow and feelings: a Venn diagram." Can everyone see my desktop? Please ignore the frog folder.',
+            options: [
+              ["TWO SLIDES. THEN ACCESS QUESTIONS.", [-2, 8, -5], "care"],
+              ["CAN THE CLOWNS DO THE TRANSITIONS?", [4, 2, 9], "clown"],
+              ["EMAIL A ONE-PAGE SUMMARY.", [2, 5, -4], "petition"],
+            ],
+          },
+          {
+            speaker: "DOTTIE / STILL IN FULL CLOWN MAKEUP",
+            body: "A student has renamed themself HOST. We have six minutes before juggling lab. What can we actually promise for Saturday?",
+            options: [
+              ["MASKED EARLY HOUR + OPEN PATIO", [3, 12, -12], "care"],
+              ["WELCOME THE CLOWN VOLUNTEERS", [6, 4, 6], "clown"],
+              ["LET A NONBINDING POLL DECIDE", [3, -4, 14], "petition"],
+            ],
+          },
+        ];
+        function nextZoom() {
+          if (zoomRound >= ZOOM.length) {
+            talk(
+              "DOTTIE",
+              "Motion carried. Meeting adjourned. Nobody knows who is the host now. See you Saturday, with snacks.",
+              null,
+              prepare,
+            );
+            return;
+          }
+          const round = ZOOM[zoomRound];
+          talk(
+            round.speaker,
+            round.body,
+            round.options.map(([label, effect, faction]) =>
+              choice(label, effect, () => {
+                factions[faction]++;
+                if (zoomRound === 3 && faction === "care")
+                  policy = "compromise";
+                zoomRound++;
+                nextZoom();
+              }),
+            ),
+          );
+        }
+        function prepare() {
+          stage = "mask";
+          world = "bar";
+          player = { x: 10, y: 6, dir: "up" };
+          setTheme("cozy");
+          setScreen("world");
+          talk(
+            "TESS",
+            "Saturday is coming. Pick your mask at the sewing table on the right. We have options. And an alarming number of sequins.",
+          );
+        }
+        function npcTalk(id) {
+          if (id === "tess") {
+            if (stage === "decision") decision();
+            else if (stage === "controversy") controversy();
+            else
+              talk(
+                "TESS",
+                "The sewing table is on the right. Dress for the shift you want to survive.",
+              );
+            return;
+          }
+          if (visited.has(id)) {
+            talk(
+              id === "willow"
+                ? "WILLOW"
+                : id === "cricket"
+                  ? "CRICKET"
+                  : "RUTH",
+              id === "willow"
+                ? "Thanks for listening. Access is how we stay part of the community."
+                : id === "cricket"
+                  ? "The line dance has only four steps. We have formed five working groups."
+                  : "Still studying rivers. I will be ready.",
+            );
+            return;
+          }
+          if (id === "willow")
+            talk(
+              "WILLOW / MUTUAL AID REGULAR",
+              "I want to be here. Can we keep a quieter, masked early hour and the patio?",
+              [
+                choice("YES. LET'S MAKE ROOM.", [-3, 8, -4], () => {
+                  visited.add(id);
+                  factions.care++;
+                  talk(
+                    "WILLOW",
+                    "I will bring snacks and help set up. Community is a verb. So is snack. Probably.",
+                  );
+                }),
+                choice("HELP ME WORK OUT THE DETAILS.", [-1, 5, -2], () => {
+                  visited.add(id);
+                  factions.petition++;
+                  talk(
+                    "WILLOW",
+                    "I have a practical checklist. Only one page. I know. Radical.",
+                  );
+                }),
+              ],
+              null,
+              () => {},
+            );
+          else if (id === "cricket")
+            talk(
+              "CRICKET / DANCE COMMITTEE",
+              "I have a line dance that works indoors OR on the patio. Do you want the 90-second pitch?",
+              [
+                choice("YES. SHOW ME THE STEPS.", [3, 3, 3], () => {
+                  visited.add(id);
+                  factions.clown++;
+                  talk(
+                    "CRICKET",
+                    "Step left. Step right. Reconsider a zoning ordinance. You're a natural.",
+                  );
+                }),
+                choice("SAVE IT FOR SATURDAY.", [2, 2, -2], () => {
+                  visited.add(id);
+                  factions.petition++;
+                  talk("CRICKET", "Motion to boogie: tabled, with enthusiasm.");
+                }),
+              ],
+              null,
+              () => {},
+            );
+          else {
+            visited.add(id);
+            talk("RUTH / USUAL, PLEASE", [
+              "I came out in 1984. I have outlasted worse than a comment section.",
+              "Give people a place to sit. Keep the water free. And tell me if trivia is still on.",
+            ]);
+          }
+        }
+
+        const MAP = { x: 62, y: 126, tile: 38, w: 22, h: 10 };
+        const STATIONS = [
+          { id: "dj", label: "DJ", x: 3, y: 1, color: C.pink },
+          { id: "lights", label: "LIGHTS", x: 7, y: 1, color: C.peach },
+          { id: "karaoke", label: "KARAOKE", x: 11, y: 1, color: C.blue },
+          { id: "snacks", label: "SNACKS", x: 18, y: 1, color: C.mint },
+          { id: "apology", label: "APOLOGY", x: 2, y: 7, color: C.pink },
+          { id: "chalk", label: "CHALK", x: 10, y: 7, color: C.cream },
+          { id: "dance", label: "DANCE", x: 19, y: 7, color: C.orange },
+        ];
+        function storyObjects() {
+          return world === "town"
+            ? [
+                { id: "tess", x: 10, y: 3 },
+                { id: "willow", x: 4, y: 4 },
+                { id: "cricket", x: 17, y: 5 },
+                { id: "notice", x: 2, y: 1 },
+                { id: "door", x: 10, y: 9 },
+              ]
+            : [
+                { id: "tess", x: 10, y: 2 },
+                { id: "ruth", x: 4, y: 5 },
+                { id: "willow", x: 16, y: 6 },
+                { id: "notice", x: 2, y: 2 },
+                { id: "sewing", x: 18, y: 2 },
+                { id: "door", x: 10, y: 9 },
+                { id: "jukebox", x: 2, y: 7 },
+              ];
+        }
+        const INCIDENTS = [
+          {
+            at: 0,
+            type: "raccoon",
+            title: "THE RACCOON HAS THE TIP JAR",
+            label: "TIP JAR",
+            x: 12,
+            y: 5,
+            station: "snacks",
+            moving: true,
+            body: "The coat-check raccoon has seized the tip jar. She has a tiny briefcase and a surprisingly sound fiscal policy.",
+            options: [
+              ["TRADE PRETZELS FOR THE MONEY.", [5, 4, -7]],
+              ["APPOINT HER ACTING TREASURER.", [9, 2, 8]],
+            ],
+          },
+          {
+            at: 8,
+            type: "printer",
+            title: "THE REPLY-ALL MACHINE IS SENTIENT",
+            label: "REPLY ALL",
+            x: 4,
+            y: 3,
+            station: "chalk",
+            body: "Pat connected the printer to the listserv. Every reply prints itself. Someone just wrote: PLEASE REMOVE ME FROM THIS THREAD.",
+            options: [
+              ["UNPLUG IT. PRINT ONE CLEAR PLAN.", [3, 6, -9]],
+              ["REPLY WITH ONE EXTREMELY LARGE POSSUM.", [6, 2, 9]],
+            ],
+          },
+          {
+            at: 17,
+            type: "conga",
+            title: "THE CONGA LINE HAS RIGHT OF WAY",
+            label: "CONGA",
+            x: 16,
+            y: 4,
+            station: "dance",
+            moving: true,
+            challenge: "dance",
+            body: "Dottie's conga line has annexed the dance floor. Match the steps and steer it somewhere useful.",
+          },
+          {
+            at: 27,
+            type: "meeting",
+            title: "A MEETING ABOUT THE MEETING",
+            label: "PETITION",
+            x: 6,
+            y: 7,
+            station: "apology",
+            body: "Two rival committees have filed petitions demanding that you stop the other committee's petition. Their chairs are dating.",
+            options: [
+              ["ONE SHARED TABLE. NO REPLY-ALL.", [3, 7, -8]],
+              ["MAKE BOTH CHAIRS CO-MAYORS OF THE PATIO.", [7, 3, 8]],
+            ],
+          },
+          {
+            at: 37,
+            type: "livestream",
+            title: "RUTH ACCIDENTALLY WENT NATIONAL",
+            label: "LIVE TV",
+            x: 15,
+            y: 7,
+            station: "lights",
+            body: "Ruth thought this was FaceTime. It is live television. The anchor asks whether Western Mass is legally a group chat.",
+            options: [
+              ["SHOW THE PATIO AND FREE MASKS.", [5, 7, -6]],
+              ["CUT TO THE RACCOON'S PRESS CONFERENCE.", [10, 1, 12]],
+            ],
+          },
+          {
+            at: 47,
+            type: "goose",
+            title: "THE GOOSE HAS A PETITION",
+            label: "GOOSE",
+            x: 18,
+            y: 5,
+            station: "snacks",
+            moving: true,
+            body: "A goose has arrived with 400 signatures. All say HONK. It demands jurisdiction over the decorative pond. There is no pond.",
+            options: [
+              ["NEGOTIATE A PRETZEL CEASEFIRE.", [4, 5, -7]],
+              ["GIVE THE GOOSE A CEREMONIAL SASH.", [8, 2, 10]],
+            ],
+          },
+          {
+            at: 58,
+            type: "exes",
+            title: "YOUR EXES HAVE UNIONIZED THE AUX",
+            label: "EXES",
+            x: 8,
+            y: 4,
+            station: "karaoke",
+            challenge: "karaoke",
+            body: "Everyone's ex has requested the same song, for different reasons. Take the mic. Hit the arrows. Commit to the bit.",
+          },
+          {
+            at: 69,
+            type: "slides",
+            title: "THE SLIDESHOW HAS ESCAPED",
+            label: "87 SLIDES",
+            x: 17,
+            y: 3,
+            station: "dj",
+            body: "The 87-slide deck is now projected onto every surface. Slide 64 is an org chart of the org chart committee.",
+            options: [
+              ["SKIP TO THE ONE USEFUL SLIDE.", [4, 6, -8]],
+              ["TURN THE PIE CHART INTO A DISCO BALL.", [8, 3, 11]],
+            ],
+          },
+          {
+            at: 80,
+            type: "finale",
+            title: "EMERGENCY MUNICIPAL LINE DANCE",
+            label: "EVERYONE!",
+            x: 13,
+            y: 6,
+            station: "dance",
+            moving: true,
+            challenge: "dance",
+            body: "The entire town is moving as one. Nobody agreed on a direction. Lead four steps before they annex the coat check.",
+          },
+        ];
+        function startChaosMode() {
+          resetGame();
+          dialog = null;
+          stage = "mask";
+          factions = { care: 1, clown: 1, petition: 0 };
+          maskRow = 0;
+          setScreen("mask");
+          announce("CHAOS MODE. Pick a mask, then go straight to Saturday.");
+        }
+        function arenaFree(x, y, except = null, includePlayer = true) {
+          return (
+            x >= 1 &&
+            x <= 20 &&
+            y >= 2 &&
+            y <= 8 &&
+            !STATIONS.some((item) => item.x === x && item.y === y) &&
+            !arcade.incidents.some(
+              (item) => item !== except && item.x === x && item.y === y,
+            ) &&
+            !arcade.patrons.some((item) => item.x === x && item.y === y) &&
+            !arcade.visitors.some((item) => item.x === x && item.y === y) &&
+            (!includePlayer || player.x !== x || player.y !== y)
+          );
+        }
+        function openFloor(x, y) {
+          if (arenaFree(x, y)) return [x, y];
+          for (let row = 2; row <= 8; row++)
+            for (let col = 1; col <= 20; col++)
+              if (arenaFree(col, row)) return [col, row];
+          return null;
+        }
+        function spawnIncident() {
+          const template = INCIDENTS[arcade.incidentCount];
+          if (!template) return;
+          const spot = openFloor(template.x, template.y);
+          if (!spot) return;
+          arcade.incidentCount++;
+          arcade.incidents.push({
+            ...template,
+            id: arcade.incidentCount,
+            x: spot[0],
+            y: spot[1],
+            born: arcade.elapsed,
+            nextMove: arcade.elapsed + 1.5,
+            nextPaper: arcade.elapsed + 1,
+            direction: 1,
+            late: false,
+            trail: [],
+          });
+          arcade.headline = template.title;
+          arcade.headlineUntil = arcade.elapsed + 4;
+          change(0, 0, 4);
+          notify(
+            template.title +
+              ". BUMP IT OR USE " +
+              template.station.toUpperCase() +
+              "!",
+          );
+          sfx("bad");
+        }
+        function celebrate(x, y, label) {
+          arcade.combo =
+            arcade.elapsed - arcade.lastSave <= 14
+              ? Math.min(4, arcade.combo + 1)
+              : 1;
+          arcade.lastSave = arcade.elapsed;
+          arcade.popups.push({ x, y, label, life: 1.7 });
+          for (let i = 0; i < 14; i++)
+            arcade.confetti.push({
+              x: x + 0.5,
+              y: y + 0.4,
+              vx: Math.sin(i * 2.4) * 2.6,
+              vy: Math.cos(i * 2.4) * 2 - 1,
+              life: 1.2 + (i % 3) * 0.2,
+              color: [C.pink, C.peach, C.mint, C.blue][i % 4],
+            });
+          arcade.vibe = clamp(arcade.vibe + 8 + arcade.combo * 3);
+          if (arcade.combo >= 3) {
+            arcade.hazards = [];
+            arcade.invincibleUntil = arcade.elapsed + 3;
+            arcade.cooldowns = {};
+          }
+          sfx("level");
+        }
+        function resolveIncident(incident, wild = false) {
+          if (!arcade.incidents.includes(incident)) return false;
+          arcade.incidents = arcade.incidents.filter(
+            (item) => item !== incident,
+          );
+          arcade.hazards = arcade.hazards.filter(
+            (item) => item.source !== incident.id,
+          );
+          arcade.resolved++;
+          addPoints(500);
+          celebrate(incident.x, incident.y, "+500");
+          if (wild) {
+            arcade.vibe = clamp(arcade.vibe + 18);
+            factions.clown++;
+          }
+          notify(
+            (wild ? "ABSURD, BUT IT WORKED. " : "DISASTER HANDLED. ") +
+              "+500 / " +
+              arcade.resolved +
+              " OF 9" +
+              (arcade.combo >= 3
+                ? " / CHAOS SURF! PAPER CLEARED + TOOLS READY."
+                : ""),
+          );
+          return true;
+        }
+        function confrontIncident(incident) {
+          held = null;
+          if (incident.challenge) {
+            startChallenge(incident);
+            return;
+          }
+          talk(
+            incident.title,
+            incident.body,
+            incident.options.map(([label, effect], index) =>
+              choice(label, effect, () =>
+                resolveIncident(incident, index === 1),
+              ),
+            ),
+            null,
+            () =>
+              notify(
+                "YOU CAN ALSO TRY " + incident.station.toUpperCase() + ".",
+              ),
+          );
+        }
+        function startChallenge(incident) {
+          held = null;
+          setTheme("clown");
+          const pattern =
+            incident.challenge === "karaoke"
+              ? ["up", "right", "down", "left"]
+              : ["left", "left", "right", "up"];
+          if (factions.clown >= 2) pattern.pop();
+          arcade.challenge = {
+            incident,
+            pattern,
+            progress: 0,
+            remaining: 8,
+            mistakes: 0,
+          };
+          announce(
+            incident.title +
+              ". Copy the arrows: " +
+              pattern.join(", ") +
+              ". The room pauses while you perform.",
+          );
+        }
+        function challengeInput(dir) {
+          const challenge = arcade.challenge;
+          if (dir === challenge.pattern[challenge.progress]) {
+            challenge.progress++;
+            sfx("serve");
+          } else {
+            challenge.mistakes++;
+            challenge.remaining = Math.max(0, challenge.remaining - 0.7);
+            sfx("bad");
+          }
+          if (challenge.progress === challenge.pattern.length) {
+            arcade.challenge = null;
+            setTheme("boss");
+            change(5, 5, -6);
+            resolveIncident(challenge.incident);
+          } else
+            announce(
+              "Next: " +
+                challenge.pattern[challenge.progress] +
+                ". " +
+                challenge.progress +
+                " steps hit.",
+            );
+        }
+        function jostle(dx, dy) {
+          if (arcade.elapsed < arcade.invincibleUntil) return;
+          arcade.invincibleUntil = arcade.elapsed + 1.6;
+          if (arcade.stamina > 0) {
+            arcade.stamina--;
+            arcade.popups.push({
+              x: player.x,
+              y: player.y,
+              label: "STEADY!",
+              life: 1,
+            });
+          } else {
+            change(-1, 0, 2);
+            arcade.vibe = clamp(arcade.vibe - 5);
+          }
+          if (arenaFree(player.x + dx, player.y + dy, null, false)) {
+            player.x += dx;
+            player.y += dy;
+          }
+          sfx("bad");
+        }
+        function updateChaos(dt) {
+          const act = Math.min(3, 1 + Math.floor(arcade.elapsed / 30));
+          for (const incident of arcade.incidents) {
+            if (!incident.late && arcade.elapsed - incident.born >= 18) {
+              incident.late = true;
+              change(-2, -2, 6);
+              notify(
+                incident.label + " HAS ESCALATED. STILL FIXABLE. MUCH LOUDER.",
+              );
+            }
+            if (
+              incident.moving &&
+              arcade.elapsed >= incident.nextMove &&
+              arcade.elapsed >= arcade.calmUntil
+            ) {
+              incident.nextMove =
+                arcade.elapsed +
+                (incident.type === "raccoon" ? 0.75 : 0.95) / (1 + act * 0.14);
+              let dx = incident.direction,
+                dy = 0;
+              if (incident.type === "goose") {
+                const deltaX = player.x - incident.x,
+                  deltaY = player.y - incident.y;
+                dx =
+                  Math.abs(deltaX) >= Math.abs(deltaY) ? Math.sign(deltaX) : 0;
+                dy = dx ? 0 : Math.sign(deltaY);
+              }
+              if (incident.x + dx === player.x && incident.y + dy === player.y)
+                jostle(dx, dy);
+              if (arenaFree(incident.x + dx, incident.y + dy, incident)) {
+                incident.trail.unshift({ x: incident.x, y: incident.y });
+                incident.trail.length = Math.min(
+                  incident.trail.length,
+                  incident.type === "finale" ? 5 : 3,
+                );
+                incident.x += dx;
+                incident.y += dy;
+              } else {
+                incident.direction *= -1;
+                const nextY = incident.y + (incident.y >= 6 ? -1 : 1);
+                if (arenaFree(incident.x, nextY, incident)) incident.y = nextY;
+              }
+            }
+            if (
+              incident.challenge === "dance" &&
+              incident.trail.some(
+                (cell) => cell.x === player.x && cell.y === player.y,
+              )
+            )
+              jostle(0, 1);
+            if (
+              ["printer", "meeting", "slides"].includes(incident.type) &&
+              arcade.elapsed >= incident.nextPaper
+            ) {
+              incident.nextPaper =
+                arcade.elapsed + (incident.late ? 0.55 : 1.2);
+              const deltaX = player.x - incident.x,
+                deltaY = player.y - incident.y;
+              const distance = Math.hypot(deltaX, deltaY) || 1;
+              const dx = deltaX / distance,
+                dy = deltaY / distance;
+              if (arcade.hazards.length < 36)
+                arcade.hazards.push({
+                  source: incident.id,
+                  x: incident.x,
+                  y: incident.y,
+                  dx,
+                  dy,
+                  speed: 2.4 + act * 0.6,
+                  life: 6,
+                });
+            }
+          }
+          for (const paper of arcade.hazards) {
+            paper.x += paper.dx * paper.speed * dt;
+            paper.y += paper.dy * paper.speed * dt;
+            paper.life -= dt;
+            if (
+              Math.abs(paper.x - player.x) < 0.55 &&
+              Math.abs(paper.y - player.y) < 0.55
+            ) {
+              const horizontal = Math.abs(paper.dx) >= Math.abs(paper.dy);
+              jostle(
+                horizontal ? Math.sign(paper.dx) : 0,
+                horizontal ? 0 : Math.sign(paper.dy),
+              );
+              paper.life = 0;
+            }
+          }
+          arcade.hazards = arcade.hazards.filter(
+            (item) =>
+              item.life > 0 &&
+              item.x >= 0 &&
+              item.x <= 21 &&
+              item.y >= 1 &&
+              item.y <= 9,
+          );
+          for (const item of arcade.confetti) {
+            item.x += item.vx * dt;
+            item.y += item.vy * dt;
+            item.vy += dt * 3;
+            item.life -= dt;
+          }
+          arcade.confetti = arcade.confetti.filter((item) => item.life > 0);
+          for (const item of arcade.popups) item.life -= dt;
+          arcade.popups = arcade.popups.filter((item) => item.life > 0);
+        }
+        function bumpObject(id) {
+          if (["tess", "ruth", "willow", "cricket"].includes(id)) {
+            npcTalk(id);
+            return;
+          }
+          if (id === "door") {
+            world = world === "bar" ? "town" : "bar";
+            player = { x: 10, y: 8, dir: "up" };
+            notify(
+              world === "bar"
+                ? "LAST DITCH / EVERYONE BELONGS"
+                : "TOWN COMMON / EVERYONE HAS NOTES",
+            );
+            return;
+          }
+          if (id === "sewing") {
+            if (stage === "mask") {
+              maskRow = 0;
+              setScreen("mask");
+            } else
+              talk(
+                "SEWING TABLE",
+                "Flannel. Thread. Emergency sequins. The Saturday outfit can wait until the town has finished reacting.",
+              );
+            return;
+          }
+          if (id === "jukebox") {
+            talk(
+              "JUKEBOX",
+              refused
+                ? 'It plays one note. Ruth calls it "ambient."'
+                : "NOW PLAYING: Girls Just Wanna Have A Sustainable Business Model.",
+            );
+            return;
+          }
+          talk("CO-OP BULLETIN BOARD", [
+            "LOST: one sense of proportion. FOUND: fourteen reusable water bottles.",
+            "COMMUNITY REMINDER: All characters, accounts, and names in this game are fictional. Kindness is not.",
+          ]);
+        }
+        function move(dir) {
+          const dirs = {
+            up: [0, -1],
+            down: [0, 1],
+            left: [-1, 0],
+            right: [1, 0],
+          };
+          player.dir = dir;
+          const [dx, dy] = dirs[dir];
+          const x = player.x + dx,
+            y = player.y + dy;
+          if (screen === "world") {
+            const object = storyObjects().find((o) => o.x === x && o.y === y);
+            if (object) {
+              bumpObject(object.id);
+              return;
+            }
+            if (x < 1 || x > 20 || y < 1 || y > 8) return;
+            if (world === "bar" && y === 1 && x >= 6 && x <= 14) return;
+          } else {
+            if (x < 1 || x > 20 || y < 2 || y > 8) {
+              const station = STATIONS.find((o) => o.x === x && o.y === y);
+              if (station) useStation(station);
+              return;
+            }
+            const station = STATIONS.find((o) => o.x === x && o.y === y);
+            if (station) {
+              useStation(station);
+              return;
+            }
+            const patron = arcade.patrons.find((o) => o.x === x && o.y === y);
+            const incident = arcade.incidents.find(
+              (item) =>
+                (item.x === x && item.y === y) ||
+                (item.challenge === "dance" &&
+                  item.trail.some((cell) => cell.x === x && cell.y === y)),
+            );
+            if (incident) {
+              confrontIncident(incident);
+              return;
+            }
+            if (patron) {
+              serve(patron);
+              return;
+            }
+            const visitor = arcade.visitors.find((o) => o.x === x && o.y === y);
+            if (visitor) {
+              notify(
+                visitor.kind === "care"
+                  ? "CONCERNED NEIGHBORS: TRY SNACKS OR APOLOGY."
+                  : visitor.kind === "petition"
+                    ? "PETITIONERS: TRY CHALK OR APOLOGY."
+                    : "CONFUSED CLOWNS: TRY DANCE OR SNACKS.",
+              );
+              return;
+            }
+          }
+          player.x = x;
+          player.y = y;
+        }
+
+        function startArcade() {
+          setScreen("arcade");
+          setTheme("boss");
+          player = { x: 10, y: 5, dir: "up" };
+          const base = MASKS[mask.base];
+          change(
+            base.id === "novelty" ? 3 : 0,
+            base.id === "cloth" ? 10 : base.id === "n95" ? 4 : 0,
+            base.id === "n95" ? -3 : 0,
+          );
+          arcade = {
+            elapsed: 0,
+            points: 0,
+            vibe: base.id === "novelty" ? 90 : 60,
+            stamina: base.stamina,
+            patrons: [],
+            visitors: [],
+            spawned: 0,
+            waves: 0,
+            served: 0,
+            cooldowns: {},
+            sickDays: 0,
+            drainAt: 5,
+            slowUntil: 0,
+            incidents: [],
+            incidentCount: 0,
+            resolved: 0,
+            hazards: [],
+            confetti: [],
+            popups: [],
+            challenge: null,
+            combo: 0,
+            lastSave: -100,
+            invincibleUntil: 0,
+            calmUntil: 0,
+            headline: "",
+            headlineUntil: 0,
+          };
+          spawnIncident();
+        }
+        const SEATS = [
+          [4, 3],
+          [8, 3],
+          [12, 3],
+          [16, 3],
+          [5, 5],
+          [9, 5],
+          [13, 5],
+          [17, 5],
+        ];
+        function spawnPatron() {
+          arcade.spawned++;
+          const free = SEATS.filter(([x, y]) => arenaFree(x, y));
+          if (!free.length) return;
+          const [x, y] = free[Math.floor(Math.random() * free.length)];
+          const patience = 15 + meters.trust / 12;
+          arcade.patrons.push({
+            id: arcade.spawned,
+            x,
+            y,
+            patience,
+            max: patience,
+            color: [C.pink, C.mint, C.blue, C.orange][arcade.spawned % 4],
+          });
+        }
+        function addPoints(amount) {
+          arcade.points = Math.min(7500, arcade.points + amount);
+        }
+        function serve(patron) {
+          if (!arcade.patrons.includes(patron)) return;
+          addPoints(100);
+          arcade.served++;
+          arcade.patrons = arcade.patrons.filter((p) => p !== patron);
+          change(2, 1, -1);
+          arcade.vibe = clamp(arcade.vibe + 15);
+          arcade.stamina = Math.min(
+            MASKS[mask.base].stamina,
+            arcade.stamina + 1,
+          );
+          arcade.popups.push({
+            x: patron.x,
+            y: patron.y,
+            label: "+100 / REST",
+            life: 1.5,
+          });
+          sfx("serve");
+          if (arcade.served % 5 === 0) {
+            sfx("level");
+            notify("THE REGULARS HAVE YOUR BACK. VIBE AND STAMINA RESTORED.");
+          }
+        }
+        function spawnWave() {
+          const kind = ["care", "petition", "clown"][arcade.waves % 3];
+          arcade.waves++;
+          const friendly = factions[kind] >= (kind === "petition" ? 1 : 2);
+          if (friendly) {
+            addPoints(150);
+            arcade.hazards = [];
+            celebrate(player.x, player.y, "+150 / ALLIES");
+            change(2, 3, -4);
+            arcade.vibe = clamp(arcade.vibe + 12);
+            if (arcade.patrons[0]) serve(arcade.patrons[0]);
+            notify(
+              kind === "care"
+                ? "ALLY WAVE: WILLOW BRINGS SNACKS AND AN EXTRA PAIR OF HANDS."
+                : kind === "petition"
+                  ? "ALLY WAVE: THE COMMITTEE SHREDS SOME PAPERWORK."
+                  : "ALLY WAVE: CLOWN VOLUNTEERS NAIL THE LINE DANCE.",
+            );
+            return;
+          }
+          const spot = openFloor(arcade.waves % 2 ? 2 : 19, 4);
+          if (!spot) return;
+          arcade.visitors.push({
+            kind,
+            x: spot[0],
+            y: spot[1],
+            patience: 14,
+            id: arcade.waves,
+          });
+          change(0, -2, 5);
+          notify(
+            kind === "care"
+              ? "NEIGHBORS HAVE QUESTIONS. SNACKS OR AN APOLOGY HELP."
+              : kind === "petition"
+                ? "PETITION WAVE! TRY THE CHALKBOARD OR APOLOGY STATION."
+                : "CLOWN WAVE! WRONG ADDRESS. TRY SNACKS OR A LINE DANCE.",
+          );
+        }
+        function useStation(station) {
+          if ((arcade.cooldowns[station.id] || 0) > arcade.elapsed) {
+            notify(
+              station.label +
+                " RECHARGING. " +
+                Math.ceil(arcade.cooldowns[station.id] - arcade.elapsed) +
+                " SECONDS.",
+            );
+            return;
+          }
+          arcade.cooldowns[station.id] = arcade.elapsed + 4;
+          const boosts = {
+            dj: 24,
+            lights: 18,
+            karaoke: 28,
+            snacks: 8,
+            apology: 6,
+            chalk: 4,
+            dance: 22,
+          };
+          arcade.vibe = clamp(
+            arcade.vibe + boosts[station.id] + (mask.base === 2 ? 8 : 0),
+          );
+          const matches = {
+            snacks: ["care", "clown"],
+            apology: ["care", "petition"],
+            chalk: ["petition"],
+            dance: ["clown"],
+          };
+          const resolved = arcade.visitors.filter((v) =>
+            (matches[station.id] || []).includes(v.kind),
+          );
+          for (const visitor of resolved) {
+            arcade.visitors = arcade.visitors.filter((v) => v !== visitor);
+            addPoints(150);
+            celebrate(visitor.x, visitor.y, "+150");
+          }
+          if (station.id === "chalk" || station.id === "lights")
+            arcade.hazards = [];
+          if (station.id === "apology" || station.id === "snacks")
+            arcade.calmUntil = arcade.elapsed + 5;
+          change(
+            station.id === "snacks" ? -1 : 0,
+            resolved.length ? 4 : 1,
+            resolved.length ? -8 : -1,
+          );
+          const incident = arcade.incidents.find(
+            (item) => item.station === station.id,
+          );
+          if (incident) {
+            if (incident.challenge) startChallenge(incident);
+            else {
+              change(4, 5, -6);
+              resolveIncident(incident);
+            }
+            return;
+          }
+          sfx("select");
+          notify(
+            {
+              dj: "DJ: FLANNEL BANGERS, VOLUME TWO.",
+              lights: "STRING LIGHTS: COZY LEVEL RESTORED.",
+              karaoke: "KARAOKE: EVERYONE KNOWS THE CHORUS.",
+              snacks: "FREE SNACKS. NO MEETING REQUIRED.",
+              apology: '"I HEAR YOU. HERE IS WHAT WE CAN DO."',
+              chalk: "A CLEAR PLAN. LEGIBLE HANDWRITING. RADICAL.",
+              dance: "STEP LEFT. STEP RIGHT. COLLECTIVE EXHALE.",
+            }[station.id] +
+              (resolved.length ? " +" + resolved.length * 150 : ""),
+          );
+        }
+        function updateArcade(dt) {
+          if (dialog) return;
+          if (arcade.challenge) {
+            arcade.challenge.remaining -= dt;
+            if (arcade.challenge.remaining <= 0) {
+              arcade.challenge = null;
+              setTheme("boss");
+              held = null;
+              change(0, 0, 3);
+              notify("AN EXPERIMENTAL SOLO. BUMP THE INCIDENT TO TRY AGAIN.");
+            }
+            return;
+          }
+          arcade.elapsed += dt;
+          arcade.vibe = clamp(arcade.vibe - dt * 1.2);
+          if (
+            arcade.incidentCount < INCIDENTS.length &&
+            arcade.elapsed >= INCIDENTS[arcade.incidentCount].at
+          )
+            spawnIncident();
+          if (arcade.spawned < 6 && arcade.elapsed >= 5 + arcade.spawned * 14)
+            spawnPatron();
+          if (arcade.waves < 6 && arcade.elapsed >= 10 + arcade.waves * 13)
+            spawnWave();
+          for (const p of [...arcade.patrons]) {
+            p.patience -= dt * (arcade.vibe < 25 ? 1.5 : 1);
+            if (p.patience <= 0) {
+              arcade.patrons = arcade.patrons.filter((item) => item !== p);
+            }
+          }
+          for (const v of [...arcade.visitors]) {
+            v.patience -= dt;
+            if (v.patience <= 0) {
+              arcade.visitors = arcade.visitors.filter((item) => item !== v);
+              change(-2, -2, 4);
+              notify("THE VISITORS LEAVE WITH UNRESOLVED AGENDA ITEMS.");
+            }
+          }
+          if (
+            arcade.elapsed >= 28 + arcade.sickDays * 30 &&
+            arcade.sickDays < 2
+          ) {
+            arcade.sickDays++;
+            const protectedShift = arcade.stamina > 0;
+            if (protectedShift) arcade.stamina--;
+            change(mask.base === 0 ? -2 : -6, 0, protectedShift ? 2 : 7);
+            arcade.slowUntil = arcade.elapsed + (protectedShift ? 1 : 5);
+            notify(
+              mask.base === 0
+                ? "STAFF SICK DAY. YOUR N95 STAMINA SOFTENS THE SHIFT PENALTY."
+                : "STAFF SICK DAY. COVERING THE SHIFT COSTS " +
+                    (protectedShift
+                      ? "ONE STAMINA."
+                      : "ENERGY. TAKE IT STEADY."),
+            );
+          }
+          if (arcade.elapsed >= arcade.drainAt) {
+            arcade.drainAt += 5;
+            if (arcade.vibe < 25) change(-1, 0, 1);
+          }
+          updateChaos(dt);
+          if (arcade.elapsed >= 90) {
+            arcade.elapsed = 90;
+            bossRound = 0;
+            bossWins = 0;
+            setScreen("boss");
+            nextBoss();
+          }
+        }
+        const BOSS = [
+          {
+            body: "I am Marlow Quill, head of the neighborhood listserv. My clipboard has a clipboard. First: where is the community input?",
+            options: [
+              ["RIGHT HERE. ONE VOICE AT A TIME.", [0, 8, -7], 500],
+              ["IN A GOOGLE FORM WITH 42 FIELDS.", [2, 2, 5], 200],
+              ["HAVE YOU TRIED REFRESHING?", [4, -6, 8], 0],
+            ],
+          },
+          {
+            body: "Second: how will you make this place work for people with different access needs?",
+            options: [
+              ["MASKED HOURS, FREE MASKS, OPEN PATIO.", [-3, 10, -8], 500],
+              ["ASK EACH GUEST WHAT WOULD HELP.", [-1, 6, -4], 300],
+              ["FORM A TASK FORCE TO NAME A TASK FORCE.", [2, -4, 10], 0],
+            ],
+          },
+          {
+            body: "Final item: I fear change. Also I have not had dinner. What can you offer?",
+            options: [
+              ["A SNACK, A CHAIR, AND A CLEAR PLAN.", [-2, 8, -8], 500],
+              ["A SEAT ON THE SNACK SUBCOMMITTEE.", [2, 5, 3], 300],
+              ["A COMPLIMENTARY CLOWN DIPLOMA.", [5, 2, 8], 200],
+            ],
+          },
+        ];
+        function nextBoss() {
+          if (bossRound >= BOSS.length) {
+            talk(
+              "MARLOW / CLIPBOARD LOWERED",
+              bossWins >= 2
+                ? "I came here to moderate. I appear to have been welcomed. Put me down for a seltzer. And possibly a hug."
+                : "I still have notes. But you saved me a chair. We can keep talking. After a snack.",
+              null,
+              finishArcade,
+            );
+            return;
+          }
+          const round = BOSS[bossRound];
+          talk(
+            "MARLOW QUILL / FINAL AGENDA",
+            round.body,
+            round.options.map(([label, effect, points]) =>
+              choice(label, effect, () => {
+                addPoints(points);
+                if (points === 500) bossWins++;
+                bossRound++;
+                sfx("level");
+                nextBoss();
+              }),
+            ),
+          );
+        }
+        function pickEnding() {
+          if (meters.trust >= 65 && meters.profit >= 40 && meters.chaos <= 60)
+            return "compromise";
+          if (factions.clown >= 3 || (mask.base === 2 && meters.chaos >= 40))
+            return "clown";
+          if (meters.chaos >= 65 || meters.profit >= 80) return "viral";
+          return "committee";
+        }
+        function finishArcade() {
+          ending = pickEnding();
+          score =
+            arcade.points +
+            meters.profit * 10 +
+            meters.trust * 10 +
+            (100 - meters.chaos) * 10;
+          tallyAge = 0;
+          setTheme("cozy");
+          setScreen("tally");
+          sfx("level");
+          announce(
+            "Shift complete. Final score " +
+              score +
+              ". " +
+              ENDINGS[ending].title,
+          );
+        }
+        async function requestJSON(url, options = {}) {
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 8000);
+          try {
+            const response = await fetch(url, {
+              ...options,
+              signal: controller.signal,
+            });
+            const data = await response.json();
+            if (!response.ok)
+              throw new Error(
+                response.status === 429
+                  ? "TAKE A SNACK BREAK. RETRY IN " +
+                      (data.retryAfter || 60) +
+                      " SECONDS."
+                  : data.error || "HIGH SCORES OFFLINE",
+              );
+            return data;
+          } finally {
+            clearTimeout(timer);
+          }
+        }
+        async function showBoard(fromRun) {
+          boardFromRun = fromRun;
+          boardStatus = "loading";
+          board = [];
+          setScreen("leaderboard");
+          const generation = ++requestGeneration;
+          try {
+            const data = await requestJSON("/api/leaderboard");
+            if (screen !== "leaderboard" || generation !== requestGeneration)
+              return;
+            if (
+              !Array.isArray(data.scores) ||
+              data.scores.length > 10 ||
+              data.scores.some(
+                (entry) =>
+                  typeof entry.initials !== "string" ||
+                  !Number.isSafeInteger(entry.score) ||
+                  !ENDINGS[entry.ending] ||
+                  !MASKS.some((mask) => mask.id === entry.mask) ||
+                  !Number.isFinite(Date.parse(entry.timestamp)),
+              )
+            )
+              throw new Error("Invalid leaderboard");
+            board = data.scores;
+            boardStatus = "ready";
+            announce(
+              board.length
+                ? "Global high scores. " +
+                    board.map((e) => e.initials + " " + e.score).join(", ")
+                : "No high scores yet. Be the first.",
+            );
+          } catch {
+            if (screen === "leaderboard" && generation === requestGeneration) {
+              boardStatus = "offline";
+              announce("HIGH SCORES OFFLINE. Left or right to continue.");
+            }
+          }
+        }
+        function startInitials() {
+          initials = [0, 0, 0];
+          initialPos = 0;
+          submissionId = crypto.randomUUID();
+          submitStatus = "idle";
+          submitChoice = 0;
+          setScreen("initials");
+        }
+        async function submitScore() {
+          submitStatus = "sending";
+          announce("Saving score.");
+          const generation = ++requestGeneration;
+          try {
+            const data = await requestJSON("/api/score", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                submissionId,
+                initials: initials
+                  .map((n) => String.fromCharCode(65 + n))
+                  .join(""),
+                score,
+                ending,
+                mask: MASKS[mask.base].id,
+              }),
+            });
+            if (screen !== "initials" || generation !== requestGeneration)
+              return;
+            if (!Number.isSafeInteger(data.rank) || data.rank < 1)
+              throw new Error("HIGH SCORES OFFLINE");
+            rank = data.rank;
+            submitStatus = "saved";
+            sfx("level");
+            void showBoard(true);
+          } catch (error) {
+            if (screen === "initials" && generation === requestGeneration) {
+              submitStatus = "error";
+              submitError =
+                error.name === "AbortError"
+                  ? "HIGH SCORES OFFLINE"
+                  : error.message;
+              submitChoice = 0;
+              announce(
+                submitError +
+                  ". Up/down choose retry or continue without saving.",
+              );
+            }
+          }
+        }
+
+        function input(dir) {
+          startAudio();
+          if (paused) {
+            paused = false;
+            held = null;
+            audio.next = audio.ctx ? audio.ctx.currentTime : 0;
+            announce("Resumed.");
+            return;
+          }
+          if (dialog) {
+            chooseDialog(dir);
+            return;
+          }
+          if (screen === "arcade" && arcade.challenge) {
+            challengeInput(dir);
+            return;
+          }
+          if (screen === "title") {
+            if (!titleAwake) {
+              titleAwake = true;
+              menuIndex = 0;
+              sfx("select");
+              announce(
+                "Story mode. Chaos mode. High scores. How to play. Sound. Up/down choose, right confirm.",
+              );
+              return;
+            }
+            if (dir === "up" || dir === "down") {
+              menuIndex = (menuIndex + (dir === "up" ? -1 : 1) + 5) % 5;
+              sfx("move");
+            } else if (dir === "left") titleAwake = false;
+            else if (dir === "right") {
+              sfx("select");
+              if (menuIndex === 0) resetGame();
+              else if (menuIndex === 1) startChaosMode();
+              else if (menuIndex === 2) void showBoard(false);
+              else if (menuIndex === 3) setScreen("help");
+              else toggleSound();
+            }
+            return;
+          }
+          if (screen === "help") {
+            if (dir === "left" || dir === "right") {
+              setScreen("title");
+              titleAwake = true;
+            }
+            return;
+          }
+          if (screen === "world" || screen === "arcade") {
+            move(dir);
+            return;
+          }
+          if (screen === "feed") {
+            if (dir === "up" || dir === "left")
+              feedIndex = Math.max(0, feedIndex - 1);
+            else if (dir === "down")
+              feedIndex = Math.min(FEED.length - 1, feedIndex + 1);
+            else if (dir === "right") {
+              if (feedIndex === FEED.length - 1) toTown();
+              else feedIndex++;
+            }
+            sfx("move");
+            announce(FEED[feedIndex].join(". "));
+            return;
+          }
+          if (screen === "mask") {
+            if (dir === "up" || dir === "down")
+              maskRow = (maskRow + (dir === "up" ? -1 : 1) + 5) % 5;
+            else if (maskRow === 4) {
+              if (dir === "right") {
+                setScreen("ready");
+                sfx("select");
+              } else maskRow = 3;
+            } else {
+              const key = ["base", "color", "pattern", "accessory"][maskRow];
+              const max = [4, 5, 4, 4][maskRow];
+              mask[key] = (mask[key] + (dir === "left" ? -1 : 1) + max) % max;
+            }
+            sfx("move");
+            announce(
+              "Mask editor. " +
+                MASKS[mask.base].label +
+                ". " +
+                MASKS[mask.base].detail +
+                " Selected " +
+                ["base", "color", "pattern", "accessory", "done"][maskRow],
+            );
+            return;
+          }
+          if (screen === "ready") {
+            if (dir === "left") {
+              setScreen("mask");
+              maskRow = 4;
+            } else if (dir === "right") startArcade();
+            return;
+          }
+          if (screen === "tally") {
+            if (tallyAge < 4.6) tallyAge = 4.6;
+            else {
+              setScreen("ending");
+              sfx("level");
+            }
+            return;
+          }
+          if (screen === "ending") {
+            startInitials();
+            return;
+          }
+          if (screen === "initials") {
+            if (submitStatus === "sending") {
+              if (dir === "left") {
+                requestGeneration++;
+                void showBoard(true);
+              }
+              return;
+            }
+            if (submitStatus === "error") {
+              if (dir === "up" || dir === "down")
+                submitChoice = 1 - submitChoice;
+              if (dir === "left" || (dir === "right" && submitChoice === 1)) {
+                void showBoard(true);
+                return;
+              }
+              if (dir === "right") void submitScore();
+              return;
+            }
+            if (dir === "up" || dir === "down")
+              initials[initialPos] =
+                (initials[initialPos] + (dir === "up" ? 1 : 25)) % 26;
+            else if (dir === "left") initialPos = Math.max(0, initialPos - 1);
+            else if (initialPos < 2) initialPos++;
+            else void submitScore();
+            sfx("move");
+            announce(
+              "Initials " +
+                initials.map((n) => String.fromCharCode(65 + n)).join("") +
+                ". Editing letter " +
+                (initialPos + 1),
+            );
+            return;
+          }
+          if (screen === "leaderboard") {
+            if (dir === "up" && boardStatus === "offline") {
+              void showBoard(boardFromRun);
+              return;
+            }
+            if (dir === "left" || dir === "right") {
+              requestGeneration++;
+              if (boardFromRun) setScreen("credits");
+              else {
+                setScreen("title");
+                titleAwake = true;
+              }
+            }
+            return;
+          }
+          if (screen === "credits") {
+            setScreen("title");
+            titleAwake = true;
+            setTheme("cozy");
+          }
+        }
+        const KEY_DIR = {
+          ArrowUp: "up",
+          ArrowDown: "down",
+          ArrowLeft: "left",
+          ArrowRight: "right",
+        };
+        function press(dir) {
+          input(dir);
+          if (
+            (screen === "world" || screen === "arcade") &&
+            !(screen === "arcade" && arcade.challenge) &&
+            !dialog &&
+            !paused
+          ) {
+            held = dir;
+            repeatAt = performance.now() + 230;
+          }
+        }
+        window.addEventListener(
+          "keydown",
+          (event) => {
+            const dir = KEY_DIR[event.key];
+            if (!dir) return;
+            event.preventDefault();
+            if (!event.repeat) press(dir);
+          },
+          { passive: false },
+        );
+        window.addEventListener("keyup", (event) => {
+          if (KEY_DIR[event.key] === held) held = null;
+        });
+        for (const button of document.querySelectorAll("[data-dir]")) {
+          button.addEventListener("pointerdown", (event) => {
+            event.preventDefault();
+            button.setPointerCapture(event.pointerId);
+            press(button.dataset.dir);
+          });
+          for (const name of [
+            "pointerup",
+            "pointercancel",
+            "lostpointercapture",
+          ])
+            button.addEventListener(name, () => {
+              held = null;
+            });
+          button.addEventListener("contextmenu", (event) =>
+            event.preventDefault(),
+          );
+        }
+        function pause() {
+          held = null;
+          if (screen === "arcade") {
+            paused = true;
+            announce("Shift paused. Press an arrow to resume.");
+          }
+          if (audio.ctx && audio.ctx.state === "running")
+            void audio.ctx.suspend().catch(() => {});
+        }
+        window.addEventListener("blur", pause);
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) pause();
+          else last = performance.now();
+        });
+        function drawHud() {
+          rect(0, 0, 960, 64, C.ink);
+          rect(0, 63, 960, 2, C.plum);
+          ["profit", "trust", "chaos"].forEach((key, i) => {
+            const x = 24 + i * 318;
+            if (i) rect(x - 13, 14, 1, 35, C.purple);
+            if (i === 0) coin(x, 18, 2);
+            else if (i === 1) heart(x, 19, 3);
+            else bolt(x, 17, 3);
+            text(
+              ["PROFIT", "COMMUNITY TRUST", "CHAOS"][i],
+              x + 32,
+              15,
+              1,
+              C.cream,
+            );
+            text(
+              String(Math.round(shown[key])).padStart(3, "0") + "/100",
+              x + 280,
+              15,
+              1,
+              C.blue,
+              "right",
+            );
+            for (let b = 0; b < 16; b++)
+              rect(
+                x + 32 + b * 15.5,
+                32,
+                13,
+                9,
+                b < Math.round(shown[key] * 0.16)
+                  ? [C.peach, C.pink, C.mint][i]
+                  : C.purple,
+              );
+            if (time < deltaUntil && meterDelta[i])
+              text(
+                (meterDelta[i] > 0 ? "+" : "") + meterDelta[i],
+                x + 278,
+                47,
+                1,
+                meterDelta[i] > 0 ? C.mint : C.pink,
+                "right",
+              );
+          });
+        }
+        function footer(left, right) {
+          rect(0, 607, 960, 33, C.ink);
+          rect(24, 607, 912, 1, C.plum);
+          text(left, 25, 622, 1, C.blue);
+          text(right, 935, 619, 2, C.cream, "right");
+        }
+        function section(kicker, title) {
+          text(kicker, 52, 88, 1, C.peach);
+          text(title, 52, 111, 3, C.cream);
+        }
+        function sprite(x, y, color = C.pink, s = 2, options = {}) {
+          const skin = options.skin || C.peach,
+            hair = options.hair || C.brown;
+          const r = (a, b, w, h, c) =>
+            rect(x + a * s, y + b * s, w * s, h * s, c);
+          r(1, 18, 12, 2, C.ink);
+          r(3, 0, 7, 2, hair);
+          r(2, 2, 9, 4, hair);
+          r(3, 3, 7, 6, skin);
+          r(2, 4, 1, 5, hair);
+          r(10, 4, 1, 5, hair);
+          if (options.dir === "up") {
+            r(3, 2, 7, 6, hair);
+            r(4, 7, 5, 2, skin);
+          } else {
+            r(4, 5, 1, 1, C.ink);
+            r(8, 5, 1, 1, C.ink);
+            r(6, 8, 2, 1, C.rust);
+          }
+          r(2, 10, 9, 6, color);
+          r(0, 11, 2, 4, color);
+          r(11, 11, 2, 4, color);
+          r(0, 15, 2, 2, skin);
+          r(11, 15, 2, 2, skin);
+          r(4, 10, 1, 6, C.plum);
+          r(8, 10, 1, 6, C.plum);
+          r(2, 12, 9, 1, C.plum);
+          r(3, 16, 3, 3, C.night);
+          r(7, 16, 3, 3, C.night);
+          r(2, 19, 4, 1, C.cream);
+          r(7, 19, 4, 1, C.cream);
+          if (options.mask && options.mask.base !== 3 && options.dir !== "up") {
+            const chosen = options.mask;
+            const mc = COLOR_OPTIONS[chosen.color][1];
+            if (chosen.base === 0) {
+              r(4, 6, 5, 1, mc);
+              r(5, 10, 3, 1, mc);
+            } else if (chosen.base === 2) {
+              r(2, 7, 9, 3, mc);
+              r(1, 6, 2, 1, C.cream);
+              r(10, 6, 2, 1, C.cream);
+            }
+            r(3, 7, 7, 3, mc);
+            r(2, 7, 1, 1, chosen.base === 0 ? C.cream : mc);
+            r(10, 7, 1, 1, chosen.base === 0 ? C.cream : mc);
+            if (chosen.pattern === 0) {
+              r(5, 7, 1, 3, C.plum);
+              r(8, 7, 1, 3, C.plum);
+              r(3, 8, 7, 0.5, C.plum);
+            } else if (chosen.pattern === 1) {
+              r(3, 7.7, 7, 0.4, C.ink);
+              r(3, 9, 7, 0.4, C.ink);
+            } else if (chosen.pattern === 2) {
+              r(4, 7.5, 0.6, 0.6, C.cream);
+              r(6, 8.7, 0.6, 0.6, C.cream);
+              r(8, 7.5, 0.6, 0.6, C.cream);
+            } else {
+              [C.pink, C.orange, C.cream, C.mint, C.blue].forEach((c, i) =>
+                r(4 + i, 8, 0.8, 1, c),
+              );
+            }
+            if (chosen.base === 0) {
+              r(5, 6, 3, 0.5, C.cream);
+              r(6, 7, 1, 4, C.cream);
+            } else if (chosen.base === 1) {
+              r(3, 9.5, 7, 0.5, C.plum);
+            } else {
+              r(4, 8, 1, 1, C.cream);
+              r(8, 8, 1, 1, C.cream);
+              r(5, 9, 3, 1, C.cream);
+            }
+            if (chosen.accessory === 0) r(8, 8, 1.3, 1.3, C.orange);
+            else if (chosen.accessory === 1) {
+              r(4, 7, 0.4, 0.4, C.white);
+              r(6, 9, 0.4, 0.4, C.white);
+              r(9, 8, 0.4, 0.4, C.white);
+            } else if (chosen.accessory === 2) {
+              r(5, 6, 3, 3, C.rose);
+              r(5.5, 6.5, 1, 1, C.pink);
+            }
+          } else if (options.mask && options.mask.base !== 3) {
+            const chosen = options.mask;
+            const mc = COLOR_OPTIONS[chosen.color][1];
+            if (chosen.base === 0) {
+              r(2, 5, 9, 1, C.cream);
+              r(2, 8, 9, 1, mc);
+            } else {
+              r(2, 7, 1, 2, mc);
+              r(10, 7, 1, 2, mc);
+              if (chosen.base === 2) {
+                r(1, 6, 2, 1, C.cream);
+                r(10, 6, 2, 1, C.cream);
+              }
+            }
+          }
+          if (options.clown) {
+            r(0, 3, 3, 4, C.pink);
+            r(10, 3, 3, 4, C.pink);
+            r(5, 6, 3, 2, C.rose);
+            r(5, 11, 2, 1, C.cream);
+            r(5, 14, 2, 1, C.cream);
+            r(1, 18, 5, 2, C.orange);
+            r(7, 18, 5, 2, C.orange);
+          }
+          if (options.hat) {
+            r(2, -1, 9, 2, C.green);
+            r(0, 1, 13, 1, C.green);
+          }
+        }
+        function tree(x, y, size = 1, color = C.rust) {
+          const r = (a, b, w, h, c) =>
+            rect(x + a * size, y + b * size, w * size, h * size, c);
+          r(-7, -65, 14, 65, C.brown);
+          r(-19, -45, 15, 7, C.brown);
+          r(4, -55, 17, 7, C.brown);
+          r(-43, -103, 82, 42, C.plum);
+          r(-34, -125, 61, 75, color);
+          r(-52, -98, 30, 30, color);
+          r(24, -101, 29, 34, color);
+          r(-21, -137, 40, 26, color);
+          r(-30, -113, 22, 24, C.orange);
+          r(-44, -86, 24, 15, C.orange);
+          r(12, -117, 16, 19, C.orange);
+          r(18, -80, 23, 17, C.rust);
+          r(-9, -130, 16, 11, C.peach);
+          for (let i = 0; i < 15; i++) {
+            const a = ((i * 31) % 85) - 45,
+              b = -60 - ((i * 17) % 70);
+            r(a, b, 4, 4, i % 2 ? C.peach : C.brown);
+          }
+          r(-21, -2, 42, 5, C.plum);
+        }
+        function lights(x, y, width, count = 14) {
+          for (let i = 0; i < count; i++) {
+            const px = x + (i * width) / (count - 1);
+            const py = y + Math.sin((i / (count - 1)) * Math.PI) * 12;
+            rect(px, py, Math.ceil(width / count) + 1, 2, C.brown);
+            rect(px + 1, py + 3, 4, 6, [C.peach, C.pink, C.mint][i % 3]);
+            rect(px + 2, py + 3, 2, 3, C.cream);
+          }
+        }
+        function raccoon(x, y) {
+          rect(x, y + 7, 22, 10, C.blue);
+          rect(x + 17, y + 8, 12, 6, C.plum);
+          rect(x + 20, y + 8, 3, 6, C.blue);
+          rect(x + 26, y + 8, 3, 6, C.blue);
+          rect(x - 4, y, 14, 13, C.blue);
+          rect(x - 4, y - 2, 4, 4, C.blue);
+          rect(x + 6, y - 2, 4, 4, C.blue);
+          rect(x - 5, y + 4, 15, 4, C.ink);
+          rect(x - 2, y + 5, 2, 2, C.cream);
+          rect(x + 6, y + 5, 2, 2, C.cream);
+          rect(x, y + 9, 3, 3, C.ink);
+          rect(x + 2, y + 17, 4, 3, C.ink);
+          rect(x + 13, y + 17, 4, 3, C.ink);
+        }
+        function exterior(variant = "normal") {
+          rect(0, 211, 960, 290, C.night);
+          for (let i = 0; i < 12; i++) {
+            const x = i * 85;
+            rect(x, 259 - ((i * 17) % 40), 90, 244, C.purple);
+            rect(x + 20, 242 - ((i * 11) % 35), 40, 60, C.purple);
+          }
+          tree(119, 459, 1.35, C.rust);
+          tree(836, 453, 1.5, C.rose);
+          tree(203, 449, 0.9, C.green);
+          tree(748, 448, 0.94, C.orange);
+          rect(0, 455, 960, 151, C.purple);
+          rect(0, 470, 960, 5, C.plum);
+          rect(395, 472, 164, 135, C.plum);
+          rect(418, 472, 121, 135, C.brown);
+          for (let i = 0; i < 34; i++) {
+            const x = (i * 173 + 11) % 950,
+              y = 475 + ((i * 29) % 116);
+            rect(
+              x,
+              y,
+              5 + (i % 4),
+              3,
+              [C.rust, C.orange, C.pink, C.mint][i % 4],
+            );
+          }
+          rect(278, 319, 407, 154, C.ink);
+          rect(287, 326, 388, 142, C.brown);
+          rect(287, 332, 388, 3, C.rust);
+          for (let y = 352; y < 465; y += 17) {
+            rect(287, y, 388, 2, C.plum);
+            for (let i = 0; i < 11; i++)
+              rect(289 + i * 38 + (y % 2 ? 16 : 0), y - 15, 2, 15, C.rust);
+          }
+          rect(302, 298, 359, 32, C.plum);
+          rect(316, 282, 328, 18, C.plum);
+          rect(330, 268, 302, 16, C.plum);
+          rect(345, 256, 270, 13, C.plum);
+          rect(592, 249, 27, 39, C.brown);
+          rect(587, 245, 37, 7, C.rust);
+          for (let i = 0; i < 6; i++)
+            rect(346 - i * 11, 269 + i * 10, 268 + i * 22, 3, C.rust);
+          rect(271, 325, 420, 8, C.orange);
+          rect(271, 333, 420, 7, C.ink);
+          panel(350, 288, 260, 49, C.ink, C.peach);
+          text("LAST DITCH", 480, 302, 4, C.cream, "center");
+          text("YOUR LOCAL LAST RESORT", 480, 347, 1, C.peach, "center");
+          for (const x of [309, 567]) {
+            rect(x - 5, 363, 93, 75, C.ink);
+            rect(x, 367, 83, 65, C.peach);
+            rect(x + 5, 372, 73, 54, C.orange);
+            rect(x + 7, 372, 7, 54, C.rust);
+            rect(x + 62, 372, 8, 54, C.rust);
+            rect(x + 39, 367, 5, 65, C.brown);
+            rect(x, 397, 83, 5, C.brown);
+            rect(x - 8, 435, 99, 6, C.rust);
+            rect(x + 11, 414, 14, 12, C.brown);
+            rect(x + 56, 407, 7, 18, C.cream);
+          }
+          rect(431, 361, 96, 108, C.ink);
+          rect(438, 366, 83, 102, C.plum);
+          rect(445, 373, 68, 88, C.rust);
+          rect(452, 380, 54, 42, C.peach);
+          rect(454, 382, 50, 38, C.orange);
+          rect(477, 380, 4, 42, C.brown);
+          rect(452, 399, 54, 3, C.brown);
+          rect(500, 435, 4, 6, C.cream);
+          rect(425, 465, 108, 7, C.blue);
+          rect(419, 472, 120, 5, C.plum);
+          rect(576, 379, 67, 26, C.rose);
+          rect(579, 382, 61, 20, C.ink);
+          text("OPEN", 609, 386, 2, C.pink, "center");
+          lights(285, 335, 384, 17);
+          rect(643, 418, 39, 48, C.ink);
+          rect(647, 422, 31, 40, C.green);
+          text("GOOD", 663, 431, 1, C.cream, "center");
+          text("COMPANY", 663, 441, 1, C.cream, "center");
+          rect(641, 465, 5, 10, C.brown);
+          rect(680, 465, 5, 10, C.brown);
+          for (let i = 0; i < 4; i++) {
+            rect(705 + i * 19, 421, 7, 50, C.brown);
+            rect(704 + i * 19, 414, 9, 7, C.brown);
+          }
+          rect(705, 432, 66, 5, C.rust);
+          rect(705, 452, 66, 4, C.rust);
+          for (const x of [280, 679]) {
+            rect(x, 445, 20, 24, C.rust);
+            rect(x - 4, 435, 28, 12, C.green);
+            rect(x, 429, 20, 12, C.mint);
+          }
+          sprite(375, 427, C.mint, 2, {
+            mask: { base: 0, color: 0, pattern: 1, accessory: 3 },
+            skin: C.rust,
+          });
+          sprite(533, 429, C.pink, 2, { hat: true });
+          sprite(568, 438, C.blue, 1.6, { clown: variant === "clown" });
+          if (variant === "clown") {
+            sprite(223, 430, C.orange, 2, { clown: true });
+            sprite(711, 430, C.mint, 2, { clown: true });
+            text("HONK U.", 479, 349, 1, C.cream, "center");
+          }
+          if (variant === "viral") {
+            for (let i = 0; i < 5; i++) {
+              sprite(175 + i * 38, 454, C.blue, 1.4, { skin: C.rust });
+              rect(188 + i * 38, 462, 12, 7, C.ink);
+            }
+            text("*", 319, 452, 3, C.cream);
+            text("*", 210, 443, 2, C.peach);
+          }
+          if (variant === "committee") {
+            rect(330, 451, 110, 10, C.rust);
+            for (let i = 0; i < 4; i++) {
+              sprite(328 + i * 30, 424, C.blue, 1.4, { hat: i === 1 });
+              rect(336 + i * 30, 446, 10, 7, C.cream);
+            }
+          }
+          if (variant === "compromise") {
+            rect(701, 398, 66, 12, C.mint);
+            text("PATIO", 734, 401, 1, C.ink, "center");
+          }
+        }
+        function drawTitle() {
+          rect(0, 65, 960, 542, C.night);
+          for (let i = 0; i < 27; i++) {
+            const x = (i * 127 + 31) % 930,
+              y = 85 + ((i * 37) % 183);
+            rect(x, y, i % 5 === 0 ? 3 : 2, 2, i % 3 ? C.plum : C.blue);
+          }
+          rect(811, 106, 32, 32, C.cream);
+          rect(824, 100, 26, 29, C.night);
+          exterior();
+          text(
+            "A VERY SMALL TOWN. A VERY LONG WEEK.",
+            480,
+            92,
+            1,
+            C.peach,
+            "center",
+          );
+          text("LAST DITCH", 484, 131, 8, C.rose, "center");
+          text("LAST DITCH", 480, 124, 8, C.cream, "center");
+          text("A WESTERN MASS BAR SAGA", 480, 199, 2, C.peach, "center");
+          rect(331, 224, 298, 2, C.plum);
+          rect(465, 222, 30, 6, C.pink);
+          if (!titleAwake) {
+            panel(297, 511, 366, 40, C.ink, C.plum);
+            if (reduced || Math.floor(time * 1.5) % 2 === 0)
+              text("PRESS ANY ARROW", 480, 524, 3, C.cream, "center");
+            text(
+              "ONE POLICY CHANGE. EVERYONE HAS NOTES.",
+              480,
+              571,
+              1,
+              C.blue,
+              "center",
+            );
+          } else {
+            panel(314, 446, 332, 145, C.ink, C.plum);
+            [
+              "STORY MODE",
+              "CHAOS MODE",
+              "HIGH SCORES",
+              "HOW TO PLAY",
+              audio.muted ? "SOUND: OFF" : "SOUND: ON",
+            ].forEach((label, i) => {
+              if (menuIndex === i) {
+                rect(326, 454 + i * 26, 308, 24, C.purple);
+                text("→", 341, 460 + i * 26, 2, C.peach);
+              }
+              text(
+                label,
+                480,
+                460 + i * 26,
+                2,
+                menuIndex === i ? C.cream : C.blue,
+                "center",
+              );
+            });
+          }
+          footer(
+            "A COZY GAME ABOUT AN UNCOZY GROUP CHAT",
+            titleAwake ? "↑↓ CHOOSE  → CONFIRM" : "↑ ↓ ← → TO BEGIN",
+          );
+        }
+        function mug(x, y, color = C.peach) {
+          rect(x, y, 14, 14, color);
+          rect(x + 14, y + 3, 5, 8, color);
+          rect(x + 14, y + 5, 3, 4, C.brown);
+          rect(x, y, 14, 3, C.cream);
+        }
+        function drawStation(station) {
+          const x = MAP.x + station.x * 38,
+            y = MAP.y + station.y * 38;
+          const cool =
+            arcade && (arcade.cooldowns[station.id] || 0) > arcade.elapsed;
+          rect(x + 1, y + 7, 35, 30, C.ink);
+          rect(x + 3, y + 6, 31, 25, cool ? C.plum : station.color);
+          rect(x + 5, y + 8, 27, 20, C.night);
+          if (station.id === "dj") {
+            rect(x + 7, y + 12, 9, 9, C.blue);
+            rect(x + 21, y + 12, 9, 9, C.pink);
+            rect(x + 10, y + 15, 3, 3, C.ink);
+            rect(x + 24, y + 15, 3, 3, C.ink);
+            rect(x + 18, y + 11, 2, 14, C.cream);
+          } else if (station.id === "lights") {
+            rect(x + 15, y + 10, 9, 10, C.peach);
+            rect(x + 17, y + 20, 5, 5, C.brown);
+          } else if (station.id === "karaoke") {
+            text("♪", x + 13, y + 10, 2, C.blue);
+          } else if (station.id === "snacks") {
+            rect(x + 8, y + 18, 23, 5, C.cream);
+            rect(x + 10, y + 13, 8, 5, C.orange);
+            rect(x + 21, y + 11, 6, 7, C.peach);
+          } else if (station.id === "apology") heart(x + 14, y + 11, 2, C.pink);
+          else if (station.id === "chalk") {
+            for (let i = 0; i < 3; i++)
+              rect(x + 9, y + 11 + i * 5, 20 - i * 3, 2, C.cream);
+          } else {
+            rect(x + 9, y + 12, 6, 11, C.orange);
+            rect(x + 21, y + 14, 6, 11, C.pink);
+          }
+          text(
+            station.label,
+            x + 19,
+            y - 5,
+            1,
+            cool ? C.blue : station.color,
+            "center",
+          );
+          if (cool) {
+            rect(x + 3, y + 32, 31, 3, C.plum);
+            rect(
+              x + 3,
+              y + 32,
+              31 * (1 - (arcade.cooldowns[station.id] - arcade.elapsed) / 4),
+              3,
+              station.color,
+            );
+          }
+        }
+        function drawChaos() {
+          const t = MAP.tile;
+          for (const incident of arcade.incidents) {
+            const x = MAP.x + incident.x * t,
+              y = MAP.y + incident.y * t;
+            if (incident.challenge === "dance")
+              incident.trail.forEach((cell, i) =>
+                sprite(
+                  MAP.x + cell.x * t + 6,
+                  MAP.y + cell.y * t,
+                  [C.mint, C.orange, C.pink][i % 3],
+                  1.7,
+                  { clown: true },
+                ),
+              );
+            const color = incident.late ? C.orange : C.pink;
+            for (const [dx, dy] of [
+              [-3, -3],
+              [33, -3],
+              [-3, 34],
+              [33, 34],
+            ]) {
+              rect(x + dx, y + dy, 7, 2, color);
+              rect(x + dx, y + dy, 2, 7, color);
+            }
+            if (incident.type === "raccoon") {
+              raccoon(x + 7, y + 12);
+              rect(x + 19, y + 1, 16, 19, C.cream);
+              coin(x + 23, y + 7, 1);
+            } else if (incident.type === "goose") {
+              rect(x + 4, y + 17, 25, 15, C.cream);
+              rect(x + 25, y + 5, 8, 24, C.cream);
+              rect(x + 25, y + 1, 12, 10, C.cream);
+              rect(x + 35, y + 6, 9, 4, C.orange);
+              rect(x + 31, y + 3, 2, 2, C.ink);
+              rect(x + 10, y + 32, 3, 5, C.orange);
+              rect(x + 22, y + 32, 3, 5, C.orange);
+              rect(x - 2, y + 9, 16, 19, C.peach);
+              text("!", x + 3, y + 13, 1, C.ink);
+            } else if (
+              incident.type === "printer" ||
+              incident.type === "slides"
+            ) {
+              rect(x + 4, y + 9, 31, 24, C.blue);
+              rect(x + 9, y, 20, 16, C.cream);
+              rect(x + 9, y + 20, 20, 7, C.ink);
+              rect(x + 12, y + 25, 14, 16, C.cream);
+              for (let i = 0; i < 3; i++)
+                rect(x + 14, y + 28 + i * 4, 10, 1, C.plum);
+              rect(x + 28, y + 13, 3, 3, C.pink);
+              if (incident.type === "slides") {
+                panel(x - 30, y + 50, 101, 30, C.purple, C.plum);
+                text("SLIDE 64/87", x + 20, y + 61, 1, C.peach, "center");
+              }
+            } else {
+              sprite(
+                x + 6,
+                y - 1,
+                incident.type === "meeting" ? C.blue : C.orange,
+                2,
+                {
+                  clown: incident.challenge === "dance",
+                  hat: incident.type === "livestream",
+                },
+              );
+              if (incident.type === "meeting") {
+                rect(x + 23, y + 15, 15, 22, C.cream);
+                for (let i = 0; i < 3; i++)
+                  rect(x + 26, y + 19 + i * 5, 9, 2, C.plum);
+              }
+              if (incident.type === "livestream") {
+                rect(x + 25, y + 9, 12, 19, C.ink);
+                rect(x + 28, y + 12, 6, 11, C.pink);
+                text("LIVE", x + 16, y + 47, 1, C.pink, "center");
+              }
+              if (incident.type === "exes")
+                sprite(x + 28, y + 4, C.pink, 1.5, { hair: C.ink });
+            }
+            const width = (incident.label.length + 2) * 6 + 8;
+            rect(x + 19 - width / 2, y - 18, width, 13, C.ink);
+            text("! " + incident.label, x + 19, y - 15, 1, color, "center");
+          }
+          for (const paper of arcade.hazards) {
+            const x = MAP.x + paper.x * t + 13,
+              y = MAP.y + paper.y * t + 10;
+            rect(x + 2, y + 2, 14, 19, C.ink);
+            rect(x, y, 14, 19, C.cream);
+            for (let i = 0; i < 3; i++)
+              rect(x + 3, y + 4 + i * 4, 8, 2, C.rose);
+          }
+          if (!reduced)
+            for (const item of arcade.confetti)
+              rect(MAP.x + item.x * t, MAP.y + item.y * t, 5, 3, item.color);
+          for (const item of arcade.popups)
+            text(
+              item.label,
+              MAP.x + item.x * t + 19,
+              MAP.y + item.y * t - (1.7 - item.life) * 20,
+              1,
+              C.mint,
+              "center",
+            );
+          if (arcade.elapsed < arcade.headlineUntil) {
+            panel(190, 129, 580, 27, C.ink, C.pink);
+            text(arcade.headline, 480, 138, 1, C.peach, "center");
+          }
+        }
+        function drawChallenge() {
+          const challenge = arcade.challenge;
+          panel(142, 182, 676, 329, C.ink, C.pink);
+          text(
+            challenge.incident.challenge === "karaoke"
+              ? "EMERGENCY KARAOKE"
+              : "DANCE OFF / MUNICIPAL EDITION",
+            480,
+            207,
+            2,
+            C.peach,
+            "center",
+          );
+          paragraph(challenge.incident.body, 170, 246, 620, 2, C.cream, 22);
+          const arrows = { up: "↑", down: "↓", left: "←", right: "→" };
+          const start = 480 - challenge.pattern.length * 55;
+          challenge.pattern.forEach((dir, i) => {
+            const color =
+              i < challenge.progress
+                ? C.mint
+                : i === challenge.progress
+                  ? C.peach
+                  : C.plum;
+            panel(start + i * 110 + 8, 342, 92, 78, C.night, color);
+            text(arrows[dir], start + i * 110 + 55, 359, 6, color, "center");
+          });
+          rect(225, 448, 510, 8, C.purple);
+          rect(
+            225,
+            448,
+            (510 * Math.max(0, challenge.remaining)) / 8,
+            8,
+            C.pink,
+          );
+          text(
+            "COPY THE ARROWS. " + Math.ceil(challenge.remaining) + " SEC.",
+            480,
+            479,
+            2,
+            C.cream,
+            "center",
+          );
+          footer(
+            "THE ROOM PAUSES WHILE YOU COMMIT TO THE BIT",
+            "↑↓←→ HIT THE SEQUENCE",
+          );
+        }
+        function drawWorld(isArcade = false) {
+          rect(0, 65, 960, 542, C.night);
+          const m = MAP,
+            t = m.tile;
+          if (isArcade) {
+            text(
+              [
+                "ACT I / REPLY ALL",
+                "ACT II / COMMUNITY INPUT",
+                "ACT III / MUNICIPAL CIRCUS",
+              ][Math.min(2, Math.floor(arcade.elapsed / 30))],
+              62,
+              83,
+              1,
+              C.peach,
+            );
+            text(
+              String(Math.ceil(90 - arcade.elapsed)).padStart(2, "0") + " SEC",
+              62,
+              103,
+              2,
+              C.cream,
+            );
+            text(
+              "SCORE " + String(arcade.points).padStart(5, "0"),
+              896,
+              83,
+              2,
+              C.cream,
+              "right",
+            );
+            text("VIBE", 410, 84, 1, C.pink);
+            for (let i = 0; i < 20; i++)
+              rect(
+                445 + i * 8,
+                82,
+                6,
+                8,
+                i < arcade.vibe / 5 ? C.pink : C.purple,
+              );
+            text("STAMINA", 410, 105, 1, C.blue);
+            for (let i = 0; i < 5; i++)
+              heart(
+                465 + i * 16,
+                102,
+                2,
+                i < arcade.stamina ? C.mint : C.purple,
+              );
+            text(
+              "FIXED " + arcade.resolved + "/9  CHAIN " + arcade.combo,
+              896,
+              107,
+              1,
+              arcade.combo >= 3 ? C.mint : C.peach,
+              "right",
+            );
+          } else {
+            const heading =
+              stage === "decision"
+                ? "CHAPTER 01 / THE DECISION"
+                : stage === "controversy"
+                  ? "CHAPTER 02 / THE CONTROVERSY"
+                  : "INTERMISSION / SATURDAY BEST";
+            text(heading, 62, 85, 1, C.peach);
+            text(
+              world === "bar" ? "LAST DITCH BAR" : "THE TOWN COMMON",
+              62,
+              104,
+              2,
+              C.cream,
+            );
+            text("YOU ♥", 899, 101, 1, C.pink, "right");
+          }
+          panel(m.x - 4, m.y - 4, t * m.w + 8, t * m.h + 8, C.brown, C.plum);
+          if (world === "town" && !isArcade) {
+            rect(m.x, m.y, t * m.w, t * m.h, C.green);
+            for (let gy = 0; gy < m.h; gy++)
+              for (let gx = 0; gx < m.w; gx++) {
+                if ((gx * 13 + gy * 7) % 5 === 0) {
+                  rect(m.x + gx * t + 5, m.y + gy * t + 8, 4, 3, C.mint);
+                  rect(m.x + gx * t + 12, m.y + gy * t + 19, 3, 4, C.teal);
+                }
+              }
+            rect(m.x + 9 * t, m.y, 3 * t, t * m.h, C.brown);
+            rect(m.x, m.y + 6 * t, t * m.w, 2 * t, C.brown);
+            for (let i = 0; i < 12; i++)
+              rect(m.x + i * 71, m.y + 6 * t + 34, 12, 3, C.rust);
+            tree(m.x + 130, m.y + 108, 0.65, C.orange);
+            tree(m.x + 732, m.y + 103, 0.8, C.rust);
+            tree(m.x + 741, m.y + 333, 0.55, C.rose);
+            rect(m.x + 230, m.y + 8, 90, 63, C.rust);
+            rect(m.x + 240, m.y + 1, 70, 12, C.plum);
+            text("CO-OP", m.x + 275, m.y + 25, 2, C.cream, "center");
+            rect(m.x + 263, m.y + 49, 23, 22, C.plum);
+            lights(m.x + 341, m.y + 23, 143, 6);
+          } else {
+            for (let gy = 0; gy < m.h; gy++) {
+              rect(
+                m.x,
+                m.y + gy * t,
+                t * m.w,
+                t - 1,
+                gy % 2 ? C.brown : C.plum,
+              );
+              for (let gx = 0; gx < m.w; gx++)
+                rect(
+                  m.x + gx * t + (gy % 2 ? 19 : 0),
+                  m.y + gy * t,
+                  1,
+                  t,
+                  C.brown,
+                );
+            }
+            rect(m.x, m.y, t * m.w, 26, C.purple);
+            rect(m.x, m.y + 26, t * m.w, 4, C.rust);
+            lights(m.x + 12, m.y + 3, t * m.w - 28, 27);
+            rect(m.x + 8 * t, m.y + 4 * t, 7 * t, 3 * t, C.rose);
+            rect(
+              m.x + 8 * t + 5,
+              m.y + 4 * t + 5,
+              7 * t - 10,
+              3 * t - 10,
+              C.plum,
+            );
+            for (let i = 0; i < 7; i++)
+              rect(m.x + 8 * t + 14 + i * 35, m.y + 4 * t + 13, 11, 5, C.rose);
+            rect(m.x, m.y + 54, 12, 245, C.rust);
+            rect(m.x + t * m.w - 12, m.y + 54, 12, 245, C.rust);
+            if (!isArcade) {
+              rect(m.x + 6 * t, m.y + 38, 9 * t, 24, C.ink);
+              rect(m.x + 6 * t, m.y + 34, 9 * t, 23, C.orange);
+              rect(m.x + 6 * t, m.y + 34, 9 * t, 5, C.peach);
+              for (let i = 0; i < 9; i++) {
+                rect(
+                  m.x + 6 * t + 17 + i * 36,
+                  m.y + 21,
+                  6,
+                  14,
+                  [C.green, C.rose, C.blue][i % 3],
+                );
+                rect(m.x + 6 * t + 19 + i * 36, m.y + 18, 2, 5, C.cream);
+              }
+              for (const col of [7, 9, 11, 13]) {
+                rect(m.x + col * t + 8, m.y + 88, 22, 7, C.ink);
+                rect(m.x + col * t + 6, m.y + 79, 26, 12, C.rust);
+                rect(m.x + col * t + 11, m.y + 92, 4, 14, C.ink);
+                rect(m.x + col * t + 24, m.y + 92, 4, 14, C.ink);
+              }
+              rect(m.x + 10 * t, m.y + 9 * t, 38, 38, C.night);
+              text(
+                "TOWN ↓",
+                m.x + 10 * t + 19,
+                m.y + 9 * t + 16,
+                1,
+                C.cream,
+                "center",
+              );
+              text("OPEN", m.x + 16 * t, m.y + 45, 2, C.pink);
+              if (refused) raccoon(m.x + 6 * t, m.y + 8 * t);
+            }
+          }
+          if (isArcade) {
+            STATIONS.forEach(drawStation);
+            drawChaos();
+            for (const visitor of arcade.visitors) {
+              const x = m.x + visitor.x * t + 6,
+                y = m.y + visitor.y * t;
+              sprite(x, y, C.orange, 2, {
+                clown: visitor.kind === "clown",
+                hat: visitor.kind === "petition",
+                mask:
+                  visitor.kind === "care"
+                    ? { base: 0, color: 0, pattern: 1, accessory: 3 }
+                    : null,
+              });
+              text("!", x + 13, y - 17, 2, C.peach, "center");
+              rect(x, y + 42, 26 * (visitor.patience / 14), 3, C.orange);
+            }
+            for (const patron of arcade.patrons) {
+              const x = m.x + patron.x * t + 6,
+                y = m.y + patron.y * t;
+              sprite(x, y, patron.color, 1.7, {
+                skin: patron.id % 3 === 0 ? C.rust : C.peach,
+                mask:
+                  patron.id % 2
+                    ? { base: 1, color: 1, pattern: 0, accessory: 3 }
+                    : null,
+              });
+              mug(x + 22, y + 2, C.peach);
+              rect(x - 2, y + 37, 34, 4, C.ink);
+              rect(
+                x - 1,
+                y + 38,
+                (32 * patron.patience) / patron.max,
+                2,
+                patron.patience < 6 ? C.pink : C.mint,
+              );
+            }
+          } else
+            for (const object of storyObjects()) {
+              const x = m.x + object.x * t,
+                y = m.y + object.y * t;
+              if (["tess", "ruth", "willow", "cricket"].includes(object.id)) {
+                sprite(
+                  x + 6,
+                  y - 4,
+                  {
+                    tess: C.pink,
+                    ruth: C.blue,
+                    willow: C.mint,
+                    cricket: C.orange,
+                  }[object.id],
+                  2,
+                  {
+                    hat: object.id === "ruth",
+                    skin: object.id === "willow" ? C.rust : C.peach,
+                    mask:
+                      object.id === "willow"
+                        ? { base: 0, color: 0, pattern: 1, accessory: 3 }
+                        : null,
+                  },
+                );
+                text(object.id, x + 19, y - 15, 1, C.cream, "center");
+                if (
+                  object.id === "tess" &&
+                  (stage === "decision" || stage === "controversy")
+                )
+                  text(
+                    "!",
+                    x + 19,
+                    y - 34 + (reduced ? 0 : Math.floor(Math.sin(time * 4) * 2)),
+                    2,
+                    C.peach,
+                    "center",
+                  );
+              } else if (object.id === "notice") {
+                rect(x - 2, y - 3, 44, 44, C.brown);
+                rect(x + 2, y + 1, 36, 34, C.rust);
+                for (let i = 0; i < 5; i++) {
+                  rect(
+                    x + 5 + (i % 3) * 10,
+                    y + 4 + Math.floor(i / 3) * 16,
+                    8,
+                    12,
+                    [C.cream, C.pink, C.mint][i % 3],
+                  );
+                  rect(
+                    x + 8 + (i % 3) * 10,
+                    y + 6 + Math.floor(i / 3) * 16,
+                    2,
+                    2,
+                    C.rose,
+                  );
+                }
+                text("NOTICES", x + 19, y + 42, 1, C.cream, "center");
+              } else if (object.id === "sewing") {
+                rect(x - 3, y + 12, 45, 19, C.rust);
+                rect(x, y + 31, 4, 10, C.ink);
+                rect(x + 33, y + 31, 4, 10, C.ink);
+                rect(x + 6, y + 2, 22, 16, C.cream);
+                rect(x + 19, y + 11, 9, 7, C.plum);
+                rect(x + 28, y + 17, 14, 7, C.pink);
+                text(
+                  "MASKS",
+                  x + 19,
+                  y - 11,
+                  1,
+                  stage === "mask" ? C.peach : C.cream,
+                  "center",
+                );
+                if (stage === "mask")
+                  text("!", x + 19, y - 32, 2, C.peach, "center");
+              } else if (object.id === "jukebox") {
+                rect(x + 2, y - 5, 33, 45, C.orange);
+                rect(x + 6, y - 1, 25, 37, C.pink);
+                rect(x + 8, y + 2, 21, 13, C.night);
+                for (let i = 0; i < 3; i++)
+                  rect(x + 9, y + 22 + i * 4, 19, 2, C.plum);
+                text("♪", x + 14, y + 4, 1, C.cream);
+              } else if (object.id === "door" && world === "town") {
+                rect(x - 7, y + 2, 52, 31, C.ink);
+                text("BAR ↓", x + 19, y + 14, 1, C.cream, "center");
+              }
+            }
+          const px = m.x + player.x * t + 6,
+            py =
+              m.y +
+              player.y * t -
+              3 +
+              (held && !reduced ? Math.floor(Math.sin(time * 18) * 1.5) : 0);
+          sprite(px, py, C.pink, 2, {
+            dir: player.dir,
+            mask: isArcade ? mask : null,
+            hair: C.ink,
+          });
+          rect(px + 9, py - 10, 8, 3, C.cream);
+          rect(px + 11, py - 7, 4, 3, C.cream);
+          if (!dialog) {
+            if (isArcade) {
+              const active = arcade.incidents
+                .slice(0, 3)
+                .map((item) => item.label + " → " + item.station.toUpperCase())
+                .join(" / ");
+              text(
+                active || "A MOMENT OF PEACE. IT WILL NOT LAST.",
+                70,
+                522,
+                1,
+                C.peach,
+              );
+              paragraph(
+                time < toastUntil
+                  ? toast
+                  : "BUMP A ! TO HANDLE THE DRAMA. DODGE THE PAPERWORK. DRINKS ARE OPTIONAL.",
+                70,
+                547,
+                820,
+                2,
+                C.cream,
+                21,
+              );
+            } else {
+              panel(62, 533, 836, 55, C.ink, C.plum);
+              text("NEXT", 80, 549, 1, C.peach);
+              paragraph(
+                stage === "decision"
+                  ? "BUMP INTO TESS AT THE BAR."
+                  : stage === "controversy"
+                    ? "MEET TESS BY THE CO-OP."
+                    : "BUMP THE SEWING TABLE TO CHOOSE YOUR MASK.",
+                139,
+                549,
+                730,
+                2,
+                C.cream,
+              );
+            }
+          }
+          footer(
+            isArcade
+              ? "BUMP ! / DODGE PAPER / CHAIN 3 SAVES TO SURF"
+              : world === "bar"
+                ? "A PLACE TO LAND. A PLACE TO STAY."
+                : "WESTERN MASS / FALL, PROBABLY",
+            "↑↓←→ MOVE + BUMP",
+          );
+        }
+        function drawDialogue() {
+          const full = dialog.pages[dialog.page],
+            done = dialog.chars >= full.length,
+            lastPage = dialog.page === dialog.pages.length - 1;
+          const lines = wrap(full, 816, 2);
+          const choiceHeight =
+            dialog.choices && lastPage ? dialog.choices.length * 27 + 12 : 0;
+          const height = 58 + lines.length * 22 + choiceHeight;
+          const y = 593 - height;
+          panel(40, y, 880, height, C.ink, C.cream);
+          rect(54, y + 14, 4, 11, C.pink);
+          text(dialog.speaker, 69, y + 15, 1, C.peach);
+          text(
+            dialog.page + 1 + "/" + dialog.pages.length,
+            898,
+            y + 15,
+            1,
+            C.blue,
+            "right",
+          );
+          paragraph(
+            full.slice(0, Math.floor(dialog.chars)),
+            69,
+            y + 43,
+            816,
+            2,
+            C.cream,
+            22,
+          );
+          if (done && lastPage && dialog.choices) {
+            const top = y + 48 + lines.length * 22;
+            dialog.choices.forEach((option, i) => {
+              if (i === dialog.index) {
+                rect(59, top + i * 27 - 5, 842, 24, C.purple);
+                text("→", 71, top + i * 27, 2, C.peach);
+              }
+              text(
+                option.label,
+                102,
+                top + i * 27,
+                2,
+                i === dialog.index ? C.cream : C.blue,
+              );
+            });
+            footer(
+              "EVERY CHOICE CHANGES THE ROOM",
+              "↑↓ CHOOSE  → CONFIRM  ← BACK",
+            );
+          } else {
+            if (done && (reduced || Math.floor(time * 2) % 2 === 0))
+              text("↓", 876, y + height - 24, 2, C.peach);
+            footer(
+              "TAKE YOUR TIME. WE CAN WAIT.",
+              "ANY ARROW " + (done ? "CONTINUE" : "REVEAL"),
+            );
+          }
+        }
+        function drawFeed() {
+          section(
+            "CHAPTER 01 / YOU POSTED IT",
+            "THE COMMENT SECTION HAS ENTERED THE CHAT.",
+          );
+          const start = clamp(feedIndex - 1, 0, FEED.length - 3);
+          for (let slot = 0; slot < 3; slot++) {
+            const index = start + slot,
+              item = FEED[index],
+              y = 165 + slot * 133,
+              active = index === feedIndex;
+            panel(
+              60,
+              y,
+              830,
+              121,
+              active ? C.purple : C.night,
+              active ? C.pink : C.plum,
+            );
+            rect(77, y + 17, 38, 38, [C.green, C.rose, C.teal][index % 3]);
+            text(item[0][0], 96, y + 24, 3, C.cream, "center");
+            text("@" + item[0], 132, y + 17, 1, C.peach);
+            paragraph(item[1], 132, y + 39, 725, 2, C.cream, 21);
+            text(item[2], 132, y + 102, 1, C.blue);
+          }
+          rect(913, 165, 4, 387, C.purple);
+          rect(913, 165 + (feedIndex / (FEED.length - 1)) * 351, 4, 36, C.pink);
+          text(
+            feedIndex + 1 + " / " + FEED.length,
+            480,
+            577,
+            1,
+            C.blue,
+            "center",
+          );
+          footer(
+            "NOTIFICATIONS: A LOT",
+            "↑↓ SCROLL  → " +
+              (feedIndex === FEED.length - 1 ? "CONTINUE" : "NEXT"),
+          );
+        }
+        function drawZoom() {
+          section(
+            "CHAPTER 02 / MEETING ID: HONK-HONK",
+            "A PERFECTLY NORMAL TOWN HALL.",
+          );
+          const names = [
+            "DOTTIE (HOST?)",
+            "WILLOW",
+            "TESS",
+            "BEANS THE DOG",
+            "JUGGLING LAB 201",
+            "PAT / SHARING SCREEN",
+          ];
+          for (let i = 0; i < 6; i++) {
+            const x = 62 + (i % 3) * 283,
+              y = 166 + Math.floor(i / 3) * 179;
+            panel(
+              x,
+              y,
+              267,
+              161,
+              C.purple,
+              i === zoomRound % 6 ? C.mint : C.plum,
+            );
+            rect(x + 8, y + 8, 251, 121, [C.teal, C.plum, C.brown][i % 3]);
+            rect(x + 15, y + 23, 44, 61, C.night);
+            rect(x + 19, y + 27, 36, 53, C.blue);
+            rect(x + 204, y + 65, 25, 51, C.brown);
+            rect(x + 196, y + 51, 40, 28, C.green);
+            if (i === 3) {
+              rect(x + 100, y + 70, 60, 33, C.peach);
+              rect(x + 87, y + 47, 35, 41, C.rust);
+              rect(x + 83, y + 44, 11, 32, C.brown);
+              rect(x + 99, y + 58, 5, 5, C.ink);
+              rect(x + 115, y + 68, 12, 8, C.ink);
+            } else
+              sprite(
+                x + 107,
+                y + 24,
+                [C.orange, C.mint, C.pink, C.blue, C.cream, C.blue][i],
+                5,
+                {
+                  clown: i === 0 || i === 4,
+                  mask:
+                    i === 1
+                      ? { base: 0, color: 0, pattern: 1, accessory: 3 }
+                      : null,
+                },
+              );
+            text(names[i], x + 12, y + 142, 1, C.cream);
+            text(
+              i === 0 ? "♪" : "X",
+              x + 243,
+              y + 139,
+              2,
+              i === 0 ? C.mint : C.pink,
+            );
+          }
+          text(
+            "YOU ARE MUTED. EVERYONE ELSE IS NOT.",
+            480,
+            564,
+            1,
+            C.peach,
+            "center",
+          );
+          footer(
+            "CLOWN SCHOOL PRO ACCOUNT / 6 PARTICIPANTS",
+            "ANY ARROW CONTINUE",
+          );
+        }
+        function drawMask() {
+          section(
+            "INTERMISSION / YOUR SATURDAY ARMOR",
+            "DRESS FOR THE DISCOURSE.",
+          );
+          panel(62, 174, 310, 352, C.purple, C.plum);
+          rect(83, 195, 268, 280, C.plum);
+          rect(102, 217, 229, 257, C.purple);
+          sprite(137, 218, C.pink, 12, { mask, hair: C.ink });
+          text(MASKS[mask.base].label, 217, 495, 2, C.cream, "center");
+          const labels = ["BASE TYPE", "COLOR", "PATTERN", "ACCESSORY", "DONE"];
+          const values = [
+            MASKS[mask.base].label,
+            COLOR_OPTIONS[mask.color][0],
+            PATTERNS[mask.pattern],
+            ACCESSORIES[mask.accessory],
+            "LOOK GOOD. DO GOOD.",
+          ];
+          for (let i = 0; i < 5; i++) {
+            const y = 175 + i * 70;
+            panel(
+              410,
+              y,
+              486,
+              59,
+              i === maskRow ? C.purple : C.night,
+              i === maskRow ? C.peach : C.plum,
+            );
+            text(labels[i], 430, y + 12, 1, i === maskRow ? C.peach : C.blue);
+            text(values[i], 653, y + 32, 2, C.cream, "center");
+            if (i === maskRow) {
+              if (i !== 4) text("←", 427, y + 31, 2, C.peach);
+              text("→", 867, y + 31, 2, C.peach);
+            }
+          }
+          text("STAMINA", 64, 549, 1, C.blue);
+          for (let i = 0; i < 5; i++)
+            heart(
+              120 + i * 21,
+              545,
+              3,
+              i < MASKS[mask.base].stamina ? C.mint : C.plum,
+            );
+          paragraph(MASKS[mask.base].detail, 410, 542, 478, 1, C.mint, 17);
+          text("YOUR STYLE STAYS ON YOUR SPRITE.", 64, 579, 1, C.peach);
+          footer("MASKS WELCOME. ALWAYS.", "↑↓ CATEGORY  ←→ CHANGE");
+        }
+        function drawReady() {
+          section(
+            "PART 02 / A SHIFT TO REMEMBER",
+            "SATURDAY NIGHT. DEEP BREATH.",
+          );
+          text(
+            "NINE DISASTERS. ONE BAR. ABSOLUTELY NO CHILL.",
+            480,
+            169,
+            2,
+            C.peach,
+            "center",
+          );
+          const cards = [
+            [
+              "01 / CHASE",
+              "Catch the tip-jar raccoon. Dodge flying petitions. Bump a ! to deal with it.",
+              "THE PAPERWORK BITES",
+            ],
+            [
+              "02 / IMPROVISE",
+              "Choose a fix or an absurd escalation. Tools handle matching incidents.",
+              "+500 PER DISASTER",
+            ],
+            [
+              "03 / DANCE OFF",
+              "Copy arrow sequences to tame the conga line. Chain 3 saves to clear papers.",
+              "DRINKS ARE OPTIONAL",
+            ],
+          ];
+          cards.forEach((card, i) => {
+            const x = 58 + i * 287;
+            panel(x, 220, 270, 229, C.night, C.plum);
+            text(card[0], x + 20, 243, 2, C.cream);
+            if (i === 0) {
+              raccoon(x + 111, 302);
+              coin(x + 150, 295, 2);
+            } else if (i === 1) {
+              text("♪", x + 100, 288, 5, C.pink);
+              text("♪", x + 154, 280, 3, C.blue);
+            } else {
+              heart(x + 112, 282, 5, C.pink);
+            }
+            paragraph(card[1], x + 20, 345, 235, 1, C.cream, 18);
+            text(card[2], x + 135, 424, 1, C.blue, "center");
+          });
+          text("YOUR ALLIES", 62, 479, 1, C.peach);
+          text(
+            [
+              "ACCESS CREW " + (factions.care >= 2 ? "♥" : "-"),
+              "COMMITTEE " + (factions.petition >= 1 ? "♥" : "-"),
+              "CLOWNS " + (factions.clown >= 2 ? "♥" : "-"),
+            ].join("   "),
+            62,
+            502,
+            2,
+            C.cream,
+          );
+          text("→ OPEN THE DOORS", 480, 559, 3, C.mint, "center");
+          footer(
+            MASKS[mask.base].label + " EQUIPPED",
+            "← MASK EDITOR  → START",
+          );
+        }
+        function drawBoss() {
+          section(
+            "FINAL BOSS / DEFEAT THROUGH DIALOGUE",
+            "THE LISTSERV HAS ARRIVED.",
+          );
+          text(
+            "AGENDA ITEMS: " + Math.min(bossRound + 1, 3) + " / 3",
+            480,
+            163,
+            2,
+            C.peach,
+            "center",
+          );
+          rect(183, 202, 594, 173, C.purple);
+          rect(204, 219, 551, 140, C.plum);
+          lights(204, 213, 541, 16);
+          sprite(412, 223, C.blue, 6, { hat: true, hair: C.blue });
+          rect(484, 280, 43, 67, C.cream);
+          rect(494, 275, 21, 12, C.rust);
+          for (let i = 0; i < 5; i++) rect(491, 294 + i * 9, 29, 3, C.plum);
+          sprite(305, 275, C.pink, 4, { mask, dir: "right" });
+          text("LET'S TALK.", 610, 261, 2, C.cream, "center");
+          footer(
+            "THE PEN IS MIGHTIER THAN THE REPLY-ALL",
+            "↑↓ CHOOSE  → CONFIRM",
+          );
+        }
+        function drawTally() {
+          text("SHIFT COMPLETE", 480, 102, 1, C.peach, "center");
+          text("SATURDAY: SURVIVED.", 480, 137, 4, C.cream, "center");
+          heart(464, 187, 5, C.pink);
+          panel(215, 251, 530, 293, C.night, C.plum);
+          const rows = [
+            ["ARCADE POINTS", arcade.points],
+            ["PROFIT BONUS", meters.profit * 10],
+            ["COMMUNITY TRUST", meters.trust * 10],
+            ["LOW CHAOS BONUS", (100 - meters.chaos) * 10],
+          ];
+          let total = 0;
+          rows.forEach(([label, value], i) => {
+            const count = Math.floor(
+              value * clamp((tallyAge - i * 0.8) / 0.7, 0, 1),
+            );
+            total += count;
+            text(label, 242, 278 + i * 38, 2, C.blue);
+            text(
+              String(count).padStart(5, "0"),
+              716,
+              278 + i * 38,
+              2,
+              i === 0 ? C.cream : C.mint,
+              "right",
+            );
+          });
+          rect(240, 438, 480, 2, C.plum);
+          text("TOTAL", 243, 474, 3, C.peach);
+          text(String(total).padStart(5, "0"), 715, 465, 5, C.cream, "right");
+          text(
+            "THE LIGHTS ARE STILL ON. THAT COUNTS.",
+            480,
+            575,
+            1,
+            C.blue,
+            "center",
+          );
+          footer(
+            "NOT BAD FOR A BAR WITH ONE WORKING PRINTER",
+            tallyAge < 4.6 ? "ANY ARROW TALLY" : "ANY ARROW YOUR ENDING",
+          );
+        }
+        function drawEnding() {
+          const end = ENDINGS[ending];
+          text("YOUR ENDING / " + end.tag, 480, 91, 1, C.peach, "center");
+          text(end.title, 480, 122, 3, C.cream, "center");
+          text(end.subtitle, 480, 161, 1, C.pink, "center");
+          exterior(ending);
+          panel(89, 486, 782, 108, C.ink, C.plum);
+          paragraph(end.body, 111, 506, 738, 2, C.cream, 23);
+          footer(
+            "THE COMMUNITY IS STILL HERE. SO ARE YOU.",
+            "ANY ARROW CONTINUE",
+          );
+        }
+        function drawInitials() {
+          text(
+            "YOU KEPT A LITTLE PLACE ALIVE.",
+            480,
+            105,
+            1,
+            C.peach,
+            "center",
+          );
+          text("PUT YOUR NAME ON THE WALL.", 480, 143, 3, C.cream, "center");
+          text(
+            String(score).padStart(5, "0") + " POINTS",
+            480,
+            199,
+            3,
+            C.mint,
+            "center",
+          );
+          for (let i = 0; i < 3; i++) {
+            const x = 304 + i * 123;
+            panel(
+              x,
+              285,
+              104,
+              105,
+              C.night,
+              initialPos === i ? C.peach : C.plum,
+            );
+            text(
+              String.fromCharCode(65 + initials[i]),
+              x + 52,
+              312,
+              7,
+              C.cream,
+              "center",
+            );
+            if (initialPos === i) {
+              text("↑", x + 52, 254, 3, C.peach, "center");
+              text("↓", x + 52, 409, 3, C.peach, "center");
+            }
+          }
+          text(
+            ENDINGS[ending].tag + " / " + MASKS[mask.base].label,
+            480,
+            457,
+            1,
+            C.blue,
+            "center",
+          );
+          if (submitStatus === "sending")
+            text("SAVING YOUR LEGEND...", 480, 526, 2, C.peach, "center");
+          else if (submitStatus === "error") {
+            paragraph(submitError, 92, 493, 776, 1, C.pink, 16);
+            ["RETRY", "CONTINUE WITHOUT SAVING"].forEach((label, i) =>
+              text(
+                (submitChoice === i ? "→ " : "  ") + label,
+                480,
+                531 + i * 27,
+                2,
+                submitChoice === i ? C.cream : C.blue,
+                "center",
+              ),
+            );
+          } else {
+            text("↑↓ LETTER   → NEXT   ← BACK", 480, 514, 2, C.cream, "center");
+            text(
+              initialPos === 2
+                ? "→ ONE MORE TIME TO SUBMIT"
+                : "THREE LETTERS. A SMALL-TOWN LEGEND.",
+              480,
+              553,
+              1,
+              C.peach,
+              "center",
+            );
+          }
+          footer(
+            "GLOBAL HIGH SCORES / THREE-LETTER INITIALS",
+            submitStatus === "sending"
+              ? "← SKIP"
+              : submitStatus === "error"
+                ? "↑↓ CHOOSE  → CONFIRM"
+                : "↑↓ LETTER  → NEXT",
+          );
+        }
+        function drawLeaderboard() {
+          section(
+            "THE LAST DITCH HALL OF FAME",
+            "LOCAL LEGENDS. GLOBAL SCORES.",
+          );
+          text(
+            rank && boardFromRun
+              ? "YOUR RANK: #" + rank
+              : "TEN PEOPLE WHO REALLY KEPT IT TOGETHER.",
+            52,
+            156,
+            1,
+            C.peach,
+          );
+          panel(53, 190, 854, 373, C.night, C.plum);
+          const labels = [
+            ["#", 76],
+            ["NAME", 128],
+            ["SCORE", 268],
+            ["ENDING", 414],
+            ["MASK", 738],
+          ];
+          labels.forEach(([label, x]) => text(label, x, 209, 1, C.blue));
+          rect(72, 230, 815, 1, C.plum);
+          if (boardStatus === "loading")
+            text("CONSULTING THE RECORDS...", 480, 366, 2, C.peach, "center");
+          else if (boardStatus === "offline") {
+            text("HIGH SCORES OFFLINE", 480, 331, 3, C.pink, "center");
+            text(
+              "THE BAR IS STILL OPEN. KEEP PLAYING.",
+              480,
+              379,
+              1,
+              C.cream,
+              "center",
+            );
+            text("↑ RETRY", 480, 416, 2, C.peach, "center");
+          } else if (!board.length) {
+            heart(465, 296, 5, C.pink);
+            text(
+              "A CLEAN SLATE. A STICKY FLOOR.",
+              480,
+              377,
+              2,
+              C.cream,
+              "center",
+            );
+            text(
+              "NO SCORES YET. YOUR NAME COULD BE FIRST.",
+              480,
+              420,
+              1,
+              C.blue,
+              "center",
+            );
+          } else
+            board.forEach((entry, i) => {
+              const y = 247 + i * 30;
+              if (i % 2 === 0) rect(64, y - 5, 833, 27, C.purple);
+              const color = i === 0 ? C.peach : C.cream;
+              text(String(i + 1).padStart(2, "0"), 76, y, 2, color);
+              text(entry.initials, 128, y, 2, color);
+              text(String(entry.score).padStart(5, "0"), 268, y, 2, color);
+              text(
+                {
+                  compromise: "COMPROMISE",
+                  clown: "CLOWN ANNEX",
+                  viral: "VIRAL",
+                  committee: "COMMITTEE",
+                }[entry.ending],
+                414,
+                y + 3,
+                1,
+                C.blue,
+              );
+              text(
+                MASKS.find((m) => m.id === entry.mask).label,
+                738,
+                y + 3,
+                1,
+                C.mint,
+              );
+            });
+          text(
+            "SCORES ARE SHARED ACROSS EVERY LAST DITCH PLAYER.",
+            480,
+            582,
+            1,
+            C.blue,
+            "center",
+          );
+          footer(
+            boardFromRun && submitStatus !== "saved"
+              ? "YOUR SCORE WAS NOT SAVED."
+              : "ONE TOWN. A WORLD OF VERY STRONG OPINIONS.",
+            boardFromRun ? "→ CREDITS" : "← TITLE  → TITLE",
+          );
+        }
+        function drawCredits() {
+          text("LAST DITCH", 480, 123, 6, C.cream, "center");
+          text("A WESTERN MASS BAR SAGA", 480, 190, 2, C.peach, "center");
+          for (let i = 0; i < 7; i++)
+            sprite(
+              328 + i * 45,
+              243,
+              [C.pink, C.mint, C.blue, C.orange][i % 4],
+              2,
+              {
+                clown: i === 6,
+                hat: i === 2,
+                mask:
+                  i === 1
+                    ? { base: 0, color: 0, pattern: 1, accessory: 3 }
+                    : null,
+                skin: i % 3 === 0 ? C.rust : C.peach,
+              },
+            );
+          text("FOR THE PLACES THAT MAKE ROOM.", 480, 330, 2, C.pink, "center");
+          text(
+            "AND THE PEOPLE WHO KEEP THEM OPEN.",
+            480,
+            361,
+            2,
+            C.cream,
+            "center",
+          );
+          text(
+            "PIXELS, TINY SYNTHS, AND COMMUNITY SPIRIT.",
+            480,
+            418,
+            1,
+            C.blue,
+            "center",
+          );
+          text(
+            "ALL CHARACTERS, NAMES, AND COMMENTS ARE FICTIONAL.",
+            480,
+            444,
+            1,
+            C.blue,
+            "center",
+          );
+          text(
+            "ACCESS NEEDS ARE REAL. EVERYONE BELONGS.",
+            480,
+            470,
+            1,
+            C.mint,
+            "center",
+          );
+          text(
+            "NO CLOWNS WERE REMOVED FROM THE MAILING LIST.",
+            480,
+            516,
+            1,
+            C.peach,
+            "center",
+          );
+          text("THANK YOU FOR PLAYING ♥", 480, 556, 2, C.cream, "center");
+          footer("THE END / PENDING COMMUNITY REVIEW", "ANY ARROW TITLE");
+        }
+        function drawHelp() {
+          section(
+            "FIELD GUIDE / FOUR KEYS. THAT'S IT.",
+            "HOW TO KEEP A LITTLE BAR ALIVE.",
+          );
+          const rows = [
+            [
+              "↑↓←→",
+              "WALK + BUMP",
+              "Walk into people, doors, and objects. Bump to talk or act.",
+            ],
+            [
+              "↑↓ →",
+              "CHOOSE + CONFIRM",
+              "Up/down picks a choice. Right confirms. Left goes back.",
+            ],
+            [
+              "ANY ↑",
+              "READ THE ROOM",
+              "Any arrow reveals dialogue. Press again to continue.",
+            ],
+            [
+              "← →",
+              "FIND YOUR LOOK",
+              "In the mask editor, up/down picks a row. Left/right cycles.",
+            ],
+          ];
+          rows.forEach(([keys, label, body], i) => {
+            const y = 182 + i * 82;
+            panel(55, y, 850, 70, C.night, C.plum);
+            text(keys, 78, y + 24, 3, C.peach);
+            text(label, 253, y + 13, 2, C.cream);
+            text(body, 253, y + 43, 1, C.blue);
+          });
+          paragraph(
+            "Saturday: chase the raccoon, dodge paperwork, handle nine disasters, and win arrow-sequence dance battles. Drinks are optional stamina breaks. CHAOS MODE skips the story.",
+            62,
+            528,
+            835,
+            1,
+            C.mint,
+            18,
+          );
+          footer("SOUND STARTS WITH YOUR FIRST ARROW", "← BACK  → BACK");
+        }
+        function updateMobileReadout() {
+          const readout = document.getElementById("mobile-readout");
+          let value = "";
+          if (paused)
+            value =
+              "TAKE A BREATHER. Your shift is paused.\nAny arrow to resume.";
+          else if (dialog) {
+            value = dialog.speaker + "\n" + dialog.pages[dialog.page];
+            if (dialog.choices && dialog.page === dialog.pages.length - 1)
+              value +=
+                "\n" +
+                dialog.choices
+                  .map(
+                    (option, i) =>
+                      (i === dialog.index ? "→ " : "  ") + option.label,
+                  )
+                  .join("\n");
+            value +=
+              "\n" +
+              (dialog.chars < dialog.pages[dialog.page].length
+                ? "Any arrow reveals the text."
+                : dialog.choices && dialog.page === dialog.pages.length - 1
+                  ? "↑↓ choose · → confirm · ← back"
+                  : "Any arrow continues.");
+          } else if (screen === "title")
+            value = titleAwake
+              ? [
+                  "STORY MODE",
+                  "CHAOS MODE",
+                  "HIGH SCORES",
+                  "HOW TO PLAY",
+                  audio.muted ? "SOUND OFF" : "SOUND ON",
+                ]
+                  .map((label, i) => (menuIndex === i ? "→ " : "  ") + label)
+                  .join("\n") + "\n↑↓ choose · → confirm"
+              : "LAST DITCH: A WESTERN MASS BAR SAGA\nOne policy change. Everyone has notes.\nPress any arrow to begin.";
+          else if (screen === "world")
+            value =
+              stage === "decision"
+                ? "Walk into Tess at the bar to talk.\n↑↓←→ move and bump."
+                : stage === "controversy"
+                  ? "Meet Tess by the town co-op.\nBump the bottom door to go between bar and town."
+                  : "Bump the sewing table on the right side of the bar to choose your mask.";
+          else if (screen === "feed")
+            value =
+              FEED[feedIndex][0] +
+              "\n" +
+              FEED[feedIndex][1] +
+              "\n↑↓ scroll · → " +
+              (feedIndex === FEED.length - 1 ? "continue" : "next post");
+          else if (screen === "mask")
+            value =
+              [
+                "BASE: " + MASKS[mask.base].label,
+                "COLOR: " + COLOR_OPTIONS[mask.color][0],
+                "PATTERN: " + PATTERNS[mask.pattern],
+                "ACCESSORY: " + ACCESSORIES[mask.accessory],
+                "DONE",
+              ]
+                .map((label, i) => (maskRow === i ? "→ " : "  ") + label)
+                .join("\n") +
+              "\n" +
+              MASKS[mask.base].detail +
+              "\n↑↓ category · ←→ change · → on DONE";
+          else if (screen === "ready")
+            value =
+              "NINE DISASTERS. ZERO CHILL.\nBump a ! to handle the drama or use its matching tool. Dodge flying paperwork. Copy arrows in dance battles. Chain 3 saves to clear papers and recharge tools. Drinks are optional stamina breaks.\n← mask editor · → start the chaos";
+          else if (screen === "arcade" && arcade.challenge) {
+            const challenge = arcade.challenge;
+            const arrows = { up: "↑", down: "↓", left: "←", right: "→" };
+            value =
+              challenge.incident.title +
+              "\n" +
+              challenge.incident.body +
+              "\n" +
+              challenge.pattern
+                .map(
+                  (dir, i) =>
+                    (i === challenge.progress ? "[" : " ") +
+                    arrows[dir] +
+                    (i === challenge.progress ? "]" : " "),
+                )
+                .join(" ") +
+              "\nCopy the arrows. " +
+              Math.ceil(challenge.remaining) +
+              " seconds. The room is paused.";
+          } else if (screen === "arcade")
+            value =
+              Math.ceil(90 - arcade.elapsed) +
+              " seconds · " +
+              arcade.points +
+              " points · Vibe " +
+              Math.round(arcade.vibe) +
+              "\n" +
+              (time < toastUntil
+                ? toast
+                : "Bump ! to handle a disaster. Dodge paperwork. Drinks are optional.") +
+              "\nFIXED " +
+              arcade.resolved +
+              "/9 · CHAIN " +
+              arcade.combo +
+              "\n" +
+              arcade.incidents
+                .slice(0, 3)
+                .map((item) => item.label + " → " + item.station.toUpperCase())
+                .join("\n");
+          else if (screen === "tally")
+            value =
+              "SHIFT COMPLETE\nArcade " +
+              arcade.points +
+              " + Profit " +
+              meters.profit * 10 +
+              " + Trust " +
+              meters.trust * 10 +
+              " + Low chaos " +
+              (100 - meters.chaos) * 10 +
+              "\nTotal: " +
+              score +
+              "\nAny arrow tallies, then continues.";
+          else if (screen === "ending")
+            value =
+              ENDINGS[ending].title +
+              "\n" +
+              ENDINGS[ending].body +
+              "\nAny arrow continues.";
+          else if (screen === "initials")
+            value =
+              "YOUR SCORE: " +
+              score +
+              "\n" +
+              initials
+                .map(
+                  (n, i) =>
+                    (i === initialPos ? "[" : " ") +
+                    String.fromCharCode(65 + n) +
+                    (i === initialPos ? "]" : " "),
+                )
+                .join(" ") +
+              "\n" +
+              (submitStatus === "error"
+                ? submitError +
+                  "\n" +
+                  (submitChoice === 0
+                    ? "→ RETRY\n  CONTINUE WITHOUT SAVING"
+                    : "  RETRY\n→ CONTINUE WITHOUT SAVING") +
+                  "\n↑↓ choose · → confirm"
+                : submitStatus === "sending"
+                  ? "Saving your legend. ← skip"
+                  : "↑↓ letter · → next · ← back\nRight on letter three submits.");
+          else if (screen === "leaderboard")
+            value =
+              "GLOBAL HIGH SCORES\n" +
+              (boardStatus === "offline"
+                ? "HIGH SCORES OFFLINE. ↑ retry."
+                : boardStatus === "loading"
+                  ? "Consulting the records."
+                  : board.length
+                    ? board
+                        .map(
+                          (entry, i) =>
+                            i +
+                            1 +
+                            ". " +
+                            entry.initials +
+                            " / " +
+                            entry.score +
+                            " / " +
+                            ENDINGS[entry.ending].tag,
+                        )
+                        .join("\n")
+                    : "No scores yet. Your name could be first.") +
+              "\n→ " +
+              (boardFromRun ? "credits" : "title");
+          else if (screen === "credits")
+            value =
+              "FOR THE PLACES THAT MAKE ROOM.\nAnd the people who keep them open.\nFictional people. Real community spirit.\nThank you for playing. Any arrow returns to the title.";
+          else if (screen === "help")
+            value =
+              "FOUR KEYS. THAT'S IT.\n↑↓←→ move. Bump ! to handle a disaster.\nDodge flying paperwork. Chase the raccoon.\n↑↓ chooses. → confirms. ← goes back.\nCopy the arrows in dance and karaoke battles.\nChain 3 saves to clear papers and recharge tools.\nDrinks are optional stamina breaks.\nCHAOS MODE skips straight to Saturday.\n← or → returns to the title.";
+          if (readout.textContent !== value) readout.textContent = value;
+          const hud = document.getElementById("mobile-hud"),
+            hudText =
+              "PROFIT " +
+              meters.profit +
+              "  /  TRUST " +
+              meters.trust +
+              "  /  CHAOS " +
+              meters.chaos;
+          if (hud.textContent !== hudText) hud.textContent = hudText;
+        }
+        function render() {
+          rect(0, 0, 960, 640, C.night);
+          if (screen === "title") drawTitle();
+          else if (screen === "world") drawWorld();
+          else if (screen === "feed") drawFeed();
+          else if (screen === "zoom") drawZoom();
+          else if (screen === "mask") drawMask();
+          else if (screen === "ready") drawReady();
+          else if (screen === "arcade") drawWorld(true);
+          else if (screen === "boss") drawBoss();
+          else if (screen === "tally") drawTally();
+          else if (screen === "ending") drawEnding();
+          else if (screen === "initials") drawInitials();
+          else if (screen === "leaderboard") drawLeaderboard();
+          else if (screen === "credits") drawCredits();
+          else if (screen === "help") drawHelp();
+          if (dialog) drawDialogue();
+          if (screen === "arcade" && arcade.challenge) drawChallenge();
+          drawHud();
+          if (paused) {
+            panel(239, 244, 482, 137, C.ink, C.peach);
+            text("TAKE A BREATHER.", 480, 273, 3, C.cream, "center");
+            text("YOUR SHIFT IS PAUSED.", 480, 315, 1, C.blue, "center");
+            text("ANY ARROW TO RESUME", 480, 345, 2, C.peach, "center");
+          }
+          updateMobileReadout();
+        }
+        function frame(now) {
+          const dt = Math.min((now - (last || now)) / 1000, 0.1);
+          last = now;
+          time += dt;
+          if (!paused && !document.hidden) {
+            for (const key of ["profit", "trust", "chaos"])
+              shown[key] += (meters[key] - shown[key]) * Math.min(1, dt * 9);
+            if (dialog) {
+              const before = Math.floor(dialog.chars);
+              dialog.chars = Math.min(
+                dialog.pages[dialog.page].length,
+                dialog.chars + dt * (reduced ? 150 : 44),
+              );
+              if (
+                Math.floor(dialog.chars) !== before &&
+                time - dialog.lastBlip > 0.065
+              ) {
+                dialog.lastBlip = time;
+                sfx("blip");
+              }
+            }
+            if (
+              held &&
+              now >= repeatAt &&
+              !dialog &&
+              !(screen === "arcade" && arcade.challenge) &&
+              (screen === "world" || screen === "arcade")
+            ) {
+              input(held);
+              repeatAt =
+                now +
+                (screen === "arcade"
+                  ? (mask.base === 3 ? 110 : 135) +
+                    (arcade.slowUntil > arcade.elapsed ? 55 : 0)
+                  : 135);
+            }
+            if (screen === "arcade") updateArcade(dt);
+            if (screen === "tally") {
+              const previous = Math.floor(tallyAge * 8);
+              tallyAge += dt;
+              if (tallyAge < 3.2 && Math.floor(tallyAge * 8) !== previous)
+                tone(65, 0.035, 0.022);
+            }
+            music();
+          }
+          render();
+          requestAnimationFrame(frame);
+        }
+        setScreen("title");
+        requestAnimationFrame(frame);
+      })();
+    </script>
+  </body>
+</html>

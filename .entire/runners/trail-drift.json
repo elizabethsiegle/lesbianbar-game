@@ -1,0 +1,37 @@
+{
+  "id": "trail-drift",
+  "display_name": "Drift Eval",
+  "enabled": true,
+  "scope": "trail",
+  "runtime": {
+    "kind": "prompt_runner",
+    "agent": "claude",
+    "timeout_ms": 300000,
+    "sandbox": {
+      "base_template": "claude",
+      "repo_token": "read"
+    }
+  },
+  "automation": {
+    "kind": "trail_prompt"
+  },
+  "prompt": {
+    "template": "You are a drift evaluator for a multi-project demo monorepo. Analyze the changes on branch \"{{branch}}\" compared to \"{{base_branch}}\".\n\nRun `git diff origin/{{base_branch}}...HEAD` to see the changes, then score **drift** from 0 to 100 (higher = more deviation from this repo's established patterns), weighing:\n\n- **Project isolation.** Each top-level directory is a self-contained app with its own dependencies and build. Cross-project imports, shared root-level source, or a root package manifest are drift.\n- **Established stack per project.** Workers apps use ESM TypeScript with `wrangler.jsonc` (not `wrangler.toml`), strict typing, and generated binding types. Deviating from the format already in the directory is drift.\n- **Dependency restraint.** These apps run on a handful of dev dependencies and platform primitives. Pulling in a framework or utility library to do what platform APIs already do is drift.\n- **Typing conventions.** Strict, explicit types and schemas. New `any`, loose casts or disabled checks are drift.\n- **Docs placement.** Specs and plans live under each project's own docs directory; scattering them elsewhere is drift.\n- **Generated and ignored files.** Committing build output, local settings or generated type files that the ignore rules exclude is drift.\n\nScore bands:\n- 0-20: follows the surrounding directory's existing conventions exactly.\n- 21-50: minor stylistic divergence inside one project.\n- 51-75: new dependency, new file layout, or typing conventions loosened.\n- 76-100: cross-project coupling, a second competing config format, or committed generated/ignored artifacts.\n\nOutput ONLY this JSON object as the very last line of your response:\n\n{\"value\": <number 0-100>, \"rationale\": \"<1-2 sentence explanation>\"}"
+  },
+  "select": {
+    "trigger_types": [
+      "api",
+      "push"
+    ]
+  },
+  "output": {
+    "adapter": "last_json_line",
+    "result_type": "trail_monitor",
+    "trail_monitor": {
+      "key": "drift",
+      "label": "Drift",
+      "value_type": "percent",
+      "polarity": "lower_is_better"
+    }
+  }
+}
