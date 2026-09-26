@@ -873,13 +873,13 @@
           clown: {
             title: "HIGHER HONK EDUCATION",
             subtitle: "LAST DITCH, NOW WITH A CLOWN SCHOOL ANNEX.",
-            body: "Tuition pays the rent. The jukebox gets tenure. Quiet hours stay quiet; the honking has an approved schedule.",
+            body: "Classroom Two becomes a Saturday pop-up. The bar keeps its name, the school keeps its noses, and masked hours stay on the calendar.",
             tag: "CLOWN SCHOOL ANNEX",
           },
           viral: {
             title: "LOCAL BAR, NATIONAL DISCOURSE",
             subtitle: "THE INTERNET ARRIVES. THE REGULARS STAY.",
-            body: "A million views. Six think pieces. Ruth still has her usual stool. You use the merch money for better air filters.",
+            body: "Nora's Globe story travels far. Six think pieces follow. Ruth keeps her stool; merch money buys better air filters and clown-proof calendar software.",
             tag: "NATIONALLY VIRAL",
           },
           committee: {
@@ -1016,14 +1016,14 @@
           setScreen("world");
           talk("YOU, OWNER / OCCASIONAL PLUMBER", [
             "Last Ditch. A beloved lesbian bar in a town with three co-ops and no indoor voices.",
-            "The rent is due. The cider is local. The spreadsheet is not looking local enough.",
+            "The rent is due. The cider is local. The clown school next door keeps borrowing our extension cord.",
             "Walk into Tess at the bar. She has an idea. That is usually how these things start.",
           ]);
         }
         function decision() {
           talk(
             "TESS / BAR MANAGER",
-            "Profits are down. What if Saturday were mask-optional? One night. Surely a town with nine mediation circles can discuss this calmly.",
+            "Profits are down. What if Saturday were mask-optional? One night. We can still keep masked hours and the patio. Surely the town can read one sentence.",
             [
               choice("YES", [6, -6, 12], () =>
                 talk(
@@ -1078,7 +1078,7 @@
           ],
           [
             "BEANS_THE_DOG",
-            "I am a dog. My position is that the floor should contain more cheese.",
+            "I am a dog. The clown-school Mask Lab poster has me in it. My agent requests cheese.",
             "4 MIN AGO / 109 LIKES",
           ],
           [
@@ -1088,13 +1088,18 @@
           ],
           [
             "CRICKET_TWO_STEP",
-            "Dance committee here. We support room to move AND a patio. Please stop replying all to the doodle poll.",
+            "Dance committee here. The Mask Lab meme is funny, but the patio is real. Please stop replying all to the doodle poll.",
             "6 MIN AGO / 81 REPLIES",
           ],
           [
             "DOTTIE_SELTZER",
-            "Our clown school has a paid Zoom account. Just saying. The meeting ID does contain HONK.",
+            "Our clown school can host the town hall. The invite says MASK LAB AT LAST DITCH because I reused a calendar. Please do not enroll.",
             "8 MIN AGO / 206 REPLIES",
+          ],
+          [
+            "NORA_INK / BOSTON GLOBE",
+            "Reporter here. Is this a bar policy, a clown class, or both? May I quote the chalkboard? Follow-up: which chalkboard?",
+            "9 MIN AGO / 2 FOLLOW-UPS",
           ],
           [
             "RUTH_USUAL_PLEASE",
@@ -1114,7 +1119,7 @@
           setScreen("world");
           talk(
             "TESS",
-            "The post has more replies than we have chairs. Meet me by the co-op. We need a plan.",
+            "The clown school calendar says we're hosting Mask Lab. A Globe reporter wants a quote. Meet me by the co-op before someone prints a syllabus.",
           );
         }
         function controversy() {
@@ -1144,7 +1149,17 @@
                 factions.petition--;
                 talk(
                   "YOUR PHONE",
-                  "It does not blow over. Someone prints the silence and staples it to a telephone pole.",
+                  "It does not blow over. The Globe reporter asks if silence is the official policy. Someone prints the question and staples it to a pole.",
+                  null,
+                  prepare,
+                );
+              }),
+              choice("RETREAT TO THE CLOWN SCHOOL", [-8, 4, -6], () => {
+                policy = "retreat";
+                factions.clown += 3;
+                talk(
+                  "DOTTIE / CLOWN SCHOOL DIRECTOR",
+                  "Classroom Two is yours for Saturday. Bring the bar, the masks, and Ruth's trivia cards. My students will move the tiny chairs.",
                   null,
                   prepare,
                 );
@@ -1157,7 +1172,7 @@
         const ZOOM = [
           {
             speaker: "DOTTIE SELTZER / MODERATOR",
-            body: "Welcome to the clown school Zoom. I am a trained facilitator. The makeup is also professional. Someone is unmuted inside a tuba.",
+            body: "Welcome to the clown school Zoom. I am a trained facilitator. The makeup is also professional. Our calendar now calls your bar Mask Lab. Someone is unmuted inside a tuba.",
             options: [
               ["ONE MIC. EVERY VOICE GETS A TURN.", [-2, 9, -8], "care"],
               ["HONK IF YOU CAN HEAR ME.", [2, 2, 10], "clown"],
@@ -1184,7 +1199,7 @@
           },
           {
             speaker: "DOTTIE / STILL IN FULL CLOWN MAKEUP",
-            body: "A student has renamed themself HOST. We have six minutes before juggling lab. What can we actually promise for Saturday?",
+            body: "A student has renamed themself HOST. The Globe reporter asks for one sentence. We have six minutes before juggling lab. What can we promise for Saturday?",
             options: [
               ["MASKED EARLY HOUR + OPEN PATIO", [3, 12, -12], "care"],
               ["WELCOME THE CLOWN VOLUNTEERS", [6, 4, 6], "clown"],
@@ -1225,7 +1240,9 @@
           setScreen("world");
           talk(
             "TESS",
-            "Saturday is coming. Pick your mask at the sewing table on the right. We have options. And an alarming number of sequins.",
+            policy === "retreat"
+              ? "We take the bar to Classroom Two tonight. Pick your mask at the sewing table. The clown school has chairs; we have the good cider."
+              : "Saturday is coming. Pick your mask at the sewing table. The Globe reporter will ask more questions. Bring a short answer.",
           );
         }
         function npcTalk(id) {
@@ -1305,7 +1322,7 @@
             visited.add(id);
             talk("RUTH / USUAL, PLEASE", [
               "I came out in 1984. I have outlasted worse than a comment section.",
-              "Give people a place to sit. Keep the water free. And tell me if trivia is still on.",
+              "Give people a place to sit. Keep the water free. Tell the reporter trivia is still on.",
             ]);
           }
         }
@@ -1342,124 +1359,125 @@
         const INCIDENTS = [
           {
             at: 0,
-            type: "raccoon",
-            title: "THE RACCOON HAS THE TIP JAR",
-            label: "TIP JAR",
+            type: "printer",
+            title: "THE SIGN-UP SHEET ATE THE POLICY",
+            label: "MASK LAB",
             x: 12,
             y: 5,
-            station: "snacks",
-            moving: true,
-            body: "The coat-check raccoon has seized the tip jar. She has a tiny briefcase and a surprisingly sound fiscal policy.",
+            station: "chalk",
+            body: "The clown school printed Mask Lab sign-ups over your door policy. Two hundred students think the bar is a final exam.",
             options: [
-              ["TRADE PRETZELS FOR THE MONEY.", [5, 4, -7]],
-              ["APPOINT HER ACTING TREASURER.", [9, 2, 8]],
+              ["POST ONE CLEAR POLICY.", [4, 8, -8]],
+              ["OFFER EXTRA CREDIT IN FLANNEL.", [9, 2, 9]],
             ],
           },
           {
             at: 8,
-            type: "printer",
-            title: "THE REPLY-ALL MACHINE IS SENTIENT",
-            label: "REPLY ALL",
+            type: "reporter",
+            title: "THE GLOBE HAS A QUESTION",
+            label: "GLOBE?",
             x: 4,
             y: 3,
-            station: "chalk",
-            body: "Pat connected the printer to the listserv. Every reply prints itself. Someone just wrote: PLEASE REMOVE ME FROM THIS THREAD.",
+            station: "apology",
+            moving: true,
+            body: "Nora Ink of the Boston Globe has a notebook. Is mask-optional a dress code? Is a clown nose a mask? She needs one quote.",
             options: [
-              ["UNPLUG IT. PRINT ONE CLEAR PLAN.", [3, 6, -9]],
-              ["REPLY WITH ONE EXTREMELY LARGE POSSUM.", [6, 2, 9]],
+              ["MASKS WELCOME. NOSES OPTIONAL.", [2, 8, -8]],
+              ["THE NOSES HAVE A UNION.", [7, 1, 10]],
             ],
           },
           {
             at: 17,
             type: "conga",
-            title: "THE CONGA LINE HAS RIGHT OF WAY",
-            label: "CONGA",
+            title: "THE CLOWNS BEGIN ORIENTATION",
+            label: "HONK 101",
             x: 16,
             y: 4,
             station: "dance",
             moving: true,
             challenge: "dance",
-            body: "Dottie's conga line has annexed the dance floor. Match the steps and steer it somewhere useful.",
+            body: "Clown students mistake the bar line for roll call. Match four steps and steer them to the patio before they issue diplomas.",
           },
           {
             at: 27,
             type: "meeting",
-            title: "A MEETING ABOUT THE MEETING",
-            label: "PETITION",
+            title: "THE POLICY HAS TWO CHALKBOARDS",
+            label: "TWO SIGNS",
             x: 6,
             y: 7,
-            station: "apology",
-            body: "Two rival committees have filed petitions demanding that you stop the other committee's petition. Their chairs are dating.",
+            station: "chalk",
+            body: "One sign says MASKED HOUR. The other says MASK LAB. The committees agree both are legible and neither is helping.",
             options: [
-              ["ONE SHARED TABLE. NO REPLY-ALL.", [3, 7, -8]],
-              ["MAKE BOTH CHAIRS CO-MAYORS OF THE PATIO.", [7, 3, 8]],
+              ["ONE SIGN. TWO CLEAR TIMES.", [3, 9, -8]],
+              ["LET THE SIGNS DEBATE.", [7, 1, 10]],
             ],
           },
           {
             at: 37,
-            type: "livestream",
-            title: "RUTH ACCIDENTALLY WENT NATIONAL",
-            label: "LIVE TV",
+            type: "reporter",
+            title: "THE GLOBE HAS A FOLLOW-UP",
+            label: "FOLLOW-UP",
             x: 15,
             y: 7,
-            station: "lights",
-            body: "Ruth thought this was FaceTime. It is live television. The anchor asks whether Western Mass is legally a group chat.",
+            station: "chalk",
+            moving: true,
+            body: "Nora asks if the clown students work here. Dottie says they are earning practicum credit. Tess says the tip jar is not tuition.",
             options: [
-              ["SHOW THE PATIO AND FREE MASKS.", [5, 7, -6]],
-              ["CUT TO THE RACCOON'S PRESS CONFERENCE.", [10, 1, 12]],
+              ["THEY ARE HELPING. THE BAR SETS POLICY.", [4, 8, -7]],
+              ["THEIR MAJOR IS HOSPITALITY HONK.", [9, 1, 11]],
             ],
           },
           {
             at: 47,
-            type: "goose",
-            title: "THE GOOSE HAS A PETITION",
-            label: "GOOSE",
-            x: 18,
-            y: 5,
-            station: "snacks",
-            moving: true,
-            body: "A goose has arrived with 400 signatures. All say HONK. It demands jurisdiction over the decorative pond. There is no pond.",
+            type: "slides",
+            title: "THE MASK-LAB SLIDES ESCAPE",
+            label: "87 SLIDES",
+            x: 17,
+            y: 3,
+            station: "dj",
+            body: "Pat's deck is projected over the bar menu. Slide 64 is a flowchart for asking if the flowchart is accessible.",
             options: [
-              ["NEGOTIATE A PRETZEL CEASEFIRE.", [4, 5, -7]],
-              ["GIVE THE GOOSE A CEREMONIAL SASH.", [8, 2, 10]],
+              ["SHOW THE ONE-PAGE PLAN.", [3, 8, -8]],
+              ["TURN THE PIE CHART INTO DISCO.", [8, 2, 10]],
             ],
           },
           {
             at: 58,
             type: "exes",
-            title: "YOUR EXES HAVE UNIONIZED THE AUX",
-            label: "EXES",
+            title: "THE EXES HOST MASKED KARAOKE",
+            label: "KARAOKE",
             x: 8,
             y: 4,
             station: "karaoke",
             challenge: "karaoke",
-            body: "Everyone's ex has requested the same song, for different reasons. Take the mic. Hit the arrows. Commit to the bit.",
+            body: "Three of your exes volunteer to demonstrate that masks and a chorus can coexist. They picked the same song for different reasons.",
           },
           {
             at: 69,
-            type: "slides",
-            title: "THE SLIDESHOW HAS ESCAPED",
-            label: "87 SLIDES",
-            x: 17,
-            y: 3,
-            station: "dj",
-            body: "The 87-slide deck is now projected onto every surface. Slide 64 is an org chart of the org chart committee.",
+            type: "reporter",
+            title: "THE GLOBE HAS ONE LAST QUESTION",
+            label: "ONE MORE?",
+            x: 18,
+            y: 5,
+            station: "snacks",
+            moving: true,
+            body: "Nora asks how the bar survived a policy, a classroom, and a town hall. Her recorder is on. Ruth offers her a seltzer.",
             options: [
-              ["SKIP TO THE ONE USEFUL SLIDE.", [4, 6, -8]],
-              ["TURN THE PIE CHART INTO A DISCO BALL.", [8, 3, 11]],
+              ["WE LISTENED. ALSO: FREE WATER.", [4, 9, -8]],
+              ["PUT THE HONK ON THE RECORD.", [9, 2, 11]],
             ],
           },
           {
             at: 80,
             type: "finale",
-            title: "EMERGENCY MUNICIPAL LINE DANCE",
-            label: "EVERYONE!",
+            title: "COMMENCEMENT CRASHES LAST CALL",
+            label: "FINAL HONK",
             x: 13,
             y: 6,
             station: "dance",
             moving: true,
             challenge: "dance",
-            body: "The entire town is moving as one. Nobody agreed on a direction. Lead four steps before they annex the coat check.",
+            body: "The clown class, the regulars, and the committees all arrive for a finale. Lead four steps so nobody annexes the coat check.",
           },
         ];
         function startChaosMode() {
@@ -1546,8 +1564,25 @@
           }
           sfx("level");
         }
-        function resolveIncident(incident, wild = false) {
+        function incidentPoints(incident, approach) {
+          const age = Math.max(0, arcade.elapsed - incident.born);
+          const speed = Math.max(0, 150 - Math.floor(age / 5) * 50);
+          const nextCombo =
+            arcade.elapsed - arcade.lastSave <= 14
+              ? Math.min(4, arcade.combo + 1)
+              : 1;
+          const chain = Math.min(50, (nextCombo - 1) * 25);
+          const style =
+            approach === "headline" || approach === "show"
+              ? 100
+              : approach === "station"
+                ? 75
+                : 50;
+          return Math.min(500, 250 + speed + chain + style);
+        }
+        function resolveIncident(incident, approach = "clear") {
           if (!arcade.incidents.includes(incident)) return false;
+          const earned = incidentPoints(incident, approach);
           arcade.incidents = arcade.incidents.filter(
             (item) => item !== incident,
           );
@@ -1555,15 +1590,19 @@
             (item) => item.source !== incident.id,
           );
           arcade.resolved++;
-          addPoints(500);
-          celebrate(incident.x, incident.y, "+500");
-          if (wild) {
+          addPoints(earned);
+          celebrate(incident.x, incident.y, "+" + earned);
+          if (approach === "headline") {
             arcade.vibe = clamp(arcade.vibe + 18);
             factions.clown++;
           }
           notify(
-            (wild ? "ABSURD, BUT IT WORKED. " : "DISASTER HANDLED. ") +
-              "+500 / " +
+            (approach === "headline"
+              ? "A QUOTABLE DISASTER. "
+              : "ROOM SAVED. ") +
+              "+" +
+              earned +
+              " / " +
               arcade.resolved +
               " OF 9" +
               (arcade.combo >= 3
@@ -1583,7 +1622,7 @@
             incident.body,
             incident.options.map(([label, effect], index) =>
               choice(label, effect, () =>
-                resolveIncident(incident, index === 1),
+                resolveIncident(incident, index === 1 ? "headline" : "clear"),
               ),
             ),
             null,
@@ -1629,7 +1668,10 @@
             arcade.challenge = null;
             setTheme("boss");
             change(5, 5, -6);
-            resolveIncident(challenge.incident);
+            resolveIncident(
+              challenge.incident,
+              challenge.mistakes === 0 ? "show" : "clear",
+            );
           } else
             announce(
               "Next: " +
@@ -1677,18 +1719,24 @@
             ) {
               incident.nextMove =
                 arcade.elapsed +
-                (incident.type === "raccoon" ? 0.75 : 0.95) / (1 + act * 0.14);
+                (incident.type === "reporter" ? 0.8 : 0.95) /
+                  (1 + act * 0.14);
               let dx = incident.direction,
                 dy = 0;
-              if (incident.type === "goose") {
+              if (incident.type === "reporter") {
                 const deltaX = player.x - incident.x,
                   deltaY = player.y - incident.y;
                 dx =
                   Math.abs(deltaX) >= Math.abs(deltaY) ? Math.sign(deltaX) : 0;
                 dy = dx ? 0 : Math.sign(deltaY);
               }
-              if (incident.x + dx === player.x && incident.y + dy === player.y)
+              if (incident.x + dx === player.x && incident.y + dy === player.y) {
+                if (incident.type === "reporter") {
+                  confrontIncident(incident);
+                  continue;
+                }
                 jostle(dx, dy);
+              }
               if (arenaFree(incident.x + dx, incident.y + dy, incident)) {
                 incident.trail.unshift({ x: incident.x, y: incident.y });
                 incident.trail.length = Math.min(
@@ -1991,10 +2039,10 @@
           change(0, -2, 5);
           notify(
             kind === "care"
-              ? "NEIGHBORS HAVE QUESTIONS. SNACKS OR AN APOLOGY HELP."
+              ? "MASKED-HOUR GUESTS NEED THE PLAN. SNACKS OR AN APOLOGY HELP."
               : kind === "petition"
-                ? "PETITION WAVE! TRY THE CHALKBOARD OR APOLOGY STATION."
-                : "CLOWN WAVE! WRONG ADDRESS. TRY SNACKS OR A LINE DANCE.",
+                ? "POLICY PETITION! TRY THE CHALKBOARD OR APOLOGY STATION."
+                : "CLOWN CLASS! WRONG ROOM. TRY SNACKS OR A LINE DANCE.",
           );
         }
         function useStation(station) {
@@ -2050,20 +2098,20 @@
             if (incident.challenge) startChallenge(incident);
             else {
               change(4, 5, -6);
-              resolveIncident(incident);
+              resolveIncident(incident, "station");
             }
             return;
           }
           sfx("select");
           notify(
             {
-              dj: "DJ: FLANNEL BANGERS, VOLUME TWO.",
-              lights: "STRING LIGHTS: COZY LEVEL RESTORED.",
-              karaoke: "KARAOKE: EVERYONE KNOWS THE CHORUS.",
-              snacks: "FREE SNACKS. NO MEETING REQUIRED.",
-              apology: '"I HEAR YOU. HERE IS WHAT WE CAN DO."',
-              chalk: "A CLEAR PLAN. LEGIBLE HANDWRITING. RADICAL.",
-              dance: "STEP LEFT. STEP RIGHT. COLLECTIVE EXHALE.",
+              dj: "DJ: THE PRESS KIT IS NOW A PLAYLIST.",
+              lights: "STRING LIGHTS: NO FLASH PHOTOGRAPHY NEEDED.",
+              karaoke: "MASKED KARAOKE: THE CHORUS STILL LANDS.",
+              snacks: "FREE WATER. THE REPORTER TAKES NOTES.",
+              apology: '"I HEAR YOU. HERE IS THE ACTUAL PLAN."',
+              chalk: "ONE POLICY. ONE CHALKBOARD. A MIRACLE.",
+              dance: "STEP LEFT. STEP RIGHT. GUIDE THE CLASS.",
             }[station.id] +
               (resolved.length ? " +" + resolved.length * 150 : ""),
           );
@@ -2129,6 +2177,7 @@
             if (arcade.vibe < 25) change(-1, 0, 1);
           }
           updateChaos(dt);
+          if (dialog) return;
           if (arcade.elapsed >= 90) {
             arcade.elapsed = 90;
             bossRound = 0;
@@ -2139,15 +2188,15 @@
         }
         const BOSS = [
           {
-            body: "I am Marlow Quill, head of the neighborhood listserv. My clipboard has a clipboard. First: where is the community input?",
+            body: "Nora's Globe story is filed. I am Marlow Quill, head of the listserv. My clipboard has a clipboard. First: whose mask policy survived tonight?",
             options: [
-              ["RIGHT HERE. ONE VOICE AT A TIME.", [0, 8, -7], 500],
+              ["OURS. WRITTEN WITH THE REGULARS.", [0, 8, -7], 500],
               ["IN A GOOGLE FORM WITH 42 FIELDS.", [2, 2, 5], 200],
               ["HAVE YOU TRIED REFRESHING?", [4, -6, 8], 0],
             ],
           },
           {
-            body: "Second: how will you make this place work for people with different access needs?",
+            body: "Second: when the clown class returns next week, where can people find a quieter masked hour?",
             options: [
               ["MASKED HOURS, FREE MASKS, OPEN PATIO.", [-3, 10, -8], 500],
               ["ASK EACH GUEST WHAT WOULD HELP.", [-1, 6, -4], 300],
@@ -2155,7 +2204,7 @@
             ],
           },
           {
-            body: "Final item: I fear change. Also I have not had dinner. What can you offer?",
+            body: "Final item: the reporter wants one last quote. I fear change. Also I have not had dinner. What can you offer?",
             options: [
               ["A SNACK, A CHAIR, AND A CLEAR PLAN.", [-2, 8, -8], 500],
               ["A SEAT ON THE SNACK SUBCOMMITTEE.", [2, 5, 3], 300],
@@ -2191,6 +2240,7 @@
           );
         }
         function pickEnding() {
+          if (policy === "retreat") return "clown";
           if (meters.trust >= 65 && meters.profit >= 40 && meters.chaos <= 60)
             return "compromise";
           if (factions.clown >= 3 || (mask.base === 2 && meters.chaos >= 40))
@@ -3038,20 +3088,14 @@
               rect(x + dx, y + dy, 7, 2, color);
               rect(x + dx, y + dy, 2, 7, color);
             }
-            if (incident.type === "raccoon") {
-              raccoon(x + 7, y + 12);
-              rect(x + 19, y + 1, 16, 19, C.cream);
-              coin(x + 23, y + 7, 1);
-            } else if (incident.type === "goose") {
-              rect(x + 4, y + 17, 25, 15, C.cream);
-              rect(x + 25, y + 5, 8, 24, C.cream);
-              rect(x + 25, y + 1, 12, 10, C.cream);
-              rect(x + 35, y + 6, 9, 4, C.orange);
-              rect(x + 31, y + 3, 2, 2, C.ink);
-              rect(x + 10, y + 32, 3, 5, C.orange);
-              rect(x + 22, y + 32, 3, 5, C.orange);
-              rect(x - 2, y + 9, 16, 19, C.peach);
-              text("!", x + 3, y + 13, 1, C.ink);
+            if (incident.type === "reporter") {
+              sprite(x + 6, y - 1, C.blue, 2, {
+                hat: true,
+                hair: C.ink,
+              });
+              rect(x + 23, y + 12, 13, 20, C.ink);
+              rect(x + 25, y + 14, 9, 16, C.cream);
+              text("?", x + 27, y + 18, 1, C.rose);
             } else if (
               incident.type === "printer" ||
               incident.type === "slides"
@@ -3075,7 +3119,7 @@
                 2,
                 {
                   clown: incident.challenge === "dance",
-                  hat: incident.type === "livestream",
+                  hat: incident.type === "meeting",
                 },
               );
               if (incident.type === "meeting") {
@@ -3083,17 +3127,20 @@
                 for (let i = 0; i < 3; i++)
                   rect(x + 26, y + 19 + i * 5, 9, 2, C.plum);
               }
-              if (incident.type === "livestream") {
-                rect(x + 25, y + 9, 12, 19, C.ink);
-                rect(x + 28, y + 12, 6, 11, C.pink);
-                text("LIVE", x + 16, y + 47, 1, C.pink, "center");
-              }
               if (incident.type === "exes")
                 sprite(x + 28, y + 4, C.pink, 1.5, { hair: C.ink });
             }
             const width = (incident.label.length + 2) * 6 + 8;
             rect(x + 19 - width / 2, y - 18, width, 13, C.ink);
             text("! " + incident.label, x + 19, y - 15, 1, color, "center");
+            rect(x + 2, y + 37, 34, 3, C.ink);
+            rect(
+              x + 2,
+              y + 37,
+              34 * clamp((18 - (arcade.elapsed - incident.born)) / 18),
+              3,
+              incident.late ? C.orange : C.mint,
+            );
           }
           for (const paper of arcade.hazards) {
             const x = MAP.x + paper.x * t + 13,
@@ -3171,13 +3218,13 @@
           rect(0, 65, 960, 542, C.night);
           const m = MAP,
             t = m.tile;
+          const atSchool = isArcade && policy === "retreat";
           if (isArcade) {
             text(
-              [
-                "ACT I / REPLY ALL",
-                "ACT II / COMMUNITY INPUT",
-                "ACT III / MUNICIPAL CIRCUS",
-              ][Math.min(2, Math.floor(arcade.elapsed / 30))],
+              (atSchool ? "ROOM 2 / " : "BAR / ") +
+                ["MASK LAB", "PRESS NIGHT", "FINAL HONK"][
+                  Math.min(2, Math.floor(arcade.elapsed / 30))
+                ],
               62,
               83,
               1,
@@ -3269,7 +3316,13 @@
                 m.y + gy * t,
                 t * m.w,
                 t - 1,
-                gy % 2 ? C.brown : C.plum,
+                atSchool
+                  ? gy % 2
+                    ? C.green
+                    : C.teal
+                  : gy % 2
+                    ? C.brown
+                    : C.plum,
               );
               for (let gx = 0; gx < m.w; gx++)
                 rect(
@@ -3277,24 +3330,52 @@
                   m.y + gy * t,
                   1,
                   t,
-                  C.brown,
+                  atSchool ? C.plum : C.brown,
                 );
             }
             rect(m.x, m.y, t * m.w, 26, C.purple);
             rect(m.x, m.y + 26, t * m.w, 4, C.rust);
             lights(m.x + 12, m.y + 3, t * m.w - 28, 27);
-            rect(m.x + 8 * t, m.y + 4 * t, 7 * t, 3 * t, C.rose);
+            if (atSchool) {
+              rect(m.x + 319, m.y + 3, 198, 19, C.ink);
+              text("CLOWN SCHOOL / ROOM 2", m.x + 418, m.y + 9, 1, C.cream, "center");
+            }
+            rect(
+              m.x + 8 * t,
+              m.y + 4 * t,
+              7 * t,
+              3 * t,
+              atSchool ? C.blue : C.rose,
+            );
             rect(
               m.x + 8 * t + 5,
               m.y + 4 * t + 5,
               7 * t - 10,
               3 * t - 10,
-              C.plum,
+              atSchool ? C.purple : C.plum,
             );
             for (let i = 0; i < 7; i++)
-              rect(m.x + 8 * t + 14 + i * 35, m.y + 4 * t + 13, 11, 5, C.rose);
+              rect(
+                m.x + 8 * t + 14 + i * 35,
+                m.y + 4 * t + 13,
+                11,
+                5,
+                atSchool ? [C.pink, C.orange, C.mint][i % 3] : C.rose,
+              );
             rect(m.x, m.y + 54, 12, 245, C.rust);
             rect(m.x + t * m.w - 12, m.y + 54, 12, 245, C.rust);
+            if (atSchool) {
+              rect(m.x + 296, m.y + 315, 244, 38, C.ink);
+              rect(m.x + 300, m.y + 319, 236, 30, C.purple);
+              text(
+                "HONK U. / CLASSROOM TWO",
+                m.x + 418,
+                m.y + 328,
+                1,
+                C.cream,
+                "center",
+              );
+            }
             if (!isArcade) {
               rect(m.x + 6 * t, m.y + 38, 9 * t, 24, C.ink);
               rect(m.x + 6 * t, m.y + 34, 9 * t, 23, C.orange);
@@ -3507,7 +3588,7 @@
           }
           footer(
             isArcade
-              ? "BUMP ! / DODGE PAPER / CHAIN 3 SAVES TO SURF"
+              ? "BUMP ! / BEAT THE BONUS CLOCK / CHAIN 3 SAVES"
               : world === "bar"
                 ? "A PLACE TO LAND. A PLACE TO STAY."
                 : "WESTERN MASS / FALL, PROBABLY",
@@ -3732,11 +3813,15 @@
         }
         function drawReady() {
           section(
-            "PART 02 / A SHIFT TO REMEMBER",
-            "SATURDAY NIGHT. DEEP BREATH.",
+            policy === "retreat"
+              ? "PART 02 / CLASSROOM TWO"
+              : "PART 02 / A SHIFT TO REMEMBER",
+            policy === "retreat"
+              ? "THE BAR HAS LEFT THE BUILDING."
+              : "SATURDAY NIGHT. DEEP BREATH.",
           );
           text(
-            "NINE DISASTERS. ONE BAR. ABSOLUTELY NO CHILL.",
+            "NINE MIX-UPS. THREE GLOBE QUESTIONS. ONE BAR.",
             480,
             169,
             2,
@@ -3745,19 +3830,19 @@
           );
           const cards = [
             [
-              "01 / CHASE",
-              "Catch the tip-jar raccoon. Dodge flying petitions. Bump a ! to deal with it.",
-              "THE PAPERWORK BITES",
+              "01 / ANSWER",
+              "The Globe reporter keeps asking. Bump her for a quote. She will find you, too.",
+              "QUESTIONS KEEP COMING",
             ],
             [
-              "02 / IMPROVISE",
-              "Choose a fix or an absurd escalation. Tools handle matching incidents.",
-              "+500 PER DISASTER",
+              "02 / SCORE",
+              "Quick fixes earn more. Wild quotes win clown allies but raise chaos. Chain saves for points.",
+              "UP TO 500 EACH",
             ],
             [
               "03 / DANCE OFF",
-              "Copy arrow sequences to tame the conga line. Chain 3 saves to clear papers.",
-              "DRINKS ARE OPTIONAL",
+              "Copy arrow steps to guide the clown class. Clear signs and dodge reply-all paper.",
+              "MASKS HELP YOU LAST",
             ],
           ];
           cards.forEach((card, i) => {
@@ -3765,8 +3850,8 @@
             panel(x, 220, 270, 229, C.night, C.plum);
             text(card[0], x + 20, 243, 2, C.cream);
             if (i === 0) {
-              raccoon(x + 111, 302);
-              coin(x + 150, 295, 2);
+              sprite(x + 112, 279, C.blue, 3, { hat: true });
+              text("?", x + 158, 289, 3, C.peach);
             } else if (i === 1) {
               text("♪", x + 100, 288, 5, C.pink);
               text("♪", x + 154, 280, 3, C.blue);
@@ -3823,7 +3908,14 @@
         }
         function drawTally() {
           text("SHIFT COMPLETE", 480, 102, 1, C.peach, "center");
-          text("SATURDAY: SURVIVED.", 480, 137, 4, C.cream, "center");
+          text(
+            policy === "retreat" ? "ROOM TWO: SURVIVED." : "SATURDAY: SURVIVED.",
+            480,
+            137,
+            4,
+            C.cream,
+            "center",
+          );
           heart(464, 187, 5, C.pink);
           panel(215, 251, 530, 293, C.night, C.plum);
           const rows = [
@@ -4158,7 +4250,7 @@
             text(body, 253, y + 43, 1, C.blue);
           });
           paragraph(
-            "Saturday: chase the raccoon, dodge paperwork, handle nine disasters, and win arrow-sequence dance battles. Drinks are optional stamina breaks. CHAOS MODE skips the story.",
+            "Saturday: fix nine Mask Lab mix-ups, answer the Globe reporter, dodge paperwork, and guide clown-school dances. Move fast for more points. Drinks are optional stamina breaks. CHAOS MODE skips the story.",
             62,
             528,
             835,
@@ -4234,7 +4326,10 @@
               "\n↑↓ category · ←→ change · → on DONE";
           else if (screen === "ready")
             value =
-              "NINE DISASTERS. ZERO CHILL.\nBump a ! to handle the drama or use its matching tool. Dodge flying paperwork. Copy arrows in dance battles. Chain 3 saves to clear papers and recharge tools. Drinks are optional stamina breaks.\n← mask editor · → start the chaos";
+              (policy === "retreat"
+                ? "CLASSROOM TWO POP-UP.\n"
+                : "LAST DITCH PRESS NIGHT.\n") +
+              "Fix nine Mask Lab mix-ups. The Globe reporter asks three questions and follows you. Fast fixes and chains earn more. Wild quotes win clown allies but raise chaos. Dodge paperwork. Copy arrows in dance battles.\n← mask editor · → start the shift";
           else if (screen === "arcade" && arcade.challenge) {
             const challenge = arcade.challenge;
             const arrows = { up: "↑", down: "↓", left: "←", right: "→" };
@@ -4256,6 +4351,9 @@
               " seconds. The room is paused.";
           } else if (screen === "arcade")
             value =
+              (policy === "retreat"
+                ? "CLOWN SCHOOL ROOM TWO · "
+                : "LAST DITCH · ") +
               Math.ceil(90 - arcade.elapsed) +
               " seconds · " +
               arcade.points +
@@ -4264,7 +4362,7 @@
               "\n" +
               (time < toastUntil
                 ? toast
-                : "Bump ! to handle a disaster. Dodge paperwork. Drinks are optional.") +
+                : "Bump ! to fix a mix-up. Dodge paperwork. Drinks are optional.") +
               "\nFIXED " +
               arcade.resolved +
               "/9 · CHAIN " +
@@ -4272,7 +4370,18 @@
               "\n" +
               arcade.incidents
                 .slice(0, 3)
-                .map((item) => item.label + " → " + item.station.toUpperCase())
+                .map(
+                  (item) =>
+                    item.label +
+                    " → " +
+                    item.station.toUpperCase() +
+                    " · FAST +" +
+                    Math.max(
+                      0,
+                      150 -
+                        Math.floor((arcade.elapsed - item.born) / 5) * 50,
+                    ),
+                )
                 .join("\n");
           else if (screen === "tally")
             value =
@@ -4346,7 +4455,7 @@
               "FOR THE PLACES THAT MAKE ROOM.\nAnd the people who keep them open.\nFictional people. Real community spirit.\nThank you for playing. Any arrow returns to the title.";
           else if (screen === "help")
             value =
-              "FOUR KEYS. THAT'S IT.\n↑↓←→ move. Bump ! to handle a disaster.\nDodge flying paperwork. Chase the raccoon.\n↑↓ chooses. → confirms. ← goes back.\nCopy the arrows in dance and karaoke battles.\nChain 3 saves to clear papers and recharge tools.\nDrinks are optional stamina breaks.\nCHAOS MODE skips straight to Saturday.\n← or → returns to the title.";
+              "FOUR KEYS. THAT'S IT.\n↑↓←→ move. Bump ! to fix a Mask Lab mix-up.\nThe Globe reporter follows you with questions.\n↑↓ chooses. → confirms. ← goes back.\nFast fixes earn more. Wild quotes raise chaos.\nCopy arrows in dance and karaoke battles.\nChain 3 saves to clear paper and recharge tools.\nCHAOS MODE skips straight to Saturday.\n← or → returns to the title.";
           if (readout.textContent !== value) readout.textContent = value;
           const hud = document.getElementById("mobile-hud"),
             hudText =

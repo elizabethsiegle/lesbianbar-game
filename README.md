@@ -4,7 +4,7 @@ One lesbian bar. One policy change. An entire town with reply-all privileges.
 
 [Play the deployed game](https://last-ditch-bar-saga.lizzie-siegle5086.workers.dev).
 
-A complete arrow-only RPG and 90-second small-town meltdown. Chase a tip-jar raccoon, dodge flying reply-all paperwork, negotiate with a goose, and win municipal dance battles. Choose **CHAOS MODE** to skip the story and jump straight to mask selection and Saturday.
+A complete arrow-only RPG and 90-second small-town meltdown. One mask-policy post lands on the clown school's shared calendar as "Mask Lab at Last Ditch." A Boston Globe reporter keeps asking for a quote while the town, the bar regulars, and an entire clown class show up. Choose **CHAOS MODE** to skip the story and jump straight to mask selection and Saturday.
 
 All art uses a 16-color canvas palette and a built-in bitmap font. Four original chiptune loops and sound effects run through Web Audio. No external assets, fonts, or runtime libraries.
 
@@ -64,14 +64,14 @@ Touch devices get the same four directions on a D-pad. Small screens also show r
 ## The game
 
 - Talk to Tess. Saying no plays a short decline branch and returns to the decision.
-- Post the announcement, read the feed, and meet Tess by the town co-op. Reinstate the policy, hold a four-round clown-school Zoom meeting, or stay quiet.
+- Post the announcement, read the feed, and meet Tess by the town co-op. Reinstate the policy, hold a four-round clown-school Zoom meeting, stay quiet, or retreat to Classroom Two at the clown school. The retreat route changes Saturday's venue, adds clown allies, and leads to the warm annex ending.
 - Other neighbors offer optional conversations. Story choices determine ally and visitor waves.
 - Bump the bar's sewing table to choose an N95, cloth mask, novelty mask, or no mask. N95s have a raised bridge and center seam; cloth masks have pleats; novelty masks have a grin and cheek tabs. Each mask has a dark outline and light straps so it reads on the small character sprite. Sage green is the starting color; color, pattern, and accessory stay customizable.
-- Saturday escalates through nine incidents: a thieving raccoon, reply-all printer, conga annexation, rival petitions, accidental national livestream, campaigning goose, exes with the aux cord, escaped slideshow, and municipal line dance.
-- Chase moving incidents and bump them to choose a practical fix or a ridiculous escalation. Paperwork knocks you around; stamina cushions the impact. Matching tool stations offer another way to resolve each problem.
+- Saturday escalates through nine Mask Lab mix-ups: a policy pasted over a sign-up sheet, three visits from fictional Globe reporter Nora Ink, clown-school orientation, rival chalkboards, an escaped slideshow, masked karaoke with the exes, and a final commencement line dance.
+- Chase moving incidents and bump them to choose a clear fix or a quotable escalation. The reporter also follows you with questions. Paperwork knocks you around; stamina cushions the impact. Matching tool stations offer another way to resolve each problem.
 - Dance and karaoke incidents use timed arrow sequences. Dialogue and performances pause the room. A missed sequence can be retried. Clown allies shorten sequences.
-- Chain three saves within fourteen seconds of each other to clear flying paper, recharge tools, and gain a brief collision shield. Incidents left alone escalate after eighteen seconds but remain fixable. The room speeds up in three acts.
-- Drinks are optional: at most six patrons offer small score bonuses, vibe, and stamina recovery. Ignoring them has no meter penalty. Most points come from handling disasters.
+- Handle incidents quickly for a speed bonus. Clear answers protect trust; wild quotes pay more immediately and recruit clown allies, but raise chaos. A chain adds points, and three saves within fourteen seconds clear flying paper, recharge tools, and grant a brief collision shield. Incidents left alone escalate after eighteen seconds but remain fixable. The room speeds up in three acts.
+- Drinks are optional: at most six patrons offer small score bonuses, vibe, and stamina recovery. Ignoring them has no meter penalty. Most points come from handling the Mask Lab mix-ups.
 - Finish with three dialogue rounds against Marlow Quill's clipboard. See your tally, one of four warm endings, initials entry, global scores, and credits.
 
 N95s have five stamina and reduce sick-day penalties. Cloth masks have three stamina and add ten trust. Novelty masks have one stamina and add thirty starting vibe. No mask has no stamina and moves faster when a direction is held. All health-related stats are fictional game mechanics.
@@ -82,7 +82,7 @@ N95s have five stamina and reduce sick-day penalties. Cloth masks have three sta
 score = arcade points + profit × 10 + trust × 10 + (100 − chaos) × 10
 ```
 
-Each meter is bounded to 0–100. Nine incidents are worth 500 each, six faction waves 150 each, six optional drinks 100 each, and three boss answers 500 each: at most 7,500 arcade points. Meter bonuses add at most 3,000. The enforced ceiling remains **10,500**, and existing leaderboard scores are preserved. Each incident, wave, or patron can award points only once. Chains improve tools and survivability, not the score ceiling.
+Each meter is bounded to 0–100. Each of nine incidents earns 250 base points, up to 150 speed points, 50–100 approach points, and up to 50 chain points, capped at 500 per incident. Six faction waves earn up to 150 each, six optional drinks 100 each, and three boss answers 500 each: at most 7,500 arcade points. Meter bonuses add at most 3,000. The enforced ceiling remains **10,500**, and existing leaderboard scores are preserved. Each incident, wave, or patron can award points only once.
 
 Ending rules, in order: high trust/profit and manageable chaos earn the compromise; strong clown ties or a novelty mask with enough chaos earn the annex; high chaos or profit earns national attention; other runs earn the eternal subcommittee.
 

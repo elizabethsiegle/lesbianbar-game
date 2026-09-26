@@ -29,7 +29,7 @@ async function model() {
     crypto: { randomUUID },
   };
   const insertion = `globalThis.game = {
-    resetGame, startArcade, updateArcade, useStation, spawnWave, spawnPatron, spawnIncident, resolveIncident, startChallenge, challengeInput, jostle, serve, pickEnding, finishArcade, input,
+    resetGame, startArcade, updateArcade, useStation, spawnWave, spawnPatron, spawnIncident, resolveIncident, incidentPoints, confrontIncident, startChallenge, challengeInput, jostle, serve, pickEnding, finishArcade, input,
     state: () => ({ meters, factions, mask, arcade, score, ending, player, screen, dialog, shown, policy }),
     setup: (values) => {
       if (values.meters) meters = values.meters;
@@ -37,9 +37,10 @@ async function model() {
       if (values.mask) mask = values.mask;
       if (values.player) player = values.player;
       if (values.screen) screen = values.screen;
+      if (values.policy) policy = values.policy;
       if (values.clearDialog) dialog = null;
     },
-    stations: STATIONS, masks: MASKS, maxScore: 10500
+    stations: STATIONS, masks: MASKS, incidents: INCIDENTS, maxScore: 10500
   };`;
   const closing = source.lastIndexOf("})();");
   runInNewContext(
@@ -77,6 +78,8 @@ test("all four warm endings are reachable from final meters and choices", async 
     game.setup({ meters, factions });
     expect(game.pickEnding()).toBe(expected);
   }
+  game.setup({ policy: "retreat" });
+  expect(game.pickEnding()).toBe("clown");
 });
 
 test("masks have distinct stamina, trust, vibe, and sick-day effects", async () => {
@@ -118,10 +121,13 @@ test("story allies change waves; relevant stations resolve visitors once and res
   const snacks = game.stations.find((station) => station.id === "snacks");
   game.useStation(snacks);
   expect(game.state().arcade.visitors).toHaveLength(0);
+  expect(game.state().arcade.points).toBe(150);
+  expect(game.state().arcade.resolved).toBe(0);
+  game.useStation(snacks);
+  expect(game.state().arcade.points).toBe(150);
+  game.useStation(game.stations.find((station) => station.id === "chalk"));
   expect(game.state().arcade.points).toBe(650);
   expect(game.state().arcade.resolved).toBe(1);
-  game.useStation(snacks);
-  expect(game.state().arcade.points).toBe(650);
   game.setup({ factions: { care: 3, clown: 3, petition: 3 } });
   game.spawnWave();
   expect(game.state().arcade.visitors).toHaveLength(0);
@@ -142,7 +148,13 @@ test("optional drinks serve once; incidents and waves are bounded; score matches
   const points = game.state().arcade.points;
   game.input("up");
   expect(game.state().arcade.points).toBe(points);
-  for (let i = 0; i < 900; i++) game.updateArcade(0.1);
+  for (let i = 0; i < 900; i++) {
+    game.updateArcade(0.1);
+    if (game.state().dialog?.speaker.includes("GLOBE")) {
+      game.input("right");
+      game.input("right");
+    }
+  }
   expect(game.state().arcade.spawned).toBe(6);
   expect(game.state().arcade.incidentCount).toBe(9);
   expect(Number.isInteger(game.state().player.x)).toBe(true);
@@ -160,7 +172,7 @@ test("optional drinks serve once; incidents and waves are bounded; score matches
   expect(validation).toContain("MAX_SCORE = 10_500");
 });
 
-test("raccoon encounter pauses the room, offers absurd choices, and cannot award twice", async () => {
+test("Mask Lab encounter pauses the room, offers a quotable choice, and cannot award twice", async () => {
   const game = await model();
   game.resetGame();
   game.setup({ clearDialog: true });
@@ -168,7 +180,7 @@ test("raccoon encounter pauses the room, offers absurd choices, and cannot award
   const incident = game.state().arcade.incidents[0];
   game.input("right");
   game.input("right");
-  expect(game.state().dialog.speaker).toContain("RACCOON");
+  expect(game.state().dialog.speaker).toContain("SIGN-UP SHEET");
   game.updateArcade(5);
   expect(game.state().arcade.elapsed).toBe(0);
   game.input("right");
@@ -179,6 +191,28 @@ test("raccoon encounter pauses the room, offers absurd choices, and cannot award
   expect(game.state().factions.clown).toBe(1);
   expect(game.resolveIncident(incident)).toBe(false);
   expect(game.state().arcade.points).toBe(500);
+});
+
+test("the Globe reporter returns with questions and quick answers score more", async () => {
+  const game = await model();
+  expect(
+    game.incidents
+      .filter((incident) => incident.type === "reporter")
+      .map((incident) => incident.at),
+  ).toEqual([8, 37, 69]);
+  game.resetGame();
+  game.setup({ clearDialog: true });
+  game.startArcade();
+  game.spawnIncident();
+  const reporter = game.state().arcade.incidents[1];
+  expect(game.incidentPoints(reporter, "clear")).toBe(450);
+  expect(game.incidentPoints(reporter, "headline")).toBe(500);
+  game.state().arcade.elapsed = reporter.born + 15;
+  expect(game.incidentPoints(reporter, "clear")).toBe(300);
+  game.setup({ player: { x: reporter.x + 1, y: reporter.y, dir: "left" } });
+  reporter.nextMove = 0;
+  game.updateArcade(0.1);
+  expect(game.state().dialog.speaker).toContain("GLOBE");
 });
 
 test("dance sequences pause the shift, accept all arrows, and remain retryable after timeout", async () => {
@@ -226,6 +260,7 @@ test("three saves clear hazards and recharge tools; chains expire", async () => 
   game.spawnIncident();
   for (const incident of [...game.state().arcade.incidents])
     game.resolveIncident(incident);
+  expect(game.state().arcade.points).toBe(1425);
   expect(game.state().arcade.combo).toBe(3);
   expect(game.state().arcade.invincibleUntil).toBe(3);
   expect(Object.keys(game.state().arcade.cooldowns)).toHaveLength(0);

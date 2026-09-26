@@ -17,7 +17,7 @@ async function postAnnouncement(page) {
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "feed");
   await page.clock.runFor(32);
   await page.screenshot({ path: "test-results/feed.png" });
-  await press(page, "ArrowRight", 9);
+  await press(page, "ArrowRight", 10);
   await press(page, "ArrowRight", 2);
   await press(page, "ArrowUp", 4);
   await press(page);
@@ -27,6 +27,16 @@ async function enterMaskEditor(page) {
   await press(page, "ArrowRight", 8);
   await press(page, "ArrowUp", 2);
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "mask");
+}
+async function advanceShift(page) {
+  for (let i = 0; i < 15; i++) {
+    await page.clock.runFor(10_000);
+    if ((await page.locator("#game").getAttribute("data-screen")) === "boss")
+      return;
+    if ((await page.locator("#mobile-readout").textContent()).startsWith("THE GLOBE"))
+      await press(page, "ArrowRight", 2);
+  }
+  throw new Error("The shift did not reach the final boss.");
 }
 
 test("plays from title through town hall, mask editor, timed shift, boss, scores, and credits with arrows", async ({
@@ -50,14 +60,10 @@ test("plays from title through town hall, mask editor, timed shift, boss, scores
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "arcade");
   await page.clock.runFor(2000);
   await page.screenshot({ path: "test-results/arcade.png" });
-  await press(page, "ArrowUp", 3);
-  await press(page, "ArrowRight");
-  await press(page, "ArrowUp");
-  await expect(page.locator("#game-status")).toContainText("KARAOKE");
   await page.evaluate(() => window.dispatchEvent(new Event("blur")));
   await page.clock.runFor(1000);
   await press(page);
-  await page.clock.runFor(88_100);
+  await advanceShift(page);
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "boss");
   await press(page, "ArrowRight", 8);
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "tally");
@@ -109,6 +115,7 @@ test("NO plays the slow decline and returns to the decision", async ({
 for (const branch of [
   { name: "reinstate masks", down: 0 },
   { name: "say nothing", down: 2 },
+  { name: "retreat to clown school", down: 3 },
 ]) {
   test(`${branch.name} reaches customization and supports all four mask types`, async ({
     page,
@@ -127,6 +134,20 @@ for (const branch of [
     await press(page, "ArrowDown", 3);
     await press(page);
     await expect(page.locator("#game")).toHaveAttribute("data-screen", "ready");
+    if (branch.down === 3) {
+      await page.clock.runFor(32);
+      await expect(page.locator("#mobile-readout")).toContainText(
+        "CLASSROOM TWO POP-UP",
+      );
+      await press(page);
+      await page.clock.runFor(32);
+      await expect(page.locator("#game")).toHaveAttribute("data-screen", "arcade");
+      await expect(page.locator("#mobile-readout")).toContainText(
+        "CLOWN SCHOOL ROOM TWO",
+      );
+      await page.screenshot({ path: "test-results/clown-school.png" });
+      return;
+    }
     await press(page, "ArrowLeft");
     await expect(page.locator("#game")).toHaveAttribute("data-screen", "mask");
   });
@@ -177,7 +198,7 @@ test("touch D-pad controls the same title menu and arrows do not scroll", async 
   );
 });
 
-test("CHAOS MODE skips story, catches the raccoon, and wins a dance battle with only arrows", async ({
+test("CHAOS MODE skips story, fixes Mask Lab, and wins a dance battle with only arrows", async ({
   page,
 }) => {
   const errors = [];
@@ -193,12 +214,16 @@ test("CHAOS MODE skips story, catches the raccoon, and wins a dance battle with 
   await press(page, "ArrowRight", 2);
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "arcade");
   await press(page, "ArrowRight", 2);
-  await expect(page.locator("#game-status")).toContainText("RACCOON");
+  await expect(page.locator("#game-status")).toContainText("SIGN-UP SHEET");
   await press(page);
   await press(page, "ArrowDown");
   await press(page);
   await expect(page.locator("#game-status")).toContainText("+500");
   await page.clock.runFor(17_050);
+  if ((await page.locator("#mobile-readout").textContent()).startsWith("THE GLOBE")) {
+    await press(page, "ArrowRight", 2);
+    await page.clock.runFor(4_000);
+  }
   await page.screenshot({ path: "test-results/chaos.png" });
   await press(page, "ArrowRight", 22);
   await press(page, "ArrowDown", 9);
