@@ -4,7 +4,9 @@ One lesbian bar. One policy change. An entire town with reply-all privileges.
 
 [Play the deployed game](https://last-ditch-bar-saga.lizzie-siegle5086.workers.dev).
 
-A complete arrow-only RPG and 90-second small-town meltdown. One mask-policy post lands on the clown school's shared calendar as "Mask Lab at Last Ditch." A Boston Globe reporter keeps asking for a quote while the town, the bar regulars, and an entire clown class show up. Choose **CHAOS MODE** to skip the story and jump straight to mask selection and Saturday.
+A choose-your-own-adventure about keeping a lesbian bar open. Rent is due Sunday. Your mask-policy post has started a town debate. Fictional Boston Globe reporter Nora Ink files at midnight. The clown school lends you its Zoom account, but the meeting link also admits its audition class.
+
+**STORY MODE** follows your choices through recurring Zoom meetings, five side quests, and Saturday night. **CHAOS MODE** is a separate 90-second arcade shift.
 
 All art uses a 16-color canvas palette and a built-in bitmap font. Four original chiptune loops and sound effects run through Web Audio. No external assets, fonts, or runtime libraries.
 
@@ -53,6 +55,7 @@ The first deployment creates the `Leaderboard` SQLite Durable Object through the
 | Bar or town    | Move on the grid. Bump people, doors, or objects.                                        |
 | Dialogue       | Any arrow reveals text; another advances.                                                |
 | Choices        | Up/down chooses. Right confirms. Left goes back.                                         |
+| Quest board    | Up/down selects an errand. Right visits. Left opens the free notebook.                   |
 | Social feed    | Up/down scrolls. Right reads the next post, then continues.                              |
 | Mask editor    | Up/down selects a category. Left/right cycles. Right on DONE confirms.                   |
 | Saturday night | Bump marked incidents or matching tool stations. Dodge flying paperwork.                 |
@@ -61,7 +64,22 @@ The first deployment creates the `Leaderboard` SQLite Durable Object through the
 
 Touch devices get the same four directions on a D-pad. Small screens also show readable dialogue, choices, and instructions below the canvas. Sound can be toggled from the header or title menu. Leaving the window pauses the arcade shift; an arrow resumes it. Reduced-motion preferences remove blinking and sprite bobbing and speed up dialogue.
 
-## The game
+## Story mode
+
+- Start with 500 points. Choose a mask, then join the clown-school Zoom call.
+- Three recesses give you two errands each. Each of five side quests takes two errands; you cannot finish them all. There is no real-time deadline while reading.
+- Willow needs a practical access plan. Dottie offers a clown benefit. Nora needs verified facts. Ruth wants queer trivia back. Tess needs ticket sales that cover rent.
+- Quest rewards unlock answers in later Zoom calls and plans for Saturday. Failed errands cost points and close without their reward. Repeating a completed quest earns nothing.
+- Handle unmuted auditions, Pat's 87 slides, disputed breakout rooms, the rent debate, and the final policy vote. Nora returns to ask what changed.
+- Promising an access plan earns 100 points now. Completing it before Saturday earns another 450; breaking the promise loses 450. The notebook tracks evidence, promises, and score changes.
+- Keep masks required, use the completed patio plan, run the optional trial, or retreat to clown school. Saturday depends on the bookings, rehearsal, and relationships you prepared.
+- End with one last Zoom meeting: adjourn with receipts, enroll in clown school, or establish a permanent subcommittee. Then see your tally, ending, initials entry, and global scores.
+
+In story mode, N95s provide five stamina, cloth masks provide three and ten trust, and novelty masks provide one and a 200-point bonus for a rehearsed clown benefit. Stamina unlocks patient follow-up answers. Evidence and honest answers let every mask choice finish the story. Stats are game mechanics.
+
+## Chaos mode and original RPG scenes
+
+The separate arcade mode retains the earlier Mask Lab encounters and time-management rules. The original top-down story scenes remain in the source; the title's Story Mode now starts the adventure above.
 
 - Talk to Tess. Saying no plays a short decline branch and returns to the decision.
 - Post the announcement, read the feed, and meet Tess by the town co-op. Reinstate the policy, hold a four-round clown-school Zoom meeting, stay quiet, or retreat to Classroom Two at the clown school. The retreat route changes Saturday's venue, adds clown allies, and leads to the warm annex ending.
@@ -79,12 +97,14 @@ N95s have five stamina and reduce sick-day penalties. Cloth masks have three sta
 ## Score and leaderboard
 
 ```text
-score = arcade points + profit × 10 + trust × 10 + (100 − chaos) × 10
+score = mode points + profit × 10 + trust × 10 + (100 − chaos) × 10
 ```
 
-Each meter is bounded to 0–100. Each of nine incidents earns 250 base points, up to 150 speed points, 50–100 approach points, and up to 50 chain points, capped at 500 per incident. Six faction waves earn up to 150 each, six optional drinks 100 each, and three boss answers 500 each: at most 7,500 arcade points. Meter bonuses add at most 3,000. The enforced ceiling remains **10,500**, and existing leaderboard scores are preserved. Each incident, wave, or patron can award points only once.
+Each meter is bounded to 0–100. Story points start at 500, rise or fall with decisions, and stay within 0–7,500. Each decision resolves once. The tally shows points gained and lost; the notebook keeps the ledger. Early departure from a recess forfeits its unused errands.
 
-Ending rules, in order: high trust/profit and manageable chaos earn the compromise; strong clown ties or a novelty mask with enough chaos earn the annex; high chaos or profit earns national attention; other runs earn the eternal subcommittee.
+In Chaos Mode, each of nine incidents earns 250 base points, up to 150 speed points, 50–100 approach points, and up to 50 chain points, capped at 500 per incident. Six faction waves earn up to 150 each, six optional drinks 100 each, and three boss answers 500 each: at most 7,500 arcade points. Meter bonuses add at most 3,000. The enforced ceiling remains **10,500**, and existing leaderboard scores are preserved. Each incident, wave, or patron can award points only once. Both modes share the casual leaderboard.
+
+Explicitly choosing clown-school retreat or the permanent subcommittee determines that ending. Otherwise, high trust/profit and manageable chaos earn the compromise; strong clown ties or a novelty mask with enough chaos earn the annex; high chaos or profit earns national attention; other runs earn the eternal subcommittee.
 
 ### API
 
@@ -124,7 +144,7 @@ npm run build
 npm test
 ```
 
-Tests use an installed Google Chrome browser and an isolated local Worker with temporary SQLite storage. They cover API validation, ordering, concurrent rate limiting, retry deduplication, a complete arrow-only playthrough, story branches, touch controls, offline behavior, mask benefits, waves, endings, and score limits. Mask tests compare actual sprite pixels in the editor and gameplay, including rear views and customization. Production scores are never touched. Screenshots and failure traces go in `test-results/`.
+Tests use an installed Google Chrome browser and an isolated local Worker with temporary SQLite storage. They cover API validation, rate limiting, retry deduplication, a complete arrow-only adventure, finite errands, locked answers, point losses, promises, clown-school retreat, touch controls, offline behavior, mask benefits, waves, endings, and score limits. Mask tests compare actual sprite pixels in the editor and gameplay, including rear views and customization. Production scores are never touched. Screenshots and failure traces go in `test-results/`.
 
 ## Files
 

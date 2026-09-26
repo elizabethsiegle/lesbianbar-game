@@ -384,7 +384,7 @@
               height="640"
               tabindex="0"
               role="application"
-              aria-label="Last Ditch RPG. Use the four arrow keys. Up and down choose, right confirms, left goes back. Walk into people and objects to interact."
+              aria-label="Last Ditch. An 8-bit choose-your-own-adventure. Up and down choose, right confirms, left goes back or opens your notebook. Chaos Mode uses arrows to move and bump."
               aria-describedby="game-status"
               >Your browser needs canvas to play Last Ditch.</canvas
             >
@@ -423,7 +423,8 @@
             town. Fictional people. Very real committee energy.
           </p>
           <p>
-            STORY + ARCADE · 6–8 MIN<br />MADE FOR THE COMMUNITY, AND THE BIT.
+            CHOICES + SIDE QUESTS + ZOOM<br />MADE FOR THE COMMUNITY, AND THE
+            BIT.
           </p>
         </footer>
       </main>
@@ -824,6 +825,7 @@
           boardFromRun = false,
           rank = null,
           requestGeneration = 0;
+        let adventure = null;
         const MASKS = [
           {
             id: "n95",
@@ -985,6 +987,11 @@
             }
             if (dir !== "right") return;
             const selected = dialog.choices[dialog.index];
+            if (selected.disabled) {
+              sfx("bad");
+              announce("LOCKED: " + selected.requirement);
+              return;
+            }
             dialog = null;
             sfx("select");
             if (selected.effect) change(...selected.effect);
@@ -997,6 +1004,7 @@
           }
         }
         function resetGame() {
+          adventure = null;
           meters = { profit: 45, trust: 72, chaos: 12 };
           shown = { ...meters };
           factions = { care: 0, clown: 0, petition: 0 };
@@ -1019,6 +1027,1016 @@
             "The rent is due. The cider is local. The clown school next door keeps borrowing our extension cord.",
             "Walk into Tess at the bar. She has an idea. That is usually how these things start.",
           ]);
+        }
+        const QUESTS = [
+          {
+            id: "access",
+            name: "WILLOW / THE PATIO IS NOT A POLICY",
+            reward: "Access plan: protects your promise on Zoom.",
+            steps: [
+              "Hear Willow's access needs",
+              "Set up the patio + free masks",
+            ],
+          },
+          {
+            id: "clowns",
+            name: "DOTTIE / HONK FOR THE RENT",
+            reward: "Clown benefit: ticket money and a school refuge.",
+            steps: ["Visit the clown school", "Rehearse the benefit show"],
+          },
+          {
+            id: "notes",
+            name: "NORA / ON THE RECORD",
+            reward: "Verified notes: stronger answers to the Globe.",
+            steps: ["Check the reporter's draft", "Give a sourced follow-up"],
+          },
+          {
+            id: "trivia",
+            name: "RUTH / SAVE QUEER TRIVIA",
+            reward: "Regulars: a full room without a viral stunt.",
+            steps: ["Rescue Ruth's trivia binder", "Invite the regulars back"],
+          },
+          {
+            id: "tickets",
+            name: "TESS / THE RENT IS NOT A VIBE",
+            reward: "Paid tickets: proof the bar can cover its bills.",
+            steps: ["Read the actual rent bill", "Run an advance ticket sale"],
+          },
+        ];
+        function startAdventure() {
+          resetGame();
+          adventure = {
+            points: 500,
+            round: 0,
+            remaining: 2,
+            stamina: 0,
+            progress: Object.fromEntries(QUESTS.map((q) => [q.id, 0])),
+            flags: {},
+            promises: {},
+            resolved: new Set(),
+            ledger: [{ label: "Opening goodwill", delta: 500 }],
+            scene: "THE POST",
+            earned: 0,
+            lost: 0,
+          };
+          stage = "adventure";
+          setScreen("adventure");
+          talk(
+            "TESS / RENT IS DUE SUNDAY",
+            [
+              "You own Last Ditch, the town's lesbian bar. Rent is due Sunday. You post a mask-optional Saturday trial, with masks welcome. The replies arrive before the punctuation.",
+              "Nora Ink, a fictional Boston Globe reporter, wants a story by midnight. The clown school lends you its Zoom account. Unfortunately, it also lends you its audition link.",
+              "Keep the bar open and your promises believable. Start with 500 points. Good decisions earn points; bad quotes and broken promises lose them. Final bar meters add bonuses.",
+              "Three Zoom recesses. Two errands each. Five side quests, two steps apiece. You cannot do everything. Choose your mask, then join the call.",
+            ],
+            null,
+            () => {
+              maskRow = 0;
+              setScreen("mask");
+            },
+          );
+        }
+        function adventureMaskDetail() {
+          return [
+            "5 STAMINA. HELPS WITH LONG FOLLOW-UPS.",
+            "3 STAMINA. +10 COMMUNITY TRUST.",
+            "1 STAMINA. +200 AT A REHEARSED CLOWN SHOW.",
+            "0 STAMINA. EVIDENCE STILL UNLOCKS GOOD ANSWERS.",
+          ][mask.base];
+        }
+        function equipAdventureMask() {
+          adventure.stamina = MASKS[mask.base].stamina;
+          if (mask.base === 1) change(0, 10, 0);
+          adventureZoom();
+        }
+        function adventurePoints(amount, label) {
+          const before = adventure.points;
+          adventure.points = clamp(before + amount, 0, 7500);
+          const delta = adventure.points - before;
+          adventure.ledger.push({ label, delta });
+          if (delta > 0) adventure.earned += delta;
+          else adventure.lost -= delta;
+          sfx(delta < 0 ? "bad" : "level");
+          return (delta >= 0 ? "+" : "") + delta + " POINTS";
+        }
+        function adventureEvent(
+          id,
+          speaker,
+          body,
+          options,
+          after,
+          back = null,
+        ) {
+          if (adventure.resolved.has(id)) return;
+          talk(
+            speaker,
+            body,
+            options.map((option) => ({
+              label:
+                (option.available === false ? "LOCKED: " : "") + option.label,
+              disabled: option.available === false,
+              requirement: option.requirement || option.label,
+              action: () => {
+                if (adventure.resolved.has(id)) return;
+                adventure.resolved.add(id);
+                if (option.apply) option.apply();
+                change(...option.effect);
+                const result = adventurePoints(option.points, option.reason);
+                talk(
+                  result + " / " + option.reason.toUpperCase(),
+                  option.result,
+                  null,
+                  after,
+                );
+              },
+            })),
+            null,
+            back,
+          );
+        }
+        function openQuestHub() {
+          adventure.scene = "ZOOM RECESS";
+          setTheme("cozy");
+          setScreen("quests");
+        }
+        function beginRecess() {
+          adventure.remaining = 2;
+          openQuestHub();
+        }
+        function questMenu() {
+          return [
+            ...QUESTS.map((q) => {
+              const progress = adventure.progress[q.id];
+              return {
+                label:
+                  progress === 2
+                    ? (adventure.flags[q.id] ? "DONE / " : "CLOSED / ") + q.name
+                    : q.name,
+                detail:
+                  progress === 2
+                    ? adventure.flags[q.id]
+                      ? q.reward
+                      : "Closed without the reward. Other quests are still available."
+                    : progress +
+                      1 +
+                      "/2: " +
+                      q.steps[progress] +
+                      ". " +
+                      q.reward,
+                action: () => visitQuest(q.id),
+              };
+            }),
+            {
+              label:
+                "REJOIN ZOOM / " +
+                ["THE ACCESS QUESTION", "THE RENT QUESTION", "THE FINAL VOTE"][
+                  adventure.round
+                ],
+              detail: adventure.remaining
+                ? "End this recess early. Unused errands are lost."
+                : "Your two errands are used. Time to answer for them.",
+              action: rejoinZoom,
+            },
+            {
+              label: "NOTEBOOK / PROMISES + POINTS",
+              detail:
+                "Review evidence, commitments, and the score ledger. Free.",
+              action: adventureNotebook,
+            },
+          ];
+        }
+        function adventureNotebook() {
+          const completed = QUESTS.filter((q) => adventure.flags[q.id]).map(
+            (q) => q.reward,
+          );
+          talk(
+            "YOUR NOTEBOOK / NO ERRAND COST",
+            [
+              "GOAL: pay the rent without losing your community. Profit 40+, trust 65+, chaos 60 or less earns the compromise ending. Every meter also changes your final bonus.",
+              "EVIDENCE: " +
+                (completed.join(" ") ||
+                  "None yet. Finish a two-step quest to bring something real to Zoom."),
+              "PROMISE: " +
+                (adventure.promises.access
+                  ? adventure.flags.access
+                    ? "Patio plan ready. You can keep your word."
+                    : "You promised a patio plan. Finish Willow's quest before Saturday or lose 450 points."
+                  : "No outstanding patio promise.") +
+                " STAMINA: " +
+                adventure.stamina +
+                ". ERRANDS LEFT THIS RECESS: " +
+                adventure.remaining +
+                ".",
+              "POINTS: " +
+                adventure.points +
+                ". Gained " +
+                adventure.earned +
+                "; lost " +
+                adventure.lost +
+                ". Recent: " +
+                adventure.ledger
+                  .slice(-4)
+                  .map(
+                    (item) =>
+                      (item.delta >= 0 ? "+" : "") +
+                      item.delta +
+                      " " +
+                      item.label,
+                  )
+                  .join(". "),
+            ],
+            null,
+            openQuestHub,
+          );
+        }
+        function rejoinZoom() {
+          if (adventure.remaining) {
+            talk(
+              "LEAVE RECESS EARLY?",
+              "You still have " +
+                adventure.remaining +
+                " errands. They do not carry over. The meeting will absolutely still be there.",
+              [
+                choice("STAY / USE MY ERRANDS", null, openQuestHub),
+                choice("REJOIN / LOSE UNUSED ERRANDS", null, () => {
+                  adventure.round++;
+                  adventureZoom();
+                }),
+              ],
+              null,
+              openQuestHub,
+            );
+          } else {
+            adventure.round++;
+            adventureZoom();
+          }
+        }
+        function visitQuest(id) {
+          const quest = QUESTS.find((q) => q.id === id);
+          const step = adventure.progress[id];
+          if (step === 2 || adventure.remaining === 0) {
+            talk(
+              quest.name,
+              step === 2
+                ? "Already handled. No repeat points. " +
+                    (adventure.flags[id]
+                      ? quest.reward
+                      : "This quest closed without its reward.")
+                : "No errands left this recess. Rejoin Zoom; they have discovered the annotate button.",
+              null,
+              openQuestHub,
+            );
+            return;
+          }
+          const scenes = {
+            access: [
+              [
+                "WILLOW / LET ME FINISH",
+                "I want to come to my bar. I need a masked early hour and an accessible patio. The town has surveyed my feelings six times. Nobody has moved the chairs.",
+                [
+                  {
+                    label: "ASK WHAT NEEDS DOING [+150]",
+                    points: 150,
+                    effect: [-2, 7, -3],
+                    reason: "A useful checklist",
+                    result:
+                      "Clear the route. Put masks by the door. Post the hours. Willow hands you one page. Pat asks whether it comes in 87 slides.",
+                  },
+                  {
+                    label: "MAKE A NEW SURVEY [-150]",
+                    points: -150,
+                    effect: [0, -5, 6],
+                    reason: "Survey number seven",
+                    result:
+                      "Question one: how tired are you of surveys? Willow gives you the checklist anyway. You now have actual work to do.",
+                  },
+                ],
+              ],
+              [
+                "WILLOW / CHAIRS ARE MOVABLE",
+                "The co-op lends a ramp mat and air filter. The patio route still contains seventeen chairs and one decorative canoe. Set up now?",
+                [
+                  {
+                    label: "DO THE CHECKLIST [+350]",
+                    points: 350,
+                    effect: [-6, 12, -8],
+                    reason: "Access plan ready",
+                    result:
+                      "Clear route. Free masks. Posted hours. The canoe becomes a planter. You can show Nora what you actually did.",
+                    apply: () => {
+                      adventure.flags.access = true;
+                      factions.care += 2;
+                    },
+                  },
+                  {
+                    label: "PHOTOGRAPH THE BOXES [-250]",
+                    points: -250,
+                    effect: [2, -8, 10],
+                    reason: "A photo is not a setup",
+                    result:
+                      "Nora asks why the ramp is still shrink-wrapped. This quest closes without an access plan. The photograph is exceptionally well lit.",
+                  },
+                ],
+              ],
+            ],
+            clowns: [
+              [
+                "DOTTIE / OFFICE HOURS",
+                "The school can stage a benefit show. Our tuition is late too. The admissions essay is a pratfall. Would you like the bar fundraiser or a brochure?",
+                [
+                  {
+                    label: "BOOK A BENEFIT [+150]",
+                    points: 150,
+                    effect: [3, 2, 3],
+                    reason: "Clown partnership",
+                    result:
+                      "Dottie books six students and one very small car. Next: rehearse. She underlines that word with a squeaky marker.",
+                    apply: () => {
+                      factions.clown++;
+                    },
+                  },
+                  {
+                    label: "ANNOUNCE 200 CLOWNS [-150]",
+                    points: -150,
+                    effect: [4, -3, 12],
+                    reason: "Capacity is a number",
+                    result:
+                      "Dottie has six students. Nora has a calculator. You can still rehearse the six you actually have.",
+                  },
+                ],
+              ],
+              [
+                "DOTTIE / DRESS REHEARSAL",
+                "The act involves a balloon bar and a landlord made of mime. The exit must stay clear. Dottie can also keep Classroom Two available if you need to retreat.",
+                [
+                  {
+                    label: "REHEARSE + KEEP EXITS CLEAR [+350]",
+                    points: 350,
+                    effect: [8, 4, -4],
+                    reason: "Benefit show ready",
+                    result:
+                      "Six clowns learn their cues. Dottie gives you the school key. For once, a clown has improved the contingency plan.",
+                    apply: () => {
+                      adventure.flags.clowns = true;
+                      factions.clown += 2;
+                    },
+                  },
+                  {
+                    label: "LET THEM IMPROVISE [-200]",
+                    points: -200,
+                    effect: [-3, -2, 12],
+                    reason: "Unrehearsed mime landlord",
+                    result:
+                      "The mime landlord demands three imaginary security deposits. Dottie cancels the act. School admission remains open.",
+                  },
+                ],
+              ],
+            ],
+            notes: [
+              [
+                "NORA INK / FICTIONAL GLOBE REPORTER",
+                "My draft says: lesbian bar drops masks, calls clown school. In what order did those things happen? Also, why is your Zoom name Landlord Balloon?",
+                [
+                  {
+                    label: "SHOW THE POST + TIMELINE [+200]",
+                    points: 200,
+                    effect: [0, 4, -5],
+                    reason: "Verified timeline",
+                    result:
+                      "Nora corrects the chronology. The clown school supplied the Zoom account, not medical advice. She schedules a follow-up.",
+                    apply: () => {
+                      adventure.flags.timeline = true;
+                    },
+                  },
+                  {
+                    label: "CALL EVERYTHING OFF RECORD [-200]",
+                    points: -200,
+                    effect: [0, -4, 7],
+                    reason: "No agreed ground rules",
+                    result:
+                      "Nora explains that saying OFF RECORD after a speech is not an undo button. She still offers you a follow-up.",
+                  },
+                ],
+              ],
+              [
+                "NORA / ONE MORE QUESTION",
+                "What changed for people who use the bar? I need something I can verify. A policy is a sentence. A promise needs a receipt.",
+                [
+                  {
+                    label: "SHOW NOTES + A SOURCE [+450]",
+                    available: !!(
+                      adventure.flags.timeline ||
+                      adventure.flags.access ||
+                      adventure.flags.tickets
+                    ),
+                    requirement:
+                      "Check the timeline or complete an access or ticket quest first.",
+                    points: 450,
+                    effect: [4, 8, -6],
+                    reason: "A sourced follow-up",
+                    result:
+                      "Nora quotes the actual plan. Her editor removes the phrase circus of uncertainty. With visible reluctance.",
+                    apply: () => {
+                      adventure.flags.notes = true;
+                    },
+                  },
+                  {
+                    label: "ADMIT WHAT IS STILL UNFINISHED [+100]",
+                    points: 100,
+                    effect: [0, 3, -2],
+                    reason: "An honest limit",
+                    result:
+                      "Nora records the uncertainty accurately. You have no verified briefing to use later, but you have not invented one.",
+                  },
+                  {
+                    label: "DECLARE YOURSELF MAYOR OF MASKS [-300]",
+                    points: -300,
+                    effect: [5, -7, 15],
+                    reason: "An extremely usable quote",
+                    result:
+                      "Nora asks who elected you. You say vibes. She spells it back to you.",
+                  },
+                ],
+              ],
+            ],
+            trivia: [
+              [
+                "RUTH / THE ARCHIVE",
+                "The clown class borrowed my queer trivia binder as a prop. It contains thirty years of local history and one answer I am still disputing.",
+                [
+                  {
+                    label: "FIND THE BINDER [+150]",
+                    points: 150,
+                    effect: [0, 5, -2],
+                    reason: "Queer history recovered",
+                    result:
+                      "It is under a unicycle. Ruth's margin note reads: lesbians invented neither flannel nor the river, but we improved both.",
+                  },
+                  {
+                    label: "ASK THE INTERNET TO REPLACE IT [-150]",
+                    points: -150,
+                    effect: [0, -5, 6],
+                    reason: "Local history is local",
+                    result:
+                      "The internet says the bar was founded by a bridge. Ruth retrieves the binder herself. You still owe her a room full of people.",
+                  },
+                ],
+              ],
+              [
+                "RUTH / EVERYONE GETS AN INVITE",
+                "Advertise masked early trivia, water, and a quiet table. My ex will come. Her ex will come. It is practically a mailing list.",
+                [
+                  {
+                    label: "INVITE THE REGULARS [+350]",
+                    points: 350,
+                    effect: [10, 8, -4],
+                    reason: "Regulars return",
+                    result:
+                      "Six teams book. Three are called Just Roommates. Ruth adds numbers so the scores remain legally distinguishable.",
+                    apply: () => {
+                      adventure.flags.trivia = true;
+                      factions.care++;
+                    },
+                  },
+                  {
+                    label: "REPLACE TRIVIA WITH AN INFLUENCER [-250]",
+                    points: -250,
+                    effect: [-3, -8, 10],
+                    reason: "The influencer invoices you",
+                    result:
+                      "They bring a ring light and no friends. Ruth keeps a spare question ready, because she is a professional.",
+                  },
+                ],
+              ],
+            ],
+            tickets: [
+              [
+                "TESS / ACTUAL ARITHMETIC",
+                "We need ticket sales, not engagement. The landlord has declined payment in awareness. Again.",
+                [
+                  {
+                    label: "READ THE BILL [+150]",
+                    points: 150,
+                    effect: [3, 2, -3],
+                    reason: "A real budget",
+                    result:
+                      "One modest fundraiser covers the gap. The spreadsheet has six cells. Pat looks personally betrayed.",
+                  },
+                  {
+                    label: "BUY A VIRAL PROMOTION [-250]",
+                    points: -250,
+                    effect: [-8, 0, 8],
+                    reason: "Engagement does not pay rent",
+                    result:
+                      "You gain 400 followers named LocalBusinessEnjoyer. None live within driving distance of Massachusetts.",
+                  },
+                ],
+              ],
+              [
+                "TESS / TICKETS, NOT TAKES",
+                "Sell a limited number of tickets, with a pay-what-you-can allocation. Or bet the rent on a mystery sponsor called HonkCoin.",
+                [
+                  {
+                    label: "RUN THE TICKET SALE [+350]",
+                    points: 350,
+                    effect: [15, 4, -4],
+                    reason: "Rent money banked",
+                    result:
+                      "Real people buy real tickets. Tess marks PAID in the book. It is the most erotic thing she has seen all week.",
+                    apply: () => {
+                      adventure.flags.tickets = true;
+                    },
+                  },
+                  {
+                    label: "ACCEPT HONKCOIN [-350]",
+                    points: -350,
+                    effect: [-12, -4, 12],
+                    reason: "The sponsor is a PDF",
+                    result:
+                      "HonkCoin pays in a PDF certificate. It cannot cover rent. It can, technically, cover a stain on the wall.",
+                  },
+                ],
+              ],
+            ],
+          };
+          const [speaker, body, options] = scenes[id][step];
+          adventure.scene = quest.steps[step].toUpperCase();
+          setScreen("adventure");
+          adventureEvent(
+            "quest-" + id + "-" + step,
+            speaker,
+            body + " Costs 1 errand.",
+            options,
+            () => {
+              adventure.progress[id]++;
+              adventure.remaining--;
+              openQuestHub();
+            },
+            openQuestHub,
+          );
+        }
+        function adventureZoom() {
+          setTheme("clown");
+          setScreen("zoom");
+          zoomRound = adventure.round;
+          if (adventure.round === 0) {
+            adventureEvent(
+              "zoom-open",
+              "DOTTIE / HOST, PROBABLY",
+              "Welcome to the mask-policy town hall. This is also the clown-school audition link. Please state your name and whether that tuba is your microphone.",
+              [
+                {
+                  label: "ONE MIC. PUT AUDITIONS IN ROOM 2. [+250]",
+                  points: 250,
+                  effect: [0, 5, -5],
+                  reason: "A meeting with an agenda",
+                  result:
+                    "The tuba mutes. Nora asks what Saturday will actually look like. Take two errands, then return with an answer.",
+                },
+                {
+                  label: "HONK TO ESTABLISH A QUORUM [+100]",
+                  points: 100,
+                  effect: [2, 1, 8],
+                  reason: "Quorum by honk",
+                  result:
+                    "Nine honks, six people. The motion passes in base clown. Nora underlines quorum. You have two errands before the access question.",
+                  apply: () => {
+                    factions.clown++;
+                  },
+                },
+                {
+                  label: "READ ALL 400 CHAT MESSAGES [-250]",
+                  points: -250,
+                  effect: [-3, -4, 10],
+                  reason: "You have become the chat",
+                  result:
+                    "Message 83 is just the word HEY. Nora wants a plan. Dottie calls recess before you reach HEY again.",
+                },
+              ],
+              beginRecess,
+            );
+          } else if (adventure.round === 1) {
+            adventureEvent(
+              "zoom-access",
+              "NORA / THE GLOBE, STILL HERE",
+              "Will people who need a masked space still have a way to use their bar? Please describe a real arrangement. Beans the dog has raised his paw.",
+              [
+                {
+                  label: "SHOW WILLOW'S ACCESS PLAN [+450]",
+                  available: !!adventure.flags.access,
+                  requirement: "Complete both steps of Willow's quest.",
+                  points: 450,
+                  effect: [2, 10, -8],
+                  reason: "Evidence beats a slogan",
+                  result:
+                    "You show the setup and hours. Willow confirms the details. Beans lowers his paw. He was asking about cheese.",
+                },
+                {
+                  label: "PROMISE A PLAN BY SATURDAY [+100]",
+                  points: 100,
+                  effect: [0, 3, 4],
+                  reason: "A promise on record",
+                  result:
+                    "Nora writes it down. Complete Willow's quest before Saturday: keeping this promise earns 450; breaking it loses 450.",
+                  apply: () => {
+                    adventure.promises.access = true;
+                  },
+                },
+                {
+                  label: "SAY EVERYONE IS WELCOME [-250]",
+                  points: -250,
+                  effect: [3, -9, 10],
+                  reason: "Welcome needs a way in",
+                  result:
+                    "Willow: I know the slogan. I am asking about the chairs. Nora puts down her pen in a way that is somehow louder.",
+                },
+              ],
+              () =>
+                adventureEvent(
+                  "zoom-slides",
+                  "PAT / SHARING THE WRONG SCREEN",
+                  "I have 87 slides about the comment section. Slide one is a photograph of slide two. Dottie can give you the floor, but this meeting is exhausting.",
+                  [
+                    {
+                      label: "STAY + ASK ONE USEFUL QUESTION [+300 / 1 ♥]",
+                      available: adventure.stamina > 0,
+                      requirement: "Requires one stamina heart.",
+                      points: 300,
+                      effect: [0, 5, -5],
+                      reason: "A patient follow-up",
+                      result:
+                        "Which action helps Saturday? Pat reveals a one-page summary hidden under eighty-six slides. The room applauds a PDF.",
+                      apply: () => {
+                        adventure.stamina--;
+                      },
+                    },
+                    {
+                      label: "REQUEST THE ONE-PAGE EMAIL [+150]",
+                      points: 150,
+                      effect: [0, 3, -2],
+                      reason: "A merciful attachment",
+                      result:
+                        "Dottie calls the second recess. Two errands remain before Tess has to explain the budget.",
+                    },
+                    {
+                      label: "LET ALL 87 SLIDES HAPPEN [-200]",
+                      points: -200,
+                      effect: [-3, -2, 8],
+                      reason: "Death by transitions",
+                      result:
+                        "A clown adds a car horn to every transition. Your next recess is emotionally overdue.",
+                    },
+                  ],
+                  beginRecess,
+                ),
+            );
+          } else if (adventure.round === 2) {
+            const funded = !!(
+              adventure.flags.tickets ||
+              adventure.flags.clowns ||
+              adventure.flags.trivia
+            );
+            adventureEvent(
+              "zoom-rent",
+              "TESS / SCREEN-SHARING SIX CELLS",
+              "We have a rent gap. We also have a town willing to debate the font on a fundraiser flyer. What can we actually count on?",
+              [
+                {
+                  label: "SHOW CONFIRMED BOOKINGS [+450]",
+                  available: funded,
+                  requirement:
+                    "Complete the ticket, clown benefit, or trivia quest.",
+                  points: 450,
+                  effect: [8, 5, -5],
+                  reason: "A funded plan",
+                  result:
+                    "Tess shows the numbers. Pat asks for a pie chart. Ruth says the pie is for paying customers.",
+                },
+                {
+                  label: "ADMIT THE GAP. SCALE DOWN. [+100]",
+                  points: 100,
+                  effect: [-4, 5, -3],
+                  reason: "An honest smaller night",
+                  result:
+                    "You cut the rented fog machine. The meeting treats this as a major austerity measure. You still have one recess to find support.",
+                },
+                {
+                  label: "COUNT LIKES AS TICKET SALES [-300]",
+                  points: -300,
+                  effect: [-6, -6, 12],
+                  reason: "The landlord does not accept likes",
+                  result:
+                    "Nora asks what your conversion rate is. You answer: spiritually, excellent.",
+                },
+              ],
+              () =>
+                adventureEvent(
+                  "zoom-breakouts",
+                  "DOTTIE / THE BREAKOUT ROOMS HAVE UNIONIZED",
+                  "Room One is writing policy. Room Two is auditioning clowns. Both think you promised them Saturday. Pick one sentence for the minutes.",
+                  [
+                    {
+                      label: "BAR FIRST. BENEFIT SHOW HAS A SLOT. [+250]",
+                      points: 250,
+                      effect: [3, 5, -4],
+                      reason: "One usable sentence",
+                      result:
+                        "The students get a schedule. The regulars keep their bar. Nora copies the sentence without asking if it is a metaphor.",
+                    },
+                    {
+                      label: "CALL IT AN IMMERSIVE MASK DISCOURSE [-150]",
+                      points: -150,
+                      effect: [4, -4, 9],
+                      reason: "You have invented a worse flyer",
+                      result:
+                        "Someone immediately applies for an arts grant. Dottie calls the final recess. Two errands before the vote.",
+                    },
+                  ],
+                  beginRecess,
+                ),
+            );
+          } else {
+            adventureEvent(
+              "zoom-policy",
+              "DOTTIE / FINAL POLICY VOTE",
+              "The rent is real. So are people's access needs. Pick what you can deliver tonight. The clowns have agreed to stop using the poll as a soundboard.",
+              [
+                {
+                  label: "MASKED EARLY HOUR + PATIO [+450]",
+                  available: !!adventure.flags.access,
+                  requirement: "Complete Willow's access plan.",
+                  points: 450,
+                  effect: [5, 12, -10],
+                  reason: "A workable compromise",
+                  result:
+                    "Clear hours. Clear route. Free masks. Everyone grudgingly agrees the policy fits on the door.",
+                  apply: () => {
+                    policy = "compromise";
+                  },
+                },
+                {
+                  label: "KEEP MASKS REQUIRED [+200]",
+                  points: 200,
+                  effect: [-5, 10, -7],
+                  reason: "A clear mask policy",
+                  result:
+                    "Tess updates the sign. People can plan their night. Pat requests a version number. The sign is now v1.0.",
+                  apply: () => {
+                    policy = "masked";
+                  },
+                },
+                {
+                  label: "RETREAT TO CLOWN SCHOOL [+100]",
+                  points: 100,
+                  effect: [-4, 3, -3],
+                  reason: "A smaller stage",
+                  result:
+                    "Classroom Two becomes the bar's pop-up. Masked hours stay. Dottie asks whether you want to enroll. You say: let's see how tonight goes.",
+                  apply: () => {
+                    policy = "retreat";
+                    factions.clown += 2;
+                  },
+                },
+                {
+                  label: "MASK-OPTIONAL. KEEP THE PLAN CLEAR. [+100]",
+                  points: 100,
+                  effect: [8, -7, 5],
+                  reason: "The trial goes ahead",
+                  result:
+                    "Masks remain welcome. Willow wants the promised alternatives in place. Nora will be there to see what actually happens.",
+                  apply: () => {
+                    policy = "optional";
+                  },
+                },
+              ],
+              () =>
+                adventureEvent(
+                  "zoom-quote",
+                  "NORA / BEFORE I FILE",
+                  "What is this story about? A lesbian bar trying to survive? A mask-policy argument? Why is the moderator juggling a mute button?",
+                  [
+                    {
+                      label: "USE OUR VERIFIED BRIEFING [+450]",
+                      available: !!adventure.flags.notes,
+                      requirement: "Complete Nora's sourced follow-up quest.",
+                      points: 450,
+                      effect: [5, 6, -6],
+                      reason: "A quote with receipts",
+                      result:
+                        "A small queer space is trying to stay open and keep people included. Nora has names, details, and one excellent photo of Dottie.",
+                      apply: () => {
+                        adventure.flags.goodQuote = true;
+                      },
+                    },
+                    {
+                      label: "WE ARE LEARNING IN PUBLIC [+150]",
+                      points: 150,
+                      effect: [0, 4, -2],
+                      reason: "Honest, if unglamorous",
+                      result:
+                        "Nora: that sounds difficult. You: yes. A clown silently offers a very small tissue.",
+                    },
+                    {
+                      label: "THE ONLY CIRCUS WITH A LIQUOR LICENSE [+300]",
+                      points: 300,
+                      effect: [10, -7, 18],
+                      reason: "A headline, unfortunately",
+                      result:
+                        "Nora reads it back. You stand by it. Tess adds a second phone line for the incoming calls.",
+                      apply: () => {
+                        adventure.flags.stunt = true;
+                      },
+                    },
+                  ],
+                  startAdventureSaturday,
+                ),
+            );
+          }
+        }
+        function startAdventureSaturday() {
+          if (adventure.resolved.has("saturday-open")) return;
+          adventure.resolved.add("saturday-open");
+          adventure.scene =
+            policy === "retreat"
+              ? "SATURDAY / CLASSROOM TWO"
+              : "SATURDAY / LAST DITCH";
+          setTheme("boss");
+          setScreen("adventure");
+          const promised = adventure.promises.access;
+          const access = adventure.flags.access;
+          const delta = promised ? (access ? 450 : -450) : access ? 250 : 0;
+          const receipt = adventurePoints(
+            delta,
+            promised
+              ? access
+                ? "Promise kept"
+                : "Promise broken"
+              : "Opening the doors",
+          );
+          if (promised) change(0, access ? 8 : -12, access ? -5 : 10);
+          talk(
+            receipt,
+            promised && !access
+              ? "Willow finds the chairs exactly where they were. You promised a plan on Zoom. Nora has the recording. The penalty is for the broken promise."
+              : access
+                ? "Willow arrives to the setup you built. The sign matches the plan. The canoe is flourishing as a planter."
+                : "The posted mask policy is clear. Ruth takes her usual stool. You still have a bar to keep open.",
+            null,
+            adventureFundraiser,
+          );
+        }
+        function adventureFundraiser() {
+          const f = adventure.flags;
+          adventureEvent(
+            "saturday-fundraiser",
+            "TESS / THE RENT ENVELOPE",
+            "The doors are open. What fills the room? Your errands decide which plans are ready. There is no time to rehearse a new one now.",
+            [
+              {
+                label:
+                  "STAGE THE CLOWN BENEFIT [+" +
+                  (mask.base === 2 ? 800 : 600) +
+                  "]",
+                available: !!f.clowns,
+                requirement: "Complete Dottie's rehearsal.",
+                points: mask.base === 2 ? 800 : 600,
+                effect: [18, 4, 5],
+                reason: "Benefit night",
+                result:
+                  "The mime landlord loses to a balloon union. The room pays happily. " +
+                  (mask.base === 2
+                    ? "Your novelty mask earns a curtain-call bonus."
+                    : "Dottie takes a bow without blocking an exit."),
+              },
+              {
+                label: "HOST RUTH'S TRIVIA [+600]",
+                available: !!f.trivia,
+                requirement: "Complete Ruth's invitations.",
+                points: 600,
+                effect: [14, 10, -5],
+                reason: "A room full of regulars",
+                result:
+                  "The question is: which local institution has survived three recessions? Every team writes THIS BAR. Ruth accepts it.",
+              },
+              {
+                label: "WELCOME OUR TICKET HOLDERS [+600]",
+                available: !!f.tickets,
+                requirement: "Complete Tess's ticket sale.",
+                points: 600,
+                effect: [20, 4, -4],
+                reason: "The rent is covered",
+                result:
+                  "People with tickets arrive. Tess counts actual money. Somewhere, a spreadsheet experiences inner peace.",
+              },
+              {
+                label: "RUN A SMALL WALK-IN NIGHT [-150]",
+                points: -150,
+                effect: [-7, 2, 3],
+                reason: "No bookings ready",
+                result:
+                  "A warm night, a thin till. Ruth buys a round of seltzer. It helps. It does not turn seltzer into rent.",
+              },
+            ],
+            adventureLastQuestion,
+          );
+        }
+        function adventureLastQuestion() {
+          adventureEvent(
+            "saturday-reporter",
+            "NORA / ONE LAST FOLLOW-UP",
+            "My editor asks if this is the end of lesbian bars or the beginning of clown bars. I said it might just be Saturday. Can you give me one detail that proves it?",
+            [
+              {
+                label: "USE THE VERIFIED NOTES [+400]",
+                available: !!adventure.flags.notes,
+                requirement: "Complete Nora's follow-up quest.",
+                points: 400,
+                effect: [3, 5, -4],
+                reason: "A specific, human story",
+                result:
+                  "You point to the people who use the bar. Nora closes her notebook. Her editor accepts an article containing neither apocalypse nor renaissance.",
+              },
+              {
+                label: "STAY FOR AN INTERVIEW [+300 / 2 ♥]",
+                available: adventure.stamina >= 2,
+                requirement: "Requires two stamina hearts.",
+                points: 300,
+                effect: [2, 4, -3],
+                reason: "You answer the actual question",
+                result:
+                  "You explain the bar, the masks, the rent. Nora listens. Dottie remains in the background, carrying one extremely long ladder.",
+                apply: () => {
+                  adventure.stamina -= 2;
+                },
+              },
+              {
+                label: "GIVE A SHORT, HONEST ANSWER [+100]",
+                points: 100,
+                effect: [0, 2, -1],
+                reason: "No invented facts",
+                result:
+                  "People need places to go. This is one of them. Nora says thank you. For a moment, nobody is typing.",
+              },
+              {
+                label: "CLAIM ALL 400 COMMENTS WERE CUSTOMERS [-350]",
+                points: -350,
+                effect: [2, -8, 12],
+                reason: "Nora can count",
+                result:
+                  "There are twenty-seven people here. Nora asks if the other 373 are inside the clown car.",
+              },
+            ],
+            () => {
+              setTheme("clown");
+              setScreen("zoom");
+              adventure.round = 4;
+              const success = meters.profit >= 40 && meters.trust >= 65;
+              adventureEvent(
+                "zoom-adjourn",
+                "11:58 PM / YOU ARE STILL ON ZOOM",
+                "Marlow from the listserv moves to extend the meeting indefinitely. Dottie offers you a clown-school application instead. The bar is still here. How do you end the night?",
+                [
+                  {
+                    label:
+                      "POST THE RECEIPTS. ADJOURN. [" +
+                      (success ? "+600" : "+100") +
+                      "]",
+                    points: success ? 600 : 100,
+                    effect: [2, 5, -8],
+                    reason: success
+                      ? "A bar worth coming back to"
+                      : "An honest accounting",
+                    result: success
+                      ? "Rent covered. Community intact. Nora's story calls it a small place worth keeping. Dottie finally finds Leave Meeting for All."
+                      : "You name what worked and what needs fixing. The community agrees to help with the next fundraiser. Nobody pretends the numbers are better than they are.",
+                  },
+                  {
+                    label: "RETREAT. ENROLL IN CLOWN SCHOOL. [+300]",
+                    points: 300,
+                    effect: [3, 3, 4],
+                    reason: "Higher honk education",
+                    result:
+                      "You enroll. Last Ditch becomes the school's evening annex. Your first assignment: fall down, then get back up. Ruth says you have transfer credits.",
+                    apply: () => {
+                      policy = "retreat";
+                    },
+                  },
+                  {
+                    label: "CREATE A PERMANENT SUBCOMMITTEE [-200]",
+                    points: -200,
+                    effect: [-4, 2, 8],
+                    reason: "Meeting never adjourned",
+                    result:
+                      "It books the back room every Tuesday. Recurring revenue, eternal minutes. The first agenda item is whether the second agenda item exists.",
+                    apply: () => {
+                      adventure.flags.committee = true;
+                    },
+                  },
+                ],
+                finishArcade,
+              );
+            },
+          );
         }
         function decision() {
           talk(
@@ -1719,8 +2737,7 @@
             ) {
               incident.nextMove =
                 arcade.elapsed +
-                (incident.type === "reporter" ? 0.8 : 0.95) /
-                  (1 + act * 0.14);
+                (incident.type === "reporter" ? 0.8 : 0.95) / (1 + act * 0.14);
               let dx = incident.direction,
                 dy = 0;
               if (incident.type === "reporter") {
@@ -1730,7 +2747,10 @@
                   Math.abs(deltaX) >= Math.abs(deltaY) ? Math.sign(deltaX) : 0;
                 dy = dx ? 0 : Math.sign(deltaY);
               }
-              if (incident.x + dx === player.x && incident.y + dy === player.y) {
+              if (
+                incident.x + dx === player.x &&
+                incident.y + dy === player.y
+              ) {
                 if (incident.type === "reporter") {
                   confrontIncident(incident);
                   continue;
@@ -2241,6 +3261,7 @@
         }
         function pickEnding() {
           if (policy === "retreat") return "clown";
+          if (adventure?.flags.committee) return "committee";
           if (meters.trust >= 65 && meters.profit >= 40 && meters.chaos <= 60)
             return "compromise";
           if (factions.clown >= 3 || (mask.base === 2 && meters.chaos >= 40))
@@ -2251,7 +3272,7 @@
         function finishArcade() {
           ending = pickEnding();
           score =
-            arcade.points +
+            (adventure ? adventure.points : arcade.points) +
             meters.profit * 10 +
             meters.trust * 10 +
             (100 - meters.chaos) * 10;
@@ -2409,7 +3430,7 @@
             } else if (dir === "left") titleAwake = false;
             else if (dir === "right") {
               sfx("select");
-              if (menuIndex === 0) resetGame();
+              if (menuIndex === 0) startAdventure();
               else if (menuIndex === 1) startChaosMode();
               else if (menuIndex === 2) void showBoard(false);
               else if (menuIndex === 3) setScreen("help");
@@ -2426,6 +3447,20 @@
           }
           if (screen === "world" || screen === "arcade") {
             move(dir);
+            return;
+          }
+          if (screen === "quests") {
+            const entries = questMenu();
+            if (dir === "up" || dir === "down") {
+              menuIndex =
+                (menuIndex + (dir === "up" ? -1 : 1) + entries.length) %
+                entries.length;
+              sfx("move");
+              announce(
+                entries[menuIndex].label + ". " + entries[menuIndex].detail,
+              );
+            } else if (dir === "right") entries[menuIndex].action();
+            else if (dir === "left") adventureNotebook();
             return;
           }
           if (screen === "feed") {
@@ -2446,7 +3481,8 @@
               maskRow = (maskRow + (dir === "up" ? -1 : 1) + 5) % 5;
             else if (maskRow === 4) {
               if (dir === "right") {
-                setScreen("ready");
+                if (adventure) equipAdventureMask();
+                else setScreen("ready");
                 sfx("select");
               } else maskRow = 3;
             } else {
@@ -2459,7 +3495,7 @@
               "Mask editor. " +
                 MASKS[mask.base].label +
                 ". " +
-                MASKS[mask.base].detail +
+                (adventure ? adventureMaskDetail() : MASKS[mask.base].detail) +
                 " Selected " +
                 ["base", "color", "pattern", "accessory", "done"][maskRow],
             );
@@ -3338,7 +4374,14 @@
             lights(m.x + 12, m.y + 3, t * m.w - 28, 27);
             if (atSchool) {
               rect(m.x + 319, m.y + 3, 198, 19, C.ink);
-              text("CLOWN SCHOOL / ROOM 2", m.x + 418, m.y + 9, 1, C.cream, "center");
+              text(
+                "CLOWN SCHOOL / ROOM 2",
+                m.x + 418,
+                m.y + 9,
+                1,
+                C.cream,
+                "center",
+              );
             }
             rect(
               m.x + 8 * t,
@@ -3595,6 +4638,141 @@
             "↑↓←→ MOVE + BUMP",
           );
         }
+        function drawAdventureStatus() {
+          if (!adventure) return;
+          rect(575, 71, 344, 23, C.ink);
+          text(
+            "SCORE " + String(adventure.points).padStart(5, "0"),
+            898,
+            78,
+            2,
+            C.cream,
+            "right",
+          );
+          text("♥ " + adventure.stamina, 590, 80, 1, C.mint);
+        }
+        function drawAdventureBar(x, y, width) {
+          panel(x, y, width, 180, C.brown, C.plum);
+          rect(x + 8, y + 8, width - 16, 115, C.purple);
+          lights(x + 13, y + 14, width - 26, 8);
+          text(
+            policy === "retreat" ? "CLOWN SCHOOL" : "LAST DITCH",
+            x + width / 2,
+            y + 39,
+            2,
+            C.peach,
+            "center",
+          );
+          rect(x + 12, y + 118, width - 24, 13, C.rust);
+          sprite(x + 27, y + 52, C.pink, 4, { mask, dir: "right" });
+          sprite(x + width - 78, y + 64, C.orange, 3, { clown: true });
+          rect(x + width / 2 - 9, y + 95, 40, 28, C.ink);
+          rect(x + width / 2 - 5, y + 99, 32, 18, C.blue);
+          text("ZOOM", x + width / 2 + 11, y + 105, 1, C.ink, "center");
+          for (let i = 0; i < 4; i++)
+            rect(x + 16 + (i * (width - 32)) / 4, y + 151, 28, 4, C.rust);
+        }
+        function drawAdventure() {
+          section(
+            "CHOOSE YOUR OWN ADVENTURE / RENT DUE SUNDAY",
+            adventure.scene,
+          );
+          drawAdventureBar(240, 171, 480);
+          text(
+            "ONE BAR. REAL PEOPLE. EXTREMELY LONG MINUTES.",
+            480,
+            381,
+            1,
+            C.blue,
+            "center",
+          );
+          footer(
+            "POINTS + PROMISES CARRY THROUGH THE STORY",
+            "ANY ARROW CONTINUE",
+          );
+        }
+        function drawQuests() {
+          section(
+            "RECESS " + (adventure.round + 1) + "/3 / THE CALL WILL RECONVENE",
+            "TWO ERRANDS. PICK YOUR BATTLES.",
+          );
+          text(
+            "ERRANDS LEFT: " + adventure.remaining + " / 2",
+            53,
+            150,
+            2,
+            adventure.remaining ? C.mint : C.pink,
+          );
+          text(
+            "EACH QUEST HAS TWO STEPS. NO REAL-TIME CLOCK.",
+            53,
+            178,
+            1,
+            C.blue,
+          );
+          const entries = questMenu();
+          entries.forEach((entry, i) => {
+            const y = 198 + i * 41;
+            panel(
+              52,
+              y,
+              590,
+              37,
+              menuIndex === i ? C.purple : C.night,
+              menuIndex === i ? C.peach : C.plum,
+            );
+            if (i === menuIndex) text("→", 64, y + 10, 2, C.peach);
+            text(
+              entry.label,
+              91,
+              y + 10,
+              2,
+              menuIndex === i ? C.cream : C.blue,
+            );
+            const q = QUESTS[i];
+            const progress = q ? adventure.progress[q.id] : 0;
+            text(
+              q
+                ? progress === 2
+                  ? adventure.flags[q.id]
+                    ? "REWARD EARNED"
+                    : "NO REWARD"
+                  : "STEP " + (progress + 1) + "/2 / 1 ERRAND"
+                : i === 5
+                  ? "NEXT MAIN STORY SCENE"
+                  : "FREE / READ ANY TIME",
+              91,
+              y + 27,
+              1,
+              q && progress === 2 && adventure.flags[q.id] ? C.mint : C.peach,
+            );
+          });
+          drawAdventureBar(670, 204, 235);
+          text("YOUR MASK", 685, 402, 1, C.blue);
+          text(MASKS[mask.base].label, 685, 421, 2, C.cream);
+          for (let i = 0; i < 5; i++)
+            heart(
+              686 + i * 27,
+              446,
+              3,
+              i < adventure.stamina ? C.mint : C.plum,
+            );
+          panel(52, 489, 853, 107, C.ink, C.plum);
+          paragraph(entries[menuIndex].detail, 71, 505, 815, 2, C.cream, 22);
+          const receipt = adventure.ledger[adventure.ledger.length - 1];
+          text(
+            "LAST: " +
+              (receipt.delta >= 0 ? "+" : "") +
+              receipt.delta +
+              " / " +
+              receipt.label.toUpperCase(),
+            71,
+            573,
+            1,
+            receipt.delta < 0 ? C.pink : C.mint,
+          );
+          footer("← NOTEBOOK / PROMISES + SCORE HISTORY", "↑↓ CHOOSE  → GO");
+        }
         function drawDialogue() {
           const full = dialog.pages[dialog.page],
             done = dialog.chars >= full.length,
@@ -3636,7 +4814,11 @@
                 102,
                 top + i * 27,
                 2,
-                i === dialog.index ? C.cream : C.blue,
+                option.disabled
+                  ? C.plum
+                  : i === dialog.index
+                    ? C.cream
+                    : C.blue,
               );
             });
             footer(
@@ -3695,34 +4877,55 @@
         }
         function drawZoom() {
           section(
-            "CHAPTER 02 / MEETING ID: HONK-HONK",
-            "A PERFECTLY NORMAL TOWN HALL.",
+            adventure
+              ? "LIVE / CLOWN SCHOOL ACCOUNT / RECORDING ON"
+              : "CHAPTER 02 / MEETING ID: HONK-HONK",
+            adventure
+              ? [
+                  "THE TUBA IS UNMUTED.",
+                  "SHOW US THE ACTUAL PLAN.",
+                  "RENT IS NOT A VIBE.",
+                  "THE VOTE. THEN OPEN THE DOORS.",
+                  "MOTION TO FINALLY LOG OFF.",
+                ][adventure.round]
+              : "A PERFECTLY NORMAL TOWN HALL.",
           );
-          const names = [
-            "DOTTIE (HOST?)",
-            "WILLOW",
-            "TESS",
-            "BEANS THE DOG",
-            "JUGGLING LAB 201",
-            "PAT / SHARING SCREEN",
-          ];
+          const names = adventure
+            ? [
+                "DOTTIE / HOST",
+                "NORA / BOSTON GLOBE",
+                "YOU / LAST DITCH",
+                "WILLOW / ACCESS",
+                "AUDITION ROOM / HONK",
+                "PAT / 87 SLIDES",
+              ]
+            : [
+                "DOTTIE (HOST?)",
+                "WILLOW",
+                "TESS",
+                "BEANS THE DOG",
+                "JUGGLING LAB 201",
+                "PAT / SHARING SCREEN",
+              ];
+          const activeTile = adventure
+            ? dialog?.speaker.startsWith("NORA")
+              ? 1
+              : dialog?.speaker.startsWith("DOTTIE")
+                ? 0
+                : dialog?.speaker.startsWith("PAT")
+                  ? 5
+                  : 2
+            : zoomRound % 6;
           for (let i = 0; i < 6; i++) {
             const x = 62 + (i % 3) * 283,
               y = 166 + Math.floor(i / 3) * 179;
-            panel(
-              x,
-              y,
-              267,
-              161,
-              C.purple,
-              i === zoomRound % 6 ? C.mint : C.plum,
-            );
+            panel(x, y, 267, 161, C.purple, i === activeTile ? C.mint : C.plum);
             rect(x + 8, y + 8, 251, 121, [C.teal, C.plum, C.brown][i % 3]);
             rect(x + 15, y + 23, 44, 61, C.night);
             rect(x + 19, y + 27, 36, 53, C.blue);
             rect(x + 204, y + 65, 25, 51, C.brown);
             rect(x + 196, y + 51, 40, 28, C.green);
-            if (i === 3) {
+            if (i === 3 && !adventure) {
               rect(x + 100, y + 70, 60, 33, C.peach);
               rect(x + 87, y + 47, 35, 41, C.rust);
               rect(x + 83, y + 44, 11, 32, C.brown);
@@ -3736,12 +4939,20 @@
                 5,
                 {
                   clown: i === 0 || i === 4,
+                  hat: adventure && i === 1,
                   mask:
-                    i === 1
-                      ? { base: 0, color: 0, pattern: 1, accessory: 3 }
-                      : null,
+                    adventure && i === 2
+                      ? mask
+                      : i === (adventure ? 3 : 1)
+                        ? { base: 0, color: 0, pattern: 1, accessory: 3 }
+                        : null,
                 },
               );
+            if (adventure && i === 1) {
+              rect(x + 157, y + 79, 24, 34, C.cream);
+              for (let row = 0; row < 4; row++)
+                rect(x + 161, y + 85 + row * 6, 14, 2, C.plum);
+            }
             text(names[i], x + 12, y + 142, 1, C.cream);
             text(
               i === 0 ? "♪" : "X",
@@ -3752,7 +4963,9 @@
             );
           }
           text(
-            "YOU ARE MUTED. EVERYONE ELSE IS NOT.",
+            adventure
+              ? "NORA IS TAKING NOTES. YOUR PROMISES ARE ON RECORD."
+              : "YOU ARE MUTED. EVERYONE ELSE IS NOT.",
             480,
             564,
             1,
@@ -3807,7 +5020,15 @@
               3,
               i < MASKS[mask.base].stamina ? C.mint : C.plum,
             );
-          paragraph(MASKS[mask.base].detail, 410, 542, 478, 1, C.mint, 17);
+          paragraph(
+            adventure ? adventureMaskDetail() : MASKS[mask.base].detail,
+            410,
+            542,
+            478,
+            1,
+            C.mint,
+            17,
+          );
           text("YOUR STYLE STAYS ON YOUR SPRITE.", 64, 579, 1, C.peach);
           footer("MASKS WELCOME. ALWAYS.", "↑↓ CATEGORY  ←→ CHANGE");
         }
@@ -3909,7 +5130,9 @@
         function drawTally() {
           text("SHIFT COMPLETE", 480, 102, 1, C.peach, "center");
           text(
-            policy === "retreat" ? "ROOM TWO: SURVIVED." : "SATURDAY: SURVIVED.",
+            policy === "retreat"
+              ? "ROOM TWO: SURVIVED."
+              : "SATURDAY: SURVIVED.",
             480,
             137,
             4,
@@ -3919,7 +5142,10 @@
           heart(464, 187, 5, C.pink);
           panel(215, 251, 530, 293, C.night, C.plum);
           const rows = [
-            ["ARCADE POINTS", arcade.points],
+            [
+              adventure ? "ADVENTURE POINTS" : "ARCADE POINTS",
+              adventure ? adventure.points : arcade.points,
+            ],
             ["PROFIT BONUS", meters.profit * 10],
             ["COMMUNITY TRUST", meters.trust * 10],
             ["LOW CHAOS BONUS", (100 - meters.chaos) * 10],
@@ -3944,7 +5170,13 @@
           text("TOTAL", 243, 474, 3, C.peach);
           text(String(total).padStart(5, "0"), 715, 465, 5, C.cream, "right");
           text(
-            "THE LIGHTS ARE STILL ON. THAT COUNTS.",
+            adventure
+              ? "GAINED " +
+                  adventure.earned +
+                  " / LOST " +
+                  adventure.lost +
+                  " / STARTED WITH 500"
+              : "THE LIGHTS ARE STILL ON. THAT COUNTS.",
             480,
             575,
             1,
@@ -3963,11 +5195,26 @@
           text(end.subtitle, 480, 161, 1, C.pink, "center");
           exterior(ending);
           panel(89, 486, 782, 108, C.ink, C.plum);
-          paragraph(end.body, 111, 506, 738, 2, C.cream, 23);
+          paragraph(endingBody(), 111, 506, 738, 2, C.cream, 23);
           footer(
             "THE COMMUNITY IS STILL HERE. SO ARE YOU.",
             "ANY ARROW CONTINUE",
           );
+        }
+        function endingBody() {
+          if (!adventure) return ENDINGS[ending].body;
+          if (ending === "compromise")
+            return (
+              (policy === "masked"
+                ? "Masks stay required. "
+                : "Posted hours. Free masks. An actual patio plan. ") +
+              "The rent gets paid. Nora writes about the people who kept a queer space open. Dottie bills you one honk."
+            );
+          if (ending === "clown")
+            return "Last Ditch opens an evening annex at clown school. Masks stay welcome. Ruth runs trivia. You learn to fall down and get up. The rent is now a group project.";
+          if (ending === "viral")
+            return "Nora's article travels. So does your quote. Tess sells shirts to pay the bills. The regulars keep their stools. Dottie declines to comment without her nose.";
+          return "The subcommittee books the bar every Tuesday. Snacks become recurring revenue. Nora files. The Zoom call continues. Someone moves to second the friendship.";
         }
         function drawInitials() {
           text(
@@ -4250,7 +5497,7 @@
             text(body, 253, y + 43, 1, C.blue);
           });
           paragraph(
-            "Saturday: fix nine Mask Lab mix-ups, answer the Globe reporter, dodge paperwork, and guide clown-school dances. Move fast for more points. Drinks are optional stamina breaks. CHAOS MODE skips the story.",
+            "Story: six errands, five side quests, recurring Zoom calls. Earn points for evidence and follow-through. Lose points for bad quotes and broken promises. CHAOS MODE is the separate timed arcade game.",
             62,
             528,
             835,
@@ -4322,8 +5569,23 @@
                 .map((label, i) => (maskRow === i ? "→ " : "  ") + label)
                 .join("\n") +
               "\n" +
-              MASKS[mask.base].detail +
+              (adventure ? adventureMaskDetail() : MASKS[mask.base].detail) +
               "\n↑↓ category · ←→ change · → on DONE";
+          else if (screen === "quests")
+            value =
+              "ZOOM RECESS " +
+              (adventure.round + 1) +
+              "/3 · ERRANDS " +
+              adventure.remaining +
+              "/2\n" +
+              questMenu()
+                .map(
+                  (entry, i) => (i === menuIndex ? "→ " : "  ") + entry.label,
+                )
+                .join("\n") +
+              "\n" +
+              questMenu()[menuIndex].detail +
+              "\n↑↓ choose · → go · ← notebook";
           else if (screen === "ready")
             value =
               (policy === "retreat"
@@ -4378,15 +5640,15 @@
                     " · FAST +" +
                     Math.max(
                       0,
-                      150 -
-                        Math.floor((arcade.elapsed - item.born) / 5) * 50,
+                      150 - Math.floor((arcade.elapsed - item.born) / 5) * 50,
                     ),
                 )
                 .join("\n");
           else if (screen === "tally")
             value =
-              "SHIFT COMPLETE\nArcade " +
-              arcade.points +
+              "SHIFT COMPLETE\n" +
+              (adventure ? "Adventure " : "Arcade ") +
+              (adventure ? adventure.points : arcade.points) +
               " + Profit " +
               meters.profit * 10 +
               " + Trust " +
@@ -4400,7 +5662,7 @@
             value =
               ENDINGS[ending].title +
               "\n" +
-              ENDINGS[ending].body +
+              endingBody() +
               "\nAny arrow continues.";
           else if (screen === "initials")
             value =
@@ -4455,7 +5717,18 @@
               "FOR THE PLACES THAT MAKE ROOM.\nAnd the people who keep them open.\nFictional people. Real community spirit.\nThank you for playing. Any arrow returns to the title.";
           else if (screen === "help")
             value =
-              "FOUR KEYS. THAT'S IT.\n↑↓←→ move. Bump ! to fix a Mask Lab mix-up.\nThe Globe reporter follows you with questions.\n↑↓ chooses. → confirms. ← goes back.\nFast fixes earn more. Wild quotes raise chaos.\nCopy arrows in dance and karaoke battles.\nChain 3 saves to clear paper and recharge tools.\nCHAOS MODE skips straight to Saturday.\n← or → returns to the title.";
+              "FOUR KEYS. THAT'S IT.\nSTORY: keep the bar open through the clown-school Zoom call.\nSix errands. Five side quests. Evidence unlocks answers.\nEarn points for follow-through. Lose them for broken promises.\n↑↓ chooses. → confirms. ← goes back or opens your notebook.\nMasks give stamina or other bonuses.\nCHAOS MODE: the separate timed arcade shift.\n← or → returns to the title.";
+          if (
+            adventure &&
+            !["title", "leaderboard", "credits", "help"].includes(screen)
+          )
+            value =
+              "SCORE " +
+              adventure.points +
+              " · STAMINA " +
+              adventure.stamina +
+              "\n" +
+              value;
           if (readout.textContent !== value) readout.textContent = value;
           const hud = document.getElementById("mobile-hud"),
             hudText =
@@ -4470,6 +5743,8 @@
         function render() {
           rect(0, 0, 960, 640, C.night);
           if (screen === "title") drawTitle();
+          else if (screen === "adventure") drawAdventure();
+          else if (screen === "quests") drawQuests();
           else if (screen === "world") drawWorld();
           else if (screen === "feed") drawFeed();
           else if (screen === "zoom") drawZoom();
@@ -4483,6 +5758,11 @@
           else if (screen === "leaderboard") drawLeaderboard();
           else if (screen === "credits") drawCredits();
           else if (screen === "help") drawHelp();
+          if (
+            adventure &&
+            !["title", "leaderboard", "credits", "help"].includes(screen)
+          )
+            drawAdventureStatus();
           if (dialog) drawDialogue();
           if (screen === "arcade" && arcade.challenge) drawChallenge();
           drawHud();

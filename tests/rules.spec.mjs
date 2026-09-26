@@ -30,7 +30,8 @@ async function model() {
   };
   const insertion = `globalThis.game = {
     resetGame, startArcade, updateArcade, useStation, spawnWave, spawnPatron, spawnIncident, resolveIncident, incidentPoints, confrontIncident, startChallenge, challengeInput, jostle, serve, pickEnding, finishArcade, input,
-    state: () => ({ meters, factions, mask, arcade, score, ending, player, screen, dialog, shown, policy }),
+    startAdventure, visitQuest, rejoinZoom, adventureZoom, startAdventureSaturday, adventurePoints, questMenu, adventureNotebook,
+    state: () => ({ meters, factions, mask, arcade, adventure, score, ending, player, screen, dialog, shown, policy }),
     setup: (values) => {
       if (values.meters) meters = values.meters;
       if (values.factions) factions = values.factions;
@@ -286,4 +287,180 @@ test("stamina cushions collisions and ignoring a drink causes no meter penalty",
   game.updateArcade(0.02);
   expect(game.state().arcade.patrons).toHaveLength(0);
   expect({ ...game.state().meters }).toEqual(before);
+});
+
+function dismiss(game) {
+  for (
+    let i = 0;
+    i < 40 && game.state().dialog && !game.state().dialog.choices;
+    i++
+  )
+    game.input("right");
+}
+
+function pick(game, index = 0) {
+  const dialog = game.state().dialog;
+  expect(dialog?.choices).toBeTruthy();
+  if (dialog.chars < dialog.pages[dialog.page].length) game.input("right");
+  for (let i = 0; i < index; i++) game.input("down");
+  game.input("right");
+  dismiss(game);
+}
+
+async function adventureGame(base = 0) {
+  const game = await model();
+  game.startAdventure();
+  dismiss(game);
+  game.setup({ mask: { base, color: 1, pattern: 0, accessory: 0 } });
+  for (let i = 0; i < 4; i++) game.input("down");
+  game.input("right");
+  pick(game);
+  return game;
+}
+
+function completeQuest(game, id) {
+  for (let i = 0; i < 2; i++) {
+    game.visitQuest(id);
+    pick(game);
+  }
+}
+
+test("quests spend finite errands, back is free, and repeat visits cannot farm points", async () => {
+  const game = await adventureGame();
+  game.visitQuest("access");
+  game.input("right");
+  game.input("left");
+  expect(game.state().screen).toBe("quests");
+  expect(game.state().adventure.remaining).toBe(2);
+  completeQuest(game, "access");
+  const { points } = game.state().adventure;
+  expect(game.state().adventure.remaining).toBe(0);
+  expect(game.state().adventure.flags.access).toBe(true);
+  game.visitQuest("access");
+  dismiss(game);
+  game.visitQuest("notes");
+  dismiss(game);
+  expect(game.state().adventure.points).toBe(points);
+  expect(game.state().adventure.progress.notes).toBe(0);
+  game.adventureNotebook();
+  dismiss(game);
+  expect(game.state().adventure.remaining).toBe(0);
+  game.rejoinZoom();
+  pick(game);
+  pick(game);
+  expect(game.state().adventure.round).toBe(1);
+  expect(game.state().adventure.remaining).toBe(2);
+});
+
+test("failed errands lose real points and never grant the successful quest evidence", async () => {
+  const game = await adventureGame();
+  game.visitQuest("tickets");
+  pick(game, 1);
+  expect(game.state().adventure.points).toBe(500);
+  game.visitQuest("tickets");
+  pick(game, 1);
+  expect(game.state().adventure.points).toBe(150);
+  expect(game.state().adventure.lost).toBe(600);
+  expect(game.state().adventure.flags.tickets).toBeUndefined();
+  expect(game.questMenu()[4].label).toContain("CLOSED");
+  expect(game.questMenu()[4].detail).toContain("without the reward");
+});
+
+test("locked evidence and stamina answers cannot be selected; every mask can proceed", async () => {
+  for (let base = 0; base < 4; base++) {
+    const game = await adventureGame(base);
+    const before = game.state().adventure.points;
+    game.rejoinZoom();
+    pick(game, 1);
+    expect(game.state().adventure.round).toBe(1);
+    pick(game);
+    expect(game.state().dialog.speaker).toContain("NORA");
+    expect(game.state().adventure.points).toBe(before);
+    pick(game, 1);
+    expect(game.state().adventure.promises.access).toBe(true);
+    if (base === 3) {
+      pick(game);
+      expect(game.state().dialog.speaker).toContain("PAT");
+      pick(game, 1);
+    } else pick(game);
+    expect(game.state().screen).toBe("quests");
+    expect(game.state().adventure.stamina).toBe(
+      Math.max(0, [5, 3, 1, 0][base] - 1),
+    );
+  }
+});
+
+test("Saturday rewards kept promises and deducts points for broken promises only once", async () => {
+  for (const kept of [true, false]) {
+    const game = await adventureGame();
+    const state = game.state();
+    state.adventure.points = 1000;
+    state.adventure.promises.access = true;
+    state.adventure.flags.access = kept;
+    game.startAdventureSaturday();
+    expect(state.adventure.points).toBe(kept ? 1450 : 550);
+    expect(state.adventure.ledger.at(-1).delta).toBe(kept ? 450 : -450);
+    game.startAdventureSaturday();
+    expect(state.adventure.points).toBe(kept ? 1450 : 550);
+    dismiss(game);
+    const before = state.adventure.points;
+    pick(game, 3);
+    expect(state.adventure.points).toBe(before - 150);
+    expect(state.adventure.resolved.has("saturday-fundraiser")).toBe(true);
+  }
+});
+
+test("a full evidence route uses six errands, earns a valid score, and resets cleanly", async () => {
+  const game = await adventureGame();
+  completeQuest(game, "access");
+  game.rejoinZoom();
+  pick(game);
+  pick(game);
+  completeQuest(game, "tickets");
+  game.rejoinZoom();
+  pick(game);
+  pick(game);
+  completeQuest(game, "notes");
+  game.rejoinZoom();
+  pick(game);
+  pick(game);
+  pick(game, 2);
+  pick(game);
+  pick(game);
+  expect(game.state().screen).toBe("tally");
+  expect(game.state().ending).toBe("compromise");
+  expect(game.state().score).toBeGreaterThan(6000);
+  expect(game.state().score).toBeLessThanOrEqual(game.maxScore);
+  expect(game.state().arcade).toBeNull();
+  expect(
+    Object.values(game.state().adventure.progress).reduce((a, b) => a + b, 0),
+  ).toBe(6);
+  game.startAdventure();
+  expect(game.state().adventure.points).toBe(500);
+  expect(game.state().adventure.resolved.size).toBe(0);
+  expect(game.state().adventure.promises.access).toBeUndefined();
+});
+
+test("clown-school retreat stays reachable without evidence or stamina", async () => {
+  const game = await adventureGame(3);
+  for (let round = 0; round < 3; round++) {
+    game.rejoinZoom();
+    pick(game, 1);
+    if (round === 0) {
+      pick(game, 1);
+      pick(game, 1);
+    }
+    if (round === 1) {
+      pick(game, 1);
+      pick(game);
+    }
+  }
+  pick(game, 2);
+  pick(game, 1);
+  pick(game, 3);
+  pick(game, 2);
+  pick(game, 1);
+  expect(game.state().screen).toBe("tally");
+  expect(game.state().ending).toBe("clown");
+  expect(game.state().score).toBeGreaterThanOrEqual(0);
 });
