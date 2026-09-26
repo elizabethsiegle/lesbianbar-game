@@ -3,6 +3,24 @@ import { test, expect } from "@playwright/test";
 async function press(page, key = "ArrowRight", count = 1) {
   for (let i = 0; i < count; i++) await page.keyboard.press(key);
 }
+
+test("footer keeps the requested copy and drops the Wi-Fi joke", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.locator(".tagline")).toContainText(
+    "ONE VERY LONG MEETING.",
+  );
+  await expect(page.locator(".tagline")).not.toContainText(
+    "QUESTIONABLE WI-FI",
+  );
+  await expect(page.locator(".details")).toContainText("EVERYONE BELONGS");
+  await expect(page.locator(".details")).toContainText(
+    "VERY REAL COMMITTEE ENERGY",
+  );
+  await expect(page.locator(".details")).not.toContainText("Fictional town");
+});
+
 test("failed leaderboard fetch is recoverable from the title", async ({
   page,
 }) => {
