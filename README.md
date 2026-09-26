@@ -4,6 +4,8 @@ One lesbian bar. One policy change. An entire town with reply-all privileges.
 
 [Play the deployed game](https://last-ditch-bar-saga.lizzie-siegle5086.workers.dev).
 
+Last Ditch Bar and Arts Venue in Greenfield is real. The game takes inspiration from [Annalisa Quinn's Boston Globe report on the mask-policy dispute and community meeting](https://www.bostonglobe.com/2026/09/22/magazine/greenfield-last-ditch-bar-backlash/). Its characters, dialogue, and outcomes are invented; it is not the bar's account of events.
+
 A choose-your-own-adventure about keeping a lesbian bar open. Rent is due Sunday. Your mask-policy post has started a town debate. Fictional Boston Globe reporter Nora Ink files at midnight. The clown school lends you its Zoom account, but the meeting link also admits its audition class.
 
 **STORY MODE** follows your choices through recurring Zoom meetings, five side quests, and Saturday night. **CHAOS MODE** is a separate 90-second arcade shift.
@@ -155,4 +157,4 @@ Tests use an installed Google Chrome browser and an isolated local Worker with t
 - `wrangler.jsonc`: assets, Durable Object binding, migration, and logs.
 - `worker-configuration.d.ts`: generated Cloudflare types.
 
-Fictional town, fictional people, affectionate satire. Health needs are never the punchline.
+Real town, imagined game story, affectionate satire. Health needs are never the punchline.
