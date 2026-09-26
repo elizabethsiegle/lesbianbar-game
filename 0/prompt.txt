@@ -320,3 +320,11 @@ Keep the writing short and punchy throughout.
 ---
 
 needs mor chaos. the game is mainly about serving people which isn't that fun
+
+---
+
+make a trail and enable runners. the trail should fix the masks. right now when i try to change n95 or novelty or cloth, the mask does not change on my character
+
+---
+
+make a trail and enable runners. the trail should fix the masks. right now when i try to change n95 or novelty or cloth, the mask does not change on my character
