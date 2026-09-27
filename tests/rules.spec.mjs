@@ -311,8 +311,8 @@ async function adventureGame(base = 0) {
   const game = await model();
   game.startAdventure();
   dismiss(game);
-  game.setup({ mask: { base, color: 1, pattern: 0, accessory: 0 } });
-  for (let i = 0; i < 4; i++) game.input("down");
+  game.setup({ mask: { base, color: 1, pattern: 0, accessory: 0, avatar: 0 } });
+  for (let i = 0; i < 5; i++) game.input("down");
   game.input("right");
   pick(game);
   return game;

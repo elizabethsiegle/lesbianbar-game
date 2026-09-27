@@ -64,7 +64,7 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await press(page);
   await page.screenshot({ path: "test-results/adventure-premise.png" });
   await until(page, "BASE: N95");
-  await press(page, "ArrowDown", 4);
+    await press(page, "ArrowDown", 5);
   await press(page);
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "zoom");
   await expect(page.locator("#mobile-readout")).toContainText(
@@ -181,7 +181,7 @@ test("mobile quest board exposes choices, points, and the notebook without spend
   await right.click();
   await right.click();
   await until(page, "BASE: N95");
-  await press(page, "ArrowDown", 4);
+    await press(page, "ArrowDown", 5);
   await press(page);
   await choose(page);
   await hub(page);
@@ -206,7 +206,7 @@ test("visible stamina falls through repeated call-outs and returns during recess
   await page.goto("/");
   await press(page, "ArrowRight", 2);
   await until(page, "BASE: N95");
-  await press(page, "ArrowDown", 4);
+    await press(page, "ArrowDown", 5);
   await press(page);
   await choose(page);
   await hub(page);

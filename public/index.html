@@ -125,6 +125,8 @@
       }
       .home-actions {
         display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
         justify-content: flex-end;
         margin: 0 0 15px;
       }
@@ -562,6 +564,7 @@
       </header>
       <main>
         <div class="home-actions">
+          <button class="leaderboard-button" id="open-share" type="button">MAKE MEME CARD ↗</button>
           <button class="leaderboard-button" id="open-dashboard" type="button">
             ★ GLOBAL LEADERBOARD →
           </button>
@@ -647,6 +650,17 @@
         <button data-dir="right" aria-label="Refresh" type="button">→</button>
       </nav>
     </dialog>
+    <dialog class="dashboard-dialog" id="share-studio" aria-labelledby="share-title">
+      <div class="dashboard-head"><h2 id="share-title">DISCOURSE POSTCARD</h2><button class="dashboard-action" id="close-share">← BACK</button></div>
+      <p class="dashboard-subtitle">ONE BAR. ALL THE LORE. YOUR CURRENT LOOK.</p>
+      <canvas id="share-canvas" width="1200" height="675" style="aspect-ratio:16/9" aria-label="Your Last Ditch meme collage"></canvas>
+      <div class="dashboard-actions">
+        <button class="dashboard-action" id="download-card">SAVE PNG</button>
+        <button class="dashboard-action" id="download-clip">SAVE 6-SECOND CLIP</button>
+        <a class="dashboard-action" id="share-twitter" target="_blank" rel="noopener noreferrer">POST ON X / TWITTER</a>
+      </div>
+      <p id="share-status" role="status" class="dashboard-status">Attach the saved image or clip to your post. ← back · → save PNG.</p>
+    </dialog>
     <footer class="credit-footer">
       <span>made w/ &lt;3 in ATL 🍑</span>
       <span
@@ -663,7 +677,7 @@
       (() => {
         "use strict";
         const canvas = document.getElementById("game");
-        const ctx = canvas.getContext("2d", { alpha: false });
+        let ctx = canvas.getContext("2d", { alpha: false });
         const live = document.getElementById("game-status");
         const soundButton = document.getElementById("sound");
         const dashboard = document.getElementById("leaderboard-dashboard");
@@ -673,6 +687,13 @@
         let dashboardEntries = [];
         let dashboardSelection = 0;
         let dashboardReturnFocus = null;
+        const shareStudio = document.getElementById("share-studio");
+        const shareCanvas = document.getElementById("share-canvas");
+        let shareTimer = null;
+        let recording = null;
+        let recordingTimer = null;
+        let secretHonk = false;
+        let secretKeys = "";
         const C = {
           ink: "#191522",
           night: "#242438",
@@ -1043,7 +1064,7 @@
           policy = "optional",
           toast = "",
           toastUntil = 0;
-        let mask = { base: 0, color: 1, pattern: 0, accessory: 0 },
+        let mask = { base: 0, color: 1, pattern: 0, accessory: 0, avatar: 0 },
           maskRow = 0,
           arcade = null,
           bossRound = 0,
@@ -1251,7 +1272,7 @@
           stage = "decision";
           world = "bar";
           player = { x: 10, y: 6, dir: "down" };
-          mask = { base: 0, color: 1, pattern: 0, accessory: 0 };
+          mask = { base: 0, color: 1, pattern: 0, accessory: 0, avatar: 0 };
           arcade = null;
           score = 0;
           rank = null;
@@ -3815,6 +3836,117 @@
             }
           }
         }
+        function drawShareCard() {
+          const gameContext = ctx;
+          ctx = shareCanvas.getContext("2d");
+          try {
+            rect(0, 0, 1200, 675, C.ink);
+            panel(18, 18, 1164, 639, C.night, C.peach);
+            text("LAST DITCH", 45, 42, 6, C.cream);
+            text("GREENFIELD, MASSACHUSETTS", 1150, 51, 2, C.peach, "right");
+            paragraph("COVID-CONSCIOUS LESBIAN BAR EASES MASK RULE. QUEER GROUP CHAT SPLITS. OWNER ATTENDS CLOWN SCHOOL.", 45, 107, 1100, 2, C.mint, 24);
+            const memes = [
+              ["DRESS FOR THE DISCOURSE", "N95. FLANNEL. EMOTIONAL ARMOR."],
+              ["CLOWN SCHOOL ZOOM", "YOU ARE MUTED. THE TUBA IS NOT."],
+              ["THE GLOBE HAS QUESTIONS", "IS THE CLOWN NOSE ON THE RECORD?"],
+              ["THE QUEER GROUP CHAT", "40 PARAGRAPHS. ONE SPREADSHEET."],
+              ["THE ETERNAL COMMITTEE", "A MOTION TO ADJOURN NEEDS A MEETING."],
+              ["MEANWHILE, AT THE BAR", "IS TRIVIA STILL ON? - A DOG ACCOUNT"],
+            ];
+            memes.forEach(([title, caption], i) => {
+              const x = 43 + (i % 3) * 376;
+              const y = 182 + Math.floor(i / 3) * 194;
+              panel(x, y, 362, 178, C.purple, i === 1 ? C.pink : C.plum);
+              text(title, x + 13, y + 10, 2, C.peach);
+              lights(x + 12, y + 27, 334, 10);
+              sprite(x + 30, y + 46, [C.pink, C.orange, C.blue, C.mint, C.blue, C.rose][i], 4, {
+                character: ["owner", "dottie", "nora", "willow", "pat", "tess"][i],
+                mask: i === 0 ? mask : null,
+                clown: i === 1,
+                hat: i === 2,
+              });
+              if (i === 1) {
+                text("♪ HONK ♪", x + 112, y + 66, 3, Math.floor(performance.now() / 400) % 2 ? C.peach : C.pink);
+                text("HOST: HONK U.", x + 116, y + 106, 2, C.mint);
+              } else if (i === 3) {
+                for (let lineIndex = 0; lineIndex < 6; lineIndex++)
+                  rect(x + 116, y + 53 + lineIndex * 11, 140 - lineIndex * 13, 4, lineIndex % 2 ? C.blue : C.cream);
+              } else if (i === 5) {
+                raccoon(x + 165, y + 80);
+                text(secretHonk ? "RACCOON: TENURED" : "COAT CHECK INTERN", x + 112, y + 112, 2, C.mint);
+              } else {
+                paragraph(i === 0 ? (mask.avatar ? "MAN" : "WOMAN") + " / " + MASKS[mask.base].label : i === 2 ? "ONE LAST FOLLOW-UP..." : "WE HAVE FORMED A SUBCOMMITTEE.", x + 111, y + 62, 225, 2, C.cream, 23);
+              }
+              paragraph(caption, x + 13, y + 138, 334, 2, C.cream, 17);
+            });
+            const currentScore = screen === "ending" || screen === "tally" || screen === "initials" ? score : adventure?.points ?? arcade?.points ?? 0;
+            text("SCORE " + currentScore + " / " + (secretHonk ? "SECRET HONK SOCIETY" : mask.base === 2 && mask.accessory === 2 ? "HONK SCHOLAR" : "VERY REAL COMMITTEE ENERGY"), 45, 590, 2, C.peach);
+            text("EVERYONE BELONGS. / LAST DITCH: A WESTERN MASS BAR SAGA", 45, 625, 2, C.mint);
+          } finally {
+            ctx = gameContext;
+          }
+        }
+        function downloadMedia(blob, name) {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = name;
+          link.click();
+          setTimeout(() => URL.revokeObjectURL(url), 30000);
+        }
+        function saveCard() {
+          drawShareCard();
+          shareCanvas.toBlob((blob) => {
+            if (blob) downloadMedia(blob, "last-ditch-discourse.png");
+          }, "image/png");
+        }
+        function openShare() {
+          held = null;
+          drawShareCard();
+          shareStudio.showModal();
+          document.getElementById("share-twitter").href = "https://twitter.com/intent/tweet?" + new URLSearchParams({
+            text: "A COVID-conscious lesbian bar. A mask-policy schism. Clown school Zoom. The Boston Globe has questions. I survived LAST DITCH.",
+            url: "https://last-ditch-bar-saga.lizzie-siegle5086.workers.dev/",
+          });
+          shareTimer = setInterval(drawShareCard, 100);
+          document.getElementById("download-clip").disabled = !window.MediaRecorder || !shareCanvas.captureStream;
+        }
+        function closeShare() {
+          clearInterval(shareTimer);
+          clearTimeout(recordingTimer);
+          if (recording?.state === "recording") recording.stop();
+          shareStudio.close();
+          canvas.focus({ preventScroll: true });
+        }
+        document.getElementById("open-share").addEventListener("click", openShare);
+        document.getElementById("close-share").addEventListener("click", closeShare);
+        document.getElementById("download-card").addEventListener("click", saveCard);
+        shareStudio.addEventListener("cancel", (event) => { event.preventDefault(); closeShare(); });
+        document.getElementById("download-clip").addEventListener("click", () => {
+          if (recording?.state === "recording") return;
+          const status = document.getElementById("share-status");
+          let stream;
+          try {
+            stream = shareCanvas.captureStream(15);
+            const mimeType = ["video/mp4", "video/webm;codecs=vp9", "video/webm"].find((type) => MediaRecorder.isTypeSupported(type));
+            const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+            recording = recorder;
+            const chunks = [];
+            recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
+            recorder.onstop = () => {
+              stream.getTracks().forEach((track) => track.stop());
+              const type = recorder.mimeType;
+              downloadMedia(new Blob(chunks, { type }), "last-ditch-discourse." + (type.includes("mp4") ? "mp4" : "webm"));
+              status.textContent = "Clip saved. Attach it to your post; PNG is available too.";
+            };
+            recorder.start();
+            status.textContent = "Recording six seconds of committee energy...";
+            recordingTimer = setTimeout(() => { if (recorder.state === "recording") recorder.stop(); }, 6000);
+          } catch {
+            stream?.getTracks().forEach((track) => track.stop());
+            status.textContent = "Clip recording is unavailable here. Use SAVE PNG.";
+          }
+        });
         function startInitials() {
           initials = [0, 0, 0];
           initialPos = 0;
@@ -3893,7 +4025,7 @@
               return;
             }
             if (dir === "up" || dir === "down") {
-              menuIndex = (menuIndex + (dir === "up" ? -1 : 1) + 5) % 5;
+              menuIndex = (menuIndex + (dir === "up" ? -1 : 1) + 6) % 6;
               sfx("move");
             } else if (dir === "left") titleAwake = false;
             else if (dir === "right") {
@@ -3902,7 +4034,8 @@
               else if (menuIndex === 1) startChaosMode();
               else if (menuIndex === 2) openDashboard();
               else if (menuIndex === 3) setScreen("help");
-              else toggleSound();
+              else if (menuIndex === 4) toggleSound();
+              else openShare();
             }
             return;
           }
@@ -3946,16 +4079,16 @@
           }
           if (screen === "mask") {
             if (dir === "up" || dir === "down")
-              maskRow = (maskRow + (dir === "up" ? -1 : 1) + 5) % 5;
-            else if (maskRow === 4) {
+              maskRow = (maskRow + (dir === "up" ? -1 : 1) + 6) % 6;
+            else if (maskRow === 5) {
               if (dir === "right") {
                 if (adventure) equipAdventureMask();
                 else setScreen("ready");
                 sfx("select");
-              } else maskRow = 3;
+              } else maskRow = 4;
             } else {
-              const key = ["base", "color", "pattern", "accessory"][maskRow];
-              const max = [4, 5, 4, 4][maskRow];
+              const key = ["base", "color", "pattern", "accessory", "avatar"][maskRow];
+              const max = [4, 5, 4, 4, 2][maskRow];
               mask[key] = (mask[key] + (dir === "left" ? -1 : 1) + max) % max;
             }
             sfx("move");
@@ -3965,14 +4098,14 @@
                 ". " +
                 (adventure ? adventureMaskDetail() : MASKS[mask.base].detail) +
                 " Selected " +
-                ["base", "color", "pattern", "accessory", "done"][maskRow],
+                ["base", "color", "pattern", "accessory", "character: " + (mask.avatar ? "man" : "woman"), "done"][maskRow],
             );
             return;
           }
           if (screen === "ready") {
             if (dir === "left") {
               setScreen("mask");
-              maskRow = 4;
+              maskRow = 5;
             } else if (dir === "right") startArcade();
             return;
           }
@@ -4049,6 +4182,20 @@
           ArrowRight: "right",
         };
         function press(dir) {
+          if (shareStudio.open) {
+            if (dir === "left") closeShare();
+            if (dir === "right") saveCard();
+            return;
+          }
+          if (screen === "title" && !dashboard.open) {
+            secretKeys = (secretKeys + { up: "U", down: "D", left: "L", right: "R" }[dir]).slice(-8);
+            if (secretKeys === "UUDDLRLR") {
+              secretHonk = true;
+              secretKeys = "";
+              openShare();
+              return;
+            }
+          }
           if (dashboard.open) {
             if (dir === "left") closeDashboard();
             else if (dir === "right") void loadDashboard();
@@ -4169,6 +4316,7 @@
           text(title, 52, 111, 3, C.cream);
         }
         function sprite(x, y, color = C.pink, s = 2, options = {}) {
+          const avatar = options.avatar ?? (options.mask === mask ? mask.avatar : null);
           const style = options.character || (options.clown ? "dottie" : options.hat ? "nora" : color === C.mint ? "willow" : color === C.blue ? "pat" : "owner");
           const skin = options.skin || C.peach,
             hair = options.hair || (style === "pat" || style === "ruth" ? C.blue : style === "willow" ? C.ink : C.brown);
@@ -4188,6 +4336,16 @@
           r(3, 3, 7, 6, skin);
           r(2, 4, 1, 5, hair);
           r(10, 4, 1, 5, hair);
+          if (avatar === 0) {
+            r(1, 3, 1, 7, hair);
+            r(11, 3, 1, 7, hair);
+            r(9, -1, 2, 2, hair);
+          } else if (avatar === 1) {
+            r(2, 0, 8, 2, hair);
+            r(2, 2, 2, 2, hair);
+            r(2, 6, 1, 3, skin);
+            r(10, 6, 1, 3, skin);
+          }
           r(3, 1, 6, 0.5, C.plum);
           r(3, 2, 3, 1.5, hair);
           r(3, 4, 0.5, 3, C.rust);
@@ -4227,6 +4385,10 @@
           r(4, 10, 1, 6, C.plum);
           r(8, 10, 1, 6, C.plum);
           r(2, 12, 9, 1, C.plum);
+          if (avatar === 1) {
+            r(2, 10, 2, 6, C.night);
+            r(9, 10, 2, 6, C.night);
+          }
           r(2, 15, 9, 1, C.plum);
           r(2, 10, 2, 0.5, C.cream);
           r(9, 10, 2, 0.5, C.cream);
@@ -4579,22 +4741,23 @@
               "center",
             );
           } else {
-            panel(314, 446, 332, 145, C.ink, C.plum);
+            panel(314, 420, 332, 171, C.ink, C.plum);
             [
               "STORY MODE",
               "CHAOS MODE",
               "HIGH SCORES",
               "HOW TO PLAY",
               audio.muted ? "SOUND: OFF" : "SOUND: ON",
+              "MAKE MEME CARD",
             ].forEach((label, i) => {
               if (menuIndex === i) {
-                rect(326, 454 + i * 26, 308, 24, C.purple);
-                text("→", 341, 460 + i * 26, 2, C.peach);
+                rect(326, 428 + i * 26, 308, 24, C.purple);
+                text("→", 341, 434 + i * 26, 2, C.peach);
               }
               text(
                 label,
                 480,
-                460 + i * 26,
+                434 + i * 26,
                 2,
                 menuIndex === i ? C.cream : C.blue,
                 "center",
@@ -5165,6 +5328,7 @@
               3 +
               (held && !reduced ? Math.floor(Math.sin(time * 18) * 1.5) : 0);
           sprite(px, py, C.pink, 2, {
+            avatar: mask.avatar,
             walking: Boolean(held),
             dir: player.dir,
             mask: isArcade ? mask : null,
@@ -5696,28 +5860,29 @@
           rect(102, 217, 229, 257, C.purple);
           sprite(137, 218, C.pink, 12, { mask, hair: C.ink });
           text(MASKS[mask.base].label, 217, 495, 2, C.cream, "center");
-          const labels = ["BASE TYPE", "COLOR", "PATTERN", "ACCESSORY", "DONE"];
+          const labels = ["BASE TYPE", "COLOR", "PATTERN", "ACCESSORY", "CHARACTER", "DONE"];
           const values = [
             MASKS[mask.base].label,
             COLOR_OPTIONS[mask.color][0],
             PATTERNS[mask.pattern],
             ACCESSORIES[mask.accessory],
+            mask.avatar ? "MAN" : "WOMAN",
             "LOOK GOOD. DO GOOD.",
           ];
-          for (let i = 0; i < 5; i++) {
-            const y = 175 + i * 70;
+          for (let i = 0; i < 6; i++) {
+            const y = 175 + i * 58;
             panel(
               410,
               y,
               486,
-              59,
+              50,
               i === maskRow ? C.purple : C.night,
               i === maskRow ? C.peach : C.plum,
             );
             text(labels[i], 430, y + 12, 1, i === maskRow ? C.peach : C.blue);
             text(values[i], 653, y + 32, 2, C.cream, "center");
             if (i === maskRow) {
-              if (i !== 4) text("←", 427, y + 31, 2, C.peach);
+              if (i !== 5) text("←", 427, y + 31, 2, C.peach);
               text("→", 867, y + 31, 2, C.peach);
             }
           }
@@ -5738,7 +5903,7 @@
             C.mint,
             17,
           );
-          text("YOUR STYLE STAYS ON YOUR SPRITE.", 64, 579, 1, C.peach);
+          text(mask.base === 2 && mask.accessory === 2 ? "SECRET DEGREE: HONK SCHOLAR ♥" : "YOUR STYLE STAYS ON YOUR SPRITE.", 64, 579, 1, C.peach);
           footer("MASKS WELCOME. ALWAYS.", "↑↓ CATEGORY  ←→ CHANGE");
         }
         function drawReady() {
@@ -6256,6 +6421,7 @@
                   "HIGH SCORES",
                   "HOW TO PLAY",
                   audio.muted ? "SOUND OFF" : "SOUND ON",
+                  "MAKE MEME CARD",
                 ]
                   .map((label, i) => (menuIndex === i ? "→ " : "  ") + label)
                   .join("\n") + "\n↑↓ choose · → confirm"
@@ -6281,6 +6447,7 @@
                 "COLOR: " + COLOR_OPTIONS[mask.color][0],
                 "PATTERN: " + PATTERNS[mask.pattern],
                 "ACCESSORY: " + ACCESSORIES[mask.accessory],
+                "CHARACTER: " + (mask.avatar ? "MAN" : "WOMAN"),
                 "DONE",
               ]
                 .map((label, i) => (maskRow === i ? "→ " : "  ") + label)
@@ -6510,7 +6677,7 @@
           const dt = Math.min((now - (last || now)) / 1000, 0.1);
           last = now;
           time += dt;
-          if (!paused && !document.hidden && !dashboard.open) {
+          if (!paused && !document.hidden && !dashboard.open && !shareStudio.open) {
             for (const key of ["profit", "trust", "chaos"])
               shown[key] += (meters[key] - shown[key]) * Math.min(1, dt * 9);
             if (dialog) {
