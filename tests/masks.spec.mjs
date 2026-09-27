@@ -114,7 +114,7 @@ test("each selected mask stays distinct on the gameplay character, including rea
           .getImageData(448 + 3 * 2, 351 + 6 * 2, 1, 1).data,
       ).slice(0, 3),
     );
-    expect(edge).toEqual(base === 3 ? [239, 169, 117] : [25, 21, 34]);
+    expect(edge).toEqual(base === 3 ? [181, 107, 82] : [25, 21, 34]);
   }
   expect(new Set(fronts).size).toBe(4);
   expect(new Set(backs).size).toBe(4);

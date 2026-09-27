@@ -19,6 +19,32 @@ test("footer keeps the requested copy and drops the Wi-Fi joke", async ({
     "VERY REAL COMMITTEE ENERGY",
   );
   await expect(page.locator(".details")).not.toContainText("Fictional town");
+  await expect(page.locator(".credit-footer")).toContainText(
+    "made w/ <3 in ATL 🍑 · prompts stored with Entire.io",
+  );
+  await expect(page.locator(".credit-footer a")).toHaveAttribute(
+    "href",
+    "https://entire.io/et/lesbianbar-game/lesbianbar-game/trails/7",
+  );
+});
+
+test("sticky credit stays visible without covering mobile controls", async ({
+  page,
+}) => {
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto("/");
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    const credit = await page.locator(".credit-footer").boundingBox();
+    const dpad = await page.locator(".dpad").boundingBox();
+    expect(credit).not.toBeNull();
+    expect(dpad).not.toBeNull();
+    expect(Math.round(credit.y + credit.height)).toBe(844);
+    expect(dpad.y + dpad.height).toBeLessThanOrEqual(credit.y);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
+      width,
+    );
+  }
 });
 
 test("failed leaderboard fetch is recoverable from the title", async ({
@@ -31,16 +57,88 @@ test("failed leaderboard fetch is recoverable from the title", async ({
   await press(page);
   await press(page, "ArrowDown", 2);
   await press(page);
-  await expect(page.locator("#game-status")).toContainText(
+  await expect(page.locator("#leaderboard-dashboard")).toBeVisible();
+  await expect(page.locator("#dashboard-status")).toContainText(
     "HIGH SCORES OFFLINE",
   );
   await press(page, "ArrowLeft");
+  await expect(page.locator("#leaderboard-dashboard")).not.toBeVisible();
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "title");
+  await press(page, "ArrowUp", 2);
   await press(page);
   await expect(page.locator("#game")).toHaveAttribute(
     "data-screen",
     "adventure",
   );
+});
+
+test("homepage button opens a live top-ten dashboard with score details", async ({
+  page,
+}) => {
+  const scores = [
+    {
+      initials: "LIZ",
+      score: 9200,
+      ending: "compromise",
+      mask: "n95",
+      timestamp: "2026-09-27T12:00:00.000Z",
+    },
+    {
+      initials: "JOY",
+      score: 7400,
+      ending: "clown",
+      mask: "cloth",
+      timestamp: "2026-09-26T12:00:00.000Z",
+    },
+  ];
+  let loads = 0;
+  await page.route("**/api/leaderboard", (route) => {
+    loads++;
+    return route.fulfill({ json: { scores } });
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "GLOBAL LEADERBOARD" }).click();
+  const dashboard = page.getByRole("dialog", { name: "HALL OF FAME" });
+  await expect(dashboard).toBeVisible();
+  await page.screenshot({ path: "test-results/dashboard-desktop.png" });
+  await expect(page.locator("#dashboard-top")).toHaveText("9,200");
+  await expect(page.locator("#dashboard-count")).toHaveText("2");
+  await expect(page.locator("#dashboard-scores li")).toHaveCount(2);
+  await expect(page.locator("#dashboard-scores li").first()).toContainText(
+    "LIZ9,200THE BAR THRIVES · N95",
+  );
+  await press(page, "ArrowDown");
+  await expect(page.locator("#dashboard-scores li").nth(1)).toHaveClass(
+    /is-selected/,
+  );
+  await press(page, "ArrowRight");
+  await expect.poll(() => loads).toBe(2);
+  await press(page, "ArrowLeft");
+  await expect(dashboard).not.toBeVisible();
+});
+
+test("leaderboard dashboard stays usable on narrow touch screens", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 700 });
+  await page.route("**/api/leaderboard", (route) =>
+    route.fulfill({ json: { scores: [] } }),
+  );
+  await page.goto("/");
+  await page.getByRole("button", { name: "GLOBAL LEADERBOARD" }).click();
+  await expect(page.locator("#dashboard-status")).toContainText(
+    "NO SCORES YET",
+  );
+  await expect(page.locator("#dashboard-count")).toHaveText("0");
+  await page.screenshot({ path: "test-results/dashboard-mobile.png" });
+  await expect(
+    page.getByRole("navigation", { name: "Leaderboard arrow controls" }),
+  ).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
+    320,
+  );
+  await page.getByRole("button", { name: "Back", exact: true }).click();
+  await expect(page.locator("#leaderboard-dashboard")).not.toBeVisible();
 });
 
 test("touch D-pad controls the same title menu and arrows do not scroll", async ({
