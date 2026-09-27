@@ -1354,7 +1354,7 @@
             "TESS / RENT IS DUE SUNDAY",
             [
               "Last Ditch is a COVID-conscious lesbian bar in Greenfield. Rent is due Sunday. You ease its strict mask rule for one Saturday; masks remain welcome. The queer group chat splits before you can add a period.",
-              "You took a clown-school class to unwind. Now your student Zoom link hosts the mask-policy town hall, plus the audition class. Nora Ink, a fictional Globe reporter, wants the timeline by midnight.",
+              "You took a clown-school class to unwind. Now your roommate's clown-school Zoom link hosts the town hall and an accidental audition class. Nora Ink, a fictional Globe reporter, wants the timeline by midnight.",
               "Bring the regulars back into one room, pay rent, and survive the final Zoom call. For the compromise: stay at the bar, adjourn, and finish with profit 40+, trust 65+, chaos 60 or less.",
               "Start with 500 points. Six errands can finish three two-step quests. During each recess, travel free between the bar, Zoom, and clown school. Each has one find worth points. Call-outs drain mask hearts; recess restores one. No clock while choosing.",
             ],
@@ -1861,7 +1861,7 @@
                     effect: [0, 4, -5],
                     reason: "Verified timeline",
                     result:
-                      "You show the one-night post: masks still welcome, access plan unfinished. The student Zoom login explains the clowns. Nora asks what happened to the regulars, not the meme.",
+                      "You show the one-night post: masks still welcome, access plan unfinished. Your roommate's clown-school Zoom link explains the clowns. Nora asks what happened to the regulars, not the meme.",
                     apply: () => {
                       adventure.flags.timeline = true;
                     },
@@ -4085,7 +4085,7 @@
             paragraph("COVID-CONSCIOUS LESBIAN BAR EASES MASK RULE. QUEER GROUP CHAT SPLITS. OWNER ATTENDS CLOWN SCHOOL.", 45, 107, 1100, 2, C.mint, 24);
             const memes = [
               ["DRESS FOR THE DISCOURSE", "N95. FLANNEL. EMOTIONAL ARMOR."],
-              ["CLOWN SCHOOL ZOOM", "YOU ARE MUTED. THE TUBA IS NOT."],
+              ["CLOWN SCHOOL ZOOM", "YOUR ROOMMATE'S LINK. THE TUBA IS NOT MUTED."],
               ["THE GLOBE HAS QUESTIONS", "IS THE CLOWN NOSE ON THE RECORD?"],
               ["THE QUEER GROUP CHAT", "40 PARAGRAPHS. ONE SPREADSHEET."],
               ["THE ETERNAL COMMITTEE", "A MOTION TO ADJOURN NEEDS A MEETING."],
@@ -6284,7 +6284,7 @@
             "center",
           );
           footer(
-            "CLOWN SCHOOL PRO ACCOUNT / 6 PARTICIPANTS",
+            "ROOMMATE'S CLOWN SCHOOL ZOOM / 6 PARTICIPANTS",
             "ANY ARROW CONTINUE",
           );
         }
@@ -7064,7 +7064,7 @@
               "FOR THE PLACES THAT MAKE ROOM.\nAnd the people who keep them open.\nInspired by Annalisa Quinn's Boston Globe reporting. Last Ditch in Greenfield is real; game characters and dialogue are invented.\nThank you for playing. Any arrow returns to the title.";
           else if (screen === "help")
             value =
-              "FOUR KEYS. THAT'S IT.\nA COVID-conscious Greenfield lesbian bar eases one mask rule. Regulars split; your clown-school login hosts the town hall.\nSTORY: finish Zoom, Saturday, and the final call. The top bar tracks progress; no story timer. Six errands can finish three quests and unlock bigger answers.\nStay at the bar, adjourn, then profit 40+, trust 65+, chaos 60 max earns the compromise ending.\n↑↓ chooses. → confirms. ← goes back or opens your notebook.\nCHAOS MODE: the timed arcade shift.\nSUPER CHAOS: mediate Zoom and the bar before each dispute clock expires.\n← or → returns to the title.";
+              "FOUR KEYS. THAT'S IT.\nA COVID-conscious Greenfield lesbian bar eases one mask rule. Regulars split; your roommate's clown-school Zoom link hosts the town hall.\nSTORY: finish Zoom, Saturday, and the final call. The top bar tracks progress; no story timer. Six errands can finish three quests and unlock bigger answers.\nStay at the bar, adjourn, then profit 40+, trust 65+, chaos 60 max earns the compromise ending.\n↑↓ chooses. → confirms. ← goes back or opens your notebook.\nCHAOS MODE: the timed arcade shift.\nSUPER CHAOS: mediate Zoom and the bar before each dispute clock expires.\n← or → returns to the title.";
           if (
             adventure &&
             !["title", "leaderboard", "credits", "help"].includes(screen)

@@ -117,6 +117,8 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   );
   await press(page);
   await page.screenshot({ path: "test-results/adventure-premise.png" });
+  await press(page);
+  await expect(page.locator("#mobile-readout")).toContainText("your roommate's clown-school Zoom link");
   await until(page, "BASE: N95");
     await press(page, "ArrowDown", 5);
   await press(page);
