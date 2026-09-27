@@ -2047,7 +2047,7 @@
             adventureEvent(
               "zoom-open",
               "DOTTIE / HOST, PROBABLY",
-              "Your clown-school student login is hosting the mask-policy town hall. Half the queer regulars want the old rule; half fear the rent gap. Your classmates are here too. Is that tuba a microphone?",
+              "Your roommate's clown-school Zoom link is hosting the town hall. Half the regulars want the old rule; half fear the rent gap. Dottie: 'before I began mediating, meetings took 5-6 hours. Now they only take 4.' Is that tuba a microphone?",
               [
                 {
                   label: "ONE MIC. PUT AUDITIONS IN ROOM 2. [+250]",
@@ -2123,7 +2123,7 @@
                 adventureEvent(
                   "zoom-slides",
                   "PAT / SHARING THE WRONG SCREEN",
-                  "I have 87 slides about the comment section. Slide one is a photograph of slide two. Dottie can give you the floor, but this meeting is exhausting.",
+                  "I have 87 slides about the comment section. Slide one is a photograph of slide two. Dottie: 'EVERYONE AGREES WITH YOU, WHY ARE YOU DOING THIS?' Pat advances to slide three.",
                   [
                     {
                       label: "STAY + ASK ONE USEFUL QUESTION [+300 / 1 ♥]",
@@ -2203,7 +2203,7 @@
                 adventureEvent(
                   "zoom-breakouts",
                   "DOTTIE / THE BREAKOUT ROOMS HAVE UNIONIZED",
-                  "Room One is writing policy. Room Two is auditioning clowns. Both think you promised them Saturday. Pick one sentence for the minutes.",
+                  "Room One is writing policy. Room Two is auditioning clowns. A student asks, 'You guys all have seven sisters?' Both rooms think you promised them Saturday. Pick one sentence for the minutes.",
                   [
                     {
                       label: "BAR FIRST. BENEFIT SHOW HAS A SLOT. [+250]",
@@ -2586,7 +2586,7 @@
           ],
           [
             "DOTTIE_SELTZER",
-            "The owner's clown-school student login is hosting the town hall. The invite says MASK LAB because I reused a calendar. Classmates: this is not your final exam.",
+            "Your roommate's clown-school Zoom link is hosting the town hall. The invite says MASK LAB because I reused a calendar. Classmates: this is not your final exam.",
             "8 MIN AGO / 206 REPLIES",
           ],
           [
@@ -2665,7 +2665,7 @@
         const ZOOM = [
           {
             speaker: "DOTTIE SELTZER / MODERATOR",
-            body: "Welcome to the clown school Zoom. I am a trained facilitator. The makeup is also professional. Our calendar now calls your bar Mask Lab. Someone is unmuted inside a tuba.",
+            body: "Welcome to your roommate's clown-school Zoom link. Dottie: 'before I began mediating, meetings took 5-6 hours. Now they only take 4.' Someone is unmuted inside a tuba.",
             options: [
               ["ONE MIC. EVERY VOICE GETS A TURN.", [-2, 9, -8], "care"],
               ["HONK IF YOU CAN HEAR ME.", [2, 2, 10], "clown"],
@@ -2674,7 +2674,7 @@
           },
           {
             speaker: "DOTTIE / BREAKOUT ROOM ENTHUSIAST",
-            body: "Three clown students just joined Balloon Animals 201. Our breakout rooms need names and, apparently, adult supervision.",
+            body: "Three clown students just joined Balloon Animals 201. One asks, 'You guys all have seven sisters?' Our breakout rooms need names and adult supervision.",
             options: [
               ["ACCESS NEEDS + QUIET SPACE", [-3, 10, -6], "care"],
               ["SNACKS + FEELINGS", [3, 5, 4], "clown"],
@@ -2683,7 +2683,7 @@
           },
           {
             speaker: "PAT / UNREQUESTED SLIDESHOW",
-            body: 'I prepared 87 slides. Slide one: "Airflow and feelings: a Venn diagram." Can everyone see my desktop? Please ignore the frog folder.',
+            body: "I prepared 87 slides. Slide one is a Venn diagram. Dottie: 'EVERYONE AGREES WITH YOU, WHY ARE YOU DOING THIS?' Please ignore the frog folder.",
             options: [
               ["TWO SLIDES. THEN ACCESS QUESTIONS.", [-2, 8, -5], "care"],
               ["CAN THE CLOWNS DO THE TRANSITIONS?", [4, 2, 9], "clown"],
@@ -2995,7 +2995,7 @@
           },
           {
             place: "zoom", speaker: "DOTTIE + THE TUBA", title: "HONK U. IS UNMUTED",
-            dispute: "A student plays through Willow's question. Captions are working; the mute button is not.",
+            dispute: "A student asks, 'You guys all have seven sisters?' Then the tuba plays through Willow's question. Captions work; the mute button does not.",
             choices: [
               ["MAKE THE TUBA MODERATOR", 0, [0, -9, 8]],
               ["MUTE TUBA; KEEP CAPTIONS", 2, [0, 7, -7]],
@@ -3024,14 +3024,14 @@
             win: "Each table returns with one useful sentence.",
           },
           {
-            place: "bar", speaker: "TESS + THE DOOR", title: "THE SIGN IS TOO SMALL",
-            dispute: "Guests want to know their options before entering. Tess has a marker and nine seconds.",
+            place: "bar", speaker: "TESS + THE DOOR", title: "THE WRONG SIGN",
+            dispute: "A draft sign says, 'just because you're crying doesn't mean you're right.' Tess hands you an eraser. Guests need clear mask options.",
             choices: [
               ["EXPLAIN IT ONE BY ONE", 1, [1, 1, 2]],
-              ["HIDE THE SIGN", 0, [2, -9, 10]],
-              ["CLEAR SIGN + FREE MASKS", 2, [4, 7, -6]],
+              ["HANG THE DRAFT SIGN", 0, [2, -9, 10]],
+              ["ERASE IT; POST CLEAR OPTIONS", 2, [4, 7, -6]],
             ],
-            win: "A real sign beats 400 posts. The line moves.",
+            win: "A clear sign and free masks beat 400 posts. The line moves.",
           },
           {
             place: "bar", speaker: "RUTH + THE REGULARS", title: "IS TRIVIA STILL ON?",
@@ -6169,7 +6169,7 @@
         function drawZoom() {
           section(
             adventure
-              ? "LIVE / CLOWN SCHOOL ACCOUNT / RECORDING ON"
+              ? "LIVE / ROOMMATE'S CLOWN-SCHOOL LINK / RECORDING ON"
               : "CHAPTER 02 / MEETING ID: HONK-HONK",
             adventure
               ? [

@@ -126,6 +126,9 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await expect(page.locator("#mobile-readout")).toContainText(
     "ROUTE 0/7 · NEXT CLOWN-SCHOOL ZOOM",
   );
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "before I began mediating, meetings took 5-6 hours. Now they only take 4.",
+  );
   await page.screenshot({ path: "test-results/adventure-zoom.png" });
   await choose(page);
   await hub(page);
@@ -149,6 +152,9 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await rejoin(page);
   await choose(page);
   await until(page, "PAT / SHARING THE WRONG SCREEN");
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "EVERYONE AGREES WITH YOU, WHY ARE YOU DOING THIS?",
+  );
   await choose(page);
   await hub(page);
   await expect(page.locator("#mobile-readout")).toContainText(
@@ -159,6 +165,9 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await rejoin(page);
   await choose(page);
   await until(page, "DOTTIE / THE BREAKOUT ROOMS");
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "You guys all have seven sisters?",
+  );
   await choose(page);
   await hub(page);
   await expect(page.locator("#mobile-readout")).toContainText(

@@ -40,6 +40,9 @@ test("Super Chaos mediates Zoom and the bar with gains, losses, and a final tall
   await expect(page.locator("#mobile-readout")).toContainText("ROOM STEADIED");
   await expect(page.locator("#mobile-readout")).toContainText(/\+\d+ points\. Score/);
   await press(page);
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "You guys all have seven sisters?",
+  );
   await mediate(page, 0);
   await expect(page.locator("#mobile-readout")).toContainText("ANOTHER THREAD OPENS");
   await expect(page.locator("#mobile-readout")).toContainText("-150 points");
@@ -51,6 +54,12 @@ test("Super Chaos mediates Zoom and the bar with gains, losses, and a final tall
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "mediator-break");
   await press(page);
   await expect(page.locator("#mobile-readout")).toContainText("LAST DITCH BAR · DISPUTE 5/8");
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "just because you're crying doesn't mean you're right",
+  );
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "ERASE IT; POST CLEAR OPTIONS",
+  );
   await page.screenshot({ path: "test-results/mediator-bar.png" });
   for (const index of [2, 0, 1, 2]) {
     await mediate(page, index);
