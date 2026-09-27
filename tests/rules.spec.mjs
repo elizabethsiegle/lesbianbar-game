@@ -357,7 +357,7 @@ test("route progress follows story beats and quest previews show available point
   expect(game.adventureProgress()).toEqual({
     completed: 1,
     total: 7,
-    next: "BRIDGE THE SPLIT",
+    next: "GET THE ROOM TALKING",
   });
   expect(game.questMenu()[0].detail).toContain("Best available: +150");
   game.visitQuest("notes");

@@ -41,7 +41,7 @@ test("Super Chaos mediates Zoom and the bar with gains, losses, and a final tall
   await expect(page.locator("#mobile-readout")).toContainText(/\+\d+ points\. Score/);
   await press(page);
   await mediate(page, 0);
-  await expect(page.locator("#mobile-readout")).toContainText("THE CHAT EXPLODES");
+  await expect(page.locator("#mobile-readout")).toContainText("ANOTHER THREAD OPENS");
   await expect(page.locator("#mobile-readout")).toContainText("-150 points");
   await press(page);
   await mediate(page, 2);
@@ -82,7 +82,7 @@ test("an unanswered dispute times out and costs points", async ({ page }) => {
 test("a chaotic answer shortens the next dispute clock", async ({ page }) => {
   await start(page);
   await mediate(page, 2);
-  await expect(page.locator("#mobile-readout")).toContainText("THE CHAT EXPLODES");
+  await expect(page.locator("#mobile-readout")).toContainText("ANOTHER THREAD OPENS");
   await press(page);
   await expect(page.locator("#mobile-readout")).toContainText("DISPUTE 2/8 · 20s");
 });

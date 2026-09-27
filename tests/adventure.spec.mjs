@@ -128,7 +128,7 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await choose(page);
   await hub(page);
   await expect(page.locator("#mobile-readout")).toContainText(
-    "ROUTE 1/7 · NEXT BRIDGE THE SPLIT",
+    "ROUTE 1/7 · NEXT GET THE ROOM TALKING",
   );
   await expect(page.locator("#mobile-readout")).toContainText(
     "COMPROMISE: STAY · PROFIT 40+ · TRUST 65+ · CHAOS 60 MAX",
