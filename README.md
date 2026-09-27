@@ -58,6 +58,7 @@ The first deployment creates the `Leaderboard` SQLite Durable Object through the
 | Dialogue       | Any arrow reveals text; another advances.                                                |
 | Choices        | Up/down chooses. Right confirms. Left goes back.                                         |
 | Quest board    | Up/down selects an errand. Right visits. Left opens the free notebook.                   |
+| Free travel    | From a Zoom recess, choose TRAVEL. Walk into people, finds, or doorways to interact.      |
 | Social feed    | Up/down scrolls. Right reads the next post, then continues.                              |
 | Mask editor    | Up/down selects a category. Left/right cycles. Right on DONE confirms.                   |
 | Saturday night | Bump marked incidents or matching tool stations. Dodge flying paperwork.                 |
@@ -71,6 +72,7 @@ Touch devices get the same four directions on a D-pad. Small screens also show r
 - Start with 500 points. Choose a mask, then join the town hall on your clown-school student login.
 - The seven-beat route bar tracks the opening call, three recesses, Saturday, the reporter, and the final call. Finish the route for an ending; Story Mode has no timer.
 - Three recesses give you two errands each. Each of five side quests takes two errands; you cannot finish them all. There is no real-time deadline while reading.
+- Travel freely between the bar, Zoom call, and clown school during recess. Each place has a one-time discovery worth points; travel never spends an errand.
 - The quest board previews the best available points for each step. Clean errands earn 150–450 points and unlock higher-value Zoom and Saturday answers. Use all six errands before rejoining.
 - Willow needs a practical access plan. Dottie offers a clown benefit. Nora needs verified facts. Ruth wants queer trivia back. Tess needs ticket sales that cover rent.
 - Quest rewards unlock answers in later Zoom calls and plans for Saturday. Failed errands cost points and close without their reward. Repeating a completed quest earns nothing.

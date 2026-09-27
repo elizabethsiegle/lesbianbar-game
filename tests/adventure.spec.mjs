@@ -51,6 +51,60 @@ test.beforeEach(async ({ page }) => {
   await page.clock.pauseAt(new Date("2026-09-26T12:00:01Z"));
 });
 
+test("free travel connects the bar, Zoom, and clown school without spending errands", async ({ page }) => {
+  await page.goto("/");
+  await press(page, "ArrowRight", 2);
+  await until(page, "BASE: N95");
+  await press(page, "ArrowDown", 5);
+  await press(page);
+  await choose(page);
+  await hub(page);
+  await press(page, "ArrowDown", 7);
+  await press(page);
+  await expect(page.locator("#game")).toHaveAttribute("data-screen", "locations");
+  await expect(page.locator("#mobile-readout")).toContainText("LAST DITCH BAR");
+  await expect(page.locator("#mobile-readout")).toContainText("CLOWN SCHOOL");
+  await press(page, "ArrowUp");
+  await press(page);
+  await expect(page.locator("#mobile-readout")).toContainText("LAST DITCH BAR");
+  await page.screenshot({ path: "test-results/free-roam-bar.png" });
+  await press(page, "ArrowUp", 4);
+  await expect(page.locator("#mobile-readout")).toContainText("Free find");
+  await press(page, "ArrowRight", 2);
+  await expect(page.locator("#mobile-readout")).toContainText("Discoveries: 1/3");
+  const firstScore = await page.locator("#mobile-readout").textContent();
+  await press(page, "ArrowUp");
+  await expect(page.locator("#mobile-readout")).toContainText("Already discovered");
+  await press(page, "ArrowRight", 2);
+  expect(await page.locator("#mobile-readout").textContent()).toBe(firstScore);
+  await press(page, "ArrowDown", 5);
+  await expect(page.locator("#game")).toHaveAttribute("data-screen", "quests");
+  await expect(page.locator("#mobile-readout")).toContainText("ERRANDS 2/2");
+  await press(page, "ArrowDown", 7);
+  await press(page);
+  await press(page, "ArrowDown", 2);
+  await press(page);
+  await expect(page.locator("#game")).toHaveAttribute("data-screen", "explore");
+  await expect(page.locator("#mobile-readout")).toContainText("CLOWN SCHOOL");
+  await page.screenshot({ path: "test-results/clown-school.png" });
+  await press(page, "ArrowUp", 4);
+  await expect(page.locator("#mobile-readout")).toContainText("Free find");
+  await press(page, "ArrowRight", 2);
+  await expect(page.locator("#mobile-readout")).toContainText("Discoveries: 2/3");
+  await press(page, "ArrowDown", 5);
+  await press(page, "ArrowDown", 7);
+  await press(page);
+  await press(page, "ArrowUp");
+  await press(page);
+  await expect(page.locator("#mobile-readout")).toContainText("CLOWN-SCHOOL ZOOM");
+  await expect(page.locator("#mobile-readout")).toContainText("No errands spent");
+  await page.screenshot({ path: "test-results/free-roam-zoom.png" });
+  await press(page, "ArrowUp", 4);
+  await expect(page.locator("#mobile-readout")).toContainText("Free find");
+  await press(page, "ArrowRight", 2);
+  await expect(page.locator("#mobile-readout")).toContainText("Discoveries: 3/3");
+});
+
 test("arrow-only adventure carries quest evidence through Zoom, Saturday, score submission, and credits", async ({
   page,
 }) => {

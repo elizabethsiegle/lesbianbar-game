@@ -1340,6 +1340,8 @@
             promises: {},
             resolved: new Set(),
             ledger: [{ label: "Opening goodwill", delta: 500 }],
+            location: "zoom",
+            locationFinds: new Set(),
             scene: "THE POST",
             earned: 0,
             lost: 0,
@@ -1352,7 +1354,7 @@
               "Last Ditch is a COVID-conscious lesbian bar in Greenfield. Rent is due Sunday. You ease its strict mask rule for one Saturday; masks remain welcome. The queer group chat splits before you can add a period.",
               "You took a clown-school class to unwind. Now your student Zoom link hosts the mask-policy town hall, plus the audition class. Nora Ink, a fictional Globe reporter, wants the timeline by midnight.",
               "Bring the regulars back into one room, pay rent, and survive the final Zoom call. For the compromise: stay at the bar, adjourn, and finish with profit 40+, trust 65+, chaos 60 or less.",
-              "Start with 500 points. Six errands can finish three two-step quests. Clean steps earn points and unlock bigger Zoom answers. Final meters add bonuses. Call-outs drain mask hearts; recess restores one. No clock while choosing.",
+              "Start with 500 points. Six errands can finish three two-step quests. During each recess, travel free between the bar, Zoom, and clown school. Each has one find worth points. Call-outs drain mask hearts; recess restores one. No clock while choosing.",
             ],
             null,
             () => {
@@ -1560,7 +1562,84 @@
                 "Review evidence, commitments, and the score ledger. Free.",
               action: adventureNotebook,
             },
+            {
+              label: "TRAVEL / BAR + ZOOM + CLOWN SCHOOL",
+              detail: "Explore three places. Talk to the regulars and clowns. Free; your errands stay put.",
+              action: openLocations,
+            },
           ];
+        }
+        const LOCATIONS = [
+          { id: "bar", name: "LAST DITCH BAR", detail: "Warm lights, receipts, and the people keeping the doors open." },
+          { id: "zoom", name: "CLOWN-SCHOOL ZOOM", detail: "Six video tiles. One unmuted tuba. A reporter taking notes." },
+          { id: "school", name: "CLOWN SCHOOL", detail: "Classroom Two is full of clowns practicing very serious honks." },
+        ];
+        function openLocations() {
+          setScreen("locations");
+          menuIndex = LOCATIONS.findIndex((place) => place.id === adventure.location);
+        }
+        function enterLocation(id) {
+          adventure.location = id;
+          player = { x: 10, y: 6, dir: "up" };
+          setTheme(id === "school" ? "clown" : id === "zoom" ? "controversy" : "cozy");
+          setScreen("explore");
+          announce(LOCATIONS.find((place) => place.id === id).name + ". Bump into people, portals, or the exit. Free travel.");
+        }
+        function locationObjects() {
+          const shared = [{ id: "exit", x: 10, y: 8 }];
+          if (adventure.location === "bar")
+            return [...shared,
+              { id: "tess", x: 5, y: 4 }, { id: "ruth", x: 16, y: 5 },
+              { id: "receipt", x: 10, y: 2 }, { id: "zoom", x: 1, y: 5 },
+              { id: "school", x: 20, y: 5 },
+            ];
+          if (adventure.location === "zoom")
+            return [...shared,
+              { id: "dottie", x: 5, y: 4 }, { id: "nora", x: 16, y: 4 },
+              { id: "tuba", x: 10, y: 2 }, { id: "bar", x: 1, y: 5 },
+              { id: "school", x: 20, y: 5 },
+            ];
+          return [...shared,
+            { id: "dottie", x: 5, y: 3 }, { id: "clown", x: 13, y: 3 },
+            { id: "clown", x: 5, y: 7 }, { id: "clown", x: 17, y: 5 },
+            { id: "diploma", x: 10, y: 2 }, { id: "bar", x: 1, y: 5 },
+            { id: "zoom", x: 20, y: 5 },
+          ];
+        }
+        function bumpLocation(id) {
+          if (id === "exit") return openQuestHub();
+          if (["bar", "zoom", "school"].includes(id)) return enterLocation(id);
+          const finds = {
+            receipt: ["TESS / THE REAL RECEIPT", "Rent is due Sunday. Tess has color-coded every expense except the emergency sequins.", 100],
+            tuba: ["ZOOM / THE TUBA", "You mute the tuba. It unmutes itself to say thank you. Dottie logs this as a productive exchange.", 100],
+            diploma: ["CLOWN SCHOOL / HONORS", "The class awards you a certificate in Applied Honking and Community Process.", 150],
+          };
+          if (finds[id]) {
+            const [speaker, body, points] = finds[id];
+            if (adventure.locationFinds.has(id)) return talk(speaker, "Already discovered. The certificate is still on the wall.");
+            adventure.locationFinds.add(id);
+            talk(speaker, body + " " + adventurePoints(points, speaker) + ". Free find; no errand spent.");
+            return;
+          }
+          const lines = {
+            tess: ["TESS / BEHIND THE BAR", "The bar is still ours. Take a breath, then bring a clear plan back to Zoom."],
+            ruth: ["RUTH / REGULAR STOOL", "I saved your seat. Also: is trivia still on? I studied rivers."],
+            dottie: ["DOTTIE / CLOWN FACULTY", "Welcome! Our curriculum is 40 percent juggling and 60 percent procedural questions."],
+            nora: ["NORA / BOSTON GLOBE", "I have one more question. I always have one more question."],
+            clown: ["CLOWN STUDENT", "Honk? Sorry. The quiet room is down the hall. Honk respectfully."],
+          };
+          talk(...lines[id]);
+        }
+        function moveLocation(dir) {
+          const delta = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[dir];
+          player.dir = dir;
+          const x = player.x + delta[0], y = player.y + delta[1];
+          const object = locationObjects().find((item) => item.x === x && item.y === y);
+          if (object) return bumpLocation(object.id);
+          if (x >= 1 && x <= 20 && y >= 1 && y <= 8) {
+            player.x = x;
+            player.y = y;
+          }
         }
         function adventureNotebook() {
           const completed = QUESTS.filter((q) => adventure.flags[q.id]).map(
@@ -1570,7 +1649,7 @@
             "YOUR NOTEBOOK / NO ERRAND COST",
             [
               "GOAL: ease one mask rule without losing the bar or the people who made it. Finish the clown-school Zoom calls and Saturday. Any ending completes the game. For the compromise: stay, adjourn, and finish with profit 40+, trust 65+, chaos 60 or less.",
-              "POINTS: six errands can finish three quests. Clean quest steps earn 150-450 points; completed plans unlock stronger Zoom and Saturday choices. Use your errands before rejoining. No story clock.",
+              "POINTS: six errands can finish three quests. Clean quest steps earn 150-450 points; completed plans unlock stronger Zoom and Saturday choices. Explore the bar, Zoom, and clown school for three one-time finds. Travel is free. No story clock.",
               "EVIDENCE: " +
                 (completed.join(" ") ||
                   "None yet. Finish a two-step quest to bring something real to Zoom."),
@@ -4050,6 +4129,18 @@
             move(dir);
             return;
           }
+          if (screen === "locations") {
+            if (dir === "up" || dir === "down") {
+              menuIndex = (menuIndex + (dir === "up" ? -1 : 1) + LOCATIONS.length) % LOCATIONS.length;
+              sfx("move");
+            } else if (dir === "right") enterLocation(LOCATIONS[menuIndex].id);
+            else openQuestHub();
+            return;
+          }
+          if (screen === "explore") {
+            moveLocation(dir);
+            return;
+          }
           if (screen === "quests") {
             const entries = questMenu();
             if (dir === "up" || dir === "down") {
@@ -4206,7 +4297,7 @@
           }
           input(dir);
           if (
-            (screen === "world" || screen === "arcade") &&
+            (screen === "world" || screen === "arcade" || screen === "explore") &&
             !(screen === "arcade" && arcade.challenge) &&
             !dialog &&
             !paused
@@ -5511,6 +5602,92 @@
             "ANY ARROW CONTINUE",
           );
         }
+        function drawLocations() {
+          section("RECESS / FREE TRAVEL", "THREE PLACES. ONE VERY LONG MEETING.");
+          LOCATIONS.forEach((place, index) => {
+            const y = 165 + index * 128;
+            panel(67, y, 824, 111, menuIndex === index ? C.purple : C.night, menuIndex === index ? C.peach : C.plum);
+            rect(87, y + 18, 75, 75, [C.rose, C.teal, C.green][index]);
+            if (index === 0) {
+              rect(97, y + 50, 56, 13, C.rust);
+              mug(111, y + 31, C.peach);
+              lights(93, y + 22, 62, 4);
+            } else if (index === 1) {
+              for (let tile = 0; tile < 4; tile++) {
+                rect(93 + (tile % 2) * 31, y + 25 + Math.floor(tile / 2) * 31, 25, 25, C.night);
+                rect(101 + (tile % 2) * 31, y + 31 + Math.floor(tile / 2) * 31, 9, 12, C.peach);
+              }
+            } else {
+              sprite(104, y + 29, C.orange, 2.5, { clown: true });
+              text("♪", 137, y + 32, 2, C.cream);
+            }
+            text((menuIndex === index ? "→ " : "  ") + place.name, 181, y + 21, 3, menuIndex === index ? C.cream : C.blue);
+            paragraph(place.detail, 185, y + 65, 675, 1, C.mint, 15);
+          });
+          footer("TRAVEL IS FREE / ERRANDS STAY PUT", "↑↓ CHOOSE  → VISIT  ← RECESS");
+        }
+        function drawExplore() {
+          const place = LOCATIONS.find((item) => item.id === adventure.location);
+          section("FREE ROAM / " + place.name, "BUMP INTO PEOPLE, PORTALS, OR THE EXIT.");
+          const x = 62, y = 166, tile = 38;
+          panel(x - 4, y - 4, 844, 350, C.purple, C.plum);
+          for (let row = 0; row < 9; row++) {
+            rect(x, y + row * tile, 836, tile - 1, adventure.location === "bar" ? row % 2 ? C.brown : C.plum : adventure.location === "zoom" ? row % 2 ? C.teal : C.night : row % 2 ? C.green : C.teal);
+            for (let column = 0; column < 22; column++)
+              rect(x + column * tile + (row % 2 ? 17 : 0), y + row * tile, 1, tile - 1, C.plum);
+          }
+          if (adventure.location === "bar") {
+            lights(x + 12, y + 8, 810, 20);
+            rect(x + 180, y + 64, 474, 20, C.ink);
+            rect(x + 185, y + 58, 464, 19, C.rust);
+            for (let stool = 0; stool < 6; stool++) {
+              rect(x + 212 + stool * 74, y + 92, 27, 7, C.ink);
+              rect(x + 217 + stool * 74, y + 99, 4, 18, C.ink);
+            }
+            text("LAST DITCH / MASKS WELCOME", 480, y + 18, 2, C.cream, "center");
+          } else if (adventure.location === "zoom") {
+            for (let index = 0; index < 6; index++) {
+              const bx = x + 174 + (index % 3) * 170;
+              const by = y + 18 + Math.floor(index / 3) * 68;
+              panel(bx, by, 158, 59, C.purple, index === 0 ? C.pink : C.plum);
+              sprite(bx + 68, by + 8, [C.orange, C.blue, C.mint][index % 3], 2, { clown: index === 0 || index === 4, hat: index === 1 });
+              text(["DOTTIE", "NORA", "YOU", "WILLOW", "HONK U.", "PAT"][index], bx + 9, by + 44, 1, C.cream);
+            }
+            text("YOU ARE MUTED. THE TUBA IS NOT.", 480, y + 168, 1, C.peach, "center");
+          } else {
+            lights(x + 24, y + 9, 785, 18);
+            rect(x + 170, y + 38, 490, 73, C.purple);
+            text("HONK U. / CLASSROOM TWO", 480, y + 53, 3, C.cream, "center");
+            for (let target = 0; target < 7; target++) {
+              const tx = x + 185 + target * 69;
+              rect(tx, y + 93, 48, 4, C.peach);
+              rect(tx + 19, y + 97, 9, 11, C.rust);
+              text("♪", tx + 13, y + 132, 2, target % 2 ? C.pink : C.orange);
+            }
+          }
+          locationObjects().forEach((item) => {
+            const ox = x + item.x * tile, oy = y + item.y * tile;
+            if (item.id === "exit" || ["bar", "zoom", "school"].includes(item.id)) {
+              panel(ox + 1, oy + 3, 35, 30, C.ink, item.id === "exit" ? C.mint : C.peach);
+              text(item.id === "exit" ? "↑" : "→", ox + 19, oy + 10, 2, C.cream, "center");
+              text(item.id === "exit" ? "RECESS" : item.id.toUpperCase(), ox + 19, oy - 11, 1, C.cream, "center");
+            } else if (["receipt", "tuba", "diploma"].includes(item.id)) {
+              panel(ox + 3, oy + 4, 31, 29, C.cream, C.peach);
+              text(item.id === "receipt" ? "$" : item.id === "tuba" ? "♪" : "♥", ox + 19, oy + 10, 2, C.rose, "center");
+              text(item.id.toUpperCase(), ox + 19, oy - 11, 1, C.cream, "center");
+            } else {
+              sprite(ox + 6, oy - 3, item.id === "clown" ? C.orange : item.id === "nora" ? C.blue : C.pink, 2, { clown: item.id === "clown" || item.id === "dottie", hat: item.id === "nora", character: item.id });
+              text(item.id.toUpperCase(), ox + 19, oy - 14, 1, C.cream, "center");
+            }
+          });
+          const px = x + player.x * tile + 6, py = y + player.y * tile - 3;
+          sprite(px, py, C.pink, 2, { mask, avatar: mask.avatar, hair: C.ink, dir: player.dir, walking: Boolean(held) });
+          text("YOU", px + 13, py - 14, 1, C.peach, "center");
+          panel(62, 530, 836, 57, C.ink, C.plum);
+          text("BAR  /  ZOOM  /  CLOWN SCHOOL", 80, 546, 2, C.peach);
+          text("BUMP A PORTAL TO SWITCH. THE EXIT RETURNS TO RECESS.", 80, 570, 1, C.mint);
+          footer("FREE TRAVEL / THREE PLACES / NO ERRAND COST", "↑↓←→ MOVE + BUMP");
+        }
         function drawQuests() {
           section(
             "RECESS " + (adventure.round + 1) + "/3 / THE CALL WILL RECONVENE",
@@ -5542,20 +5719,20 @@
           text("QUESTS UNLOCK +450 ZOOM ANSWERS", 675, 178, 1, C.mint);
           const entries = questMenu();
           entries.forEach((entry, i) => {
-            const y = 198 + i * 41;
+            const y = 190 + i * 37;
             panel(
               52,
               y,
               590,
-              37,
+              34,
               menuIndex === i ? C.purple : C.night,
               menuIndex === i ? C.peach : C.plum,
             );
-            if (i === menuIndex) text("→", 64, y + 10, 2, C.peach);
+            if (i === menuIndex) text("→", 64, y + 7, 2, C.peach);
             text(
               entry.label,
               91,
-              y + 10,
+              y + 7,
               2,
               menuIndex === i ? C.cream : C.blue,
             );
@@ -5575,9 +5752,11 @@
                     : "NO ERRANDS / REJOIN ZOOM"
                 : i === 5
                   ? "NEXT MAIN STORY SCENE"
-                  : "FREE / READ ANY TIME",
+                  : i === 6
+                    ? "FREE / READ ANY TIME"
+                    : "FREE / VISIT ALL THREE PLACES",
               91,
-              y + 27,
+              y + 24,
               1,
               q && progress === 2 && adventure.flags[q.id] ? C.mint : C.peach,
             );
@@ -6473,6 +6652,12 @@
               "\n" +
               questMenu()[menuIndex].detail +
               "\n↑↓ choose · → go · ← notebook";
+          else if (screen === "locations")
+            value = LOCATIONS.map((place, index) => (index === menuIndex ? "→ " : "  ") + place.name + " / " + place.detail).join("\n") + "\nFree travel. ↑↓ choose · → visit · ← recess.";
+          else if (screen === "explore")
+            value = LOCATIONS.find((place) => place.id === adventure.location).name +
+              "\nBump people to talk. Bump a portal to switch locations. Bump EXIT to return to recess. No errands spent." +
+              "\nDiscoveries: " + adventure.locationFinds.size + "/3 · Score " + adventure.points;
           else if (screen === "ready")
             value =
               (policy === "retreat"
@@ -6644,6 +6829,8 @@
           if (screen === "title") drawTitle();
           else if (screen === "adventure") drawAdventure();
           else if (screen === "quests") drawQuests();
+          else if (screen === "locations") drawLocations();
+          else if (screen === "explore") drawExplore();
           else if (screen === "world") drawWorld();
           else if (screen === "feed") drawFeed();
           else if (screen === "zoom") drawZoom();
@@ -6699,7 +6886,7 @@
               now >= repeatAt &&
               !dialog &&
               !(screen === "arcade" && arcade.challenge) &&
-              (screen === "world" || screen === "arcade")
+              (screen === "world" || screen === "arcade" || screen === "explore")
             ) {
               input(held);
               repeatAt =
