@@ -6,9 +6,11 @@ One eased mask rule. Two group chats. Clown school takes attendance.
 
 Last Ditch Bar and Arts Venue in Greenfield is real. The game takes inspiration from [Annalisa Quinn's Boston Globe report on the mask-policy dispute and community meeting](https://www.bostonglobe.com/2026/09/22/magazine/greenfield-last-ditch-bar-backlash/). Its characters, dialogue, and outcomes are invented; it is not the bar's account of events.
 
-A choose-your-own-adventure riff on the meme: a COVID-conscious lesbian bar in Greenfield eases its strict mask rule, the queer group chat splits, and the owner attends clown school. Rent is due Sunday. Fictional Globe reporter Nora Ink wants the timeline. The owner's clown-school login hosts the town hall—and the audition class.
+A choose-your-own-adventure riff on the meme: a COVID-conscious lesbian bar in Greenfield eases its strict mask rule, the group chat opens three threads, and the owner attends clown school. Rent is due Sunday. Fictional Globe reporter Nora Ink wants the timeline. The owner's roommate's clown-school Zoom link hosts the town hall—and an accidental audition class.
 
 **STORY MODE** follows your choices through recurring Zoom meetings, five side quests, and Saturday night. **CHAOS MODE** is a separate 90-second arcade shift. **SUPER CHAOS** is an eight-dispute mediation rush through Zoom and the bar.
+
+The jokes target meeting process and crossed wires, not health needs or the neighbors who bring them. People can disagree and still belong at Last Ditch.
 
 All art uses a 16-color canvas palette and a built-in bitmap font. Four original chiptune loops and sound effects run through Web Audio. No external assets, fonts, or runtime libraries.
 
@@ -103,7 +105,7 @@ The separate arcade mode retains the earlier Mask Lab encounters and time-manage
 - Dance and karaoke incidents use timed arrow sequences. Dialogue and performances pause the room. A missed sequence can be retried. Clown allies shorten sequences.
 - Handle incidents quickly for a speed bonus. Clear answers protect trust; wild quotes pay more immediately and recruit clown allies, but raise chaos. A chain adds points, and three saves within fourteen seconds clear flying paper, recharge tools, and grant a brief collision shield. Incidents left alone escalate after eighteen seconds but remain fixable. The room speeds up in three acts.
 - Drinks are optional: at most six patrons offer small score bonuses, vibe, and stamina recovery. Ignoring them has no meter penalty. Most points come from handling the Mask Lab mix-ups.
-- Finish with three dialogue rounds against Marlow Quill's clipboard. See your tally, one of four warm endings, initials entry, global scores, and credits.
+- Finish with three dialogue rounds with Marlow Quill's clipboard. See your tally, one of four warm endings, initials entry, global scores, and credits.
 
 N95s have five stamina and reduce sick-day penalties. Cloth masks have three stamina and add ten trust. Novelty masks have one stamina and add thirty starting vibe. No mask has no stamina and moves faster when a direction is held. All health-related stats are fictional game mechanics.
 

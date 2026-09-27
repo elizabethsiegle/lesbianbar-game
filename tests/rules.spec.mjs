@@ -357,7 +357,7 @@ test("route progress follows story beats and quest previews show available point
   expect(game.adventureProgress()).toEqual({
     completed: 1,
     total: 7,
-    next: "BRIDGE THE SPLIT",
+    next: "GET THE ROOM TALKING",
   });
   expect(game.questMenu()[0].detail).toContain("Best available: +150");
   game.visitQuest("notes");
@@ -373,7 +373,9 @@ test("the meme premise connects the mask split, clown class, and reporter to sco
   expect(intro.state().dialog.pages[0]).toContain(
     "COVID-conscious lesbian bar in Greenfield",
   );
-  expect(intro.state().dialog.pages[1]).toContain("clown-school class");
+  expect(intro.state().dialog.pages).toHaveLength(2);
+  expect(intro.state().dialog.pages[1]).toContain("roommate's clown-school Zoom link");
+  expect(intro.state().dialog.pages[1]).toContain("profit 40+, trust 65+, chaos 60 max");
 
   const classRoute = await adventureGame();
   classRoute.visitQuest("clowns");

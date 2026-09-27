@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#191522" />
     <meta
       name="description"
-      content="A COVID-conscious lesbian bar in Greenfield eases one mask rule. The group chat splits. The owner attends clown school. An 8-bit Western Mass RPG."
+      content="A COVID-conscious lesbian bar in Greenfield eases one mask rule. The group chat opens three threads. The owner attends clown school. An 8-bit Western Mass RPG."
     />
     <title>LAST DITCH — A Western Mass Bar Saga</title>
     <style>
@@ -1353,10 +1353,8 @@
           talk(
             "TESS / RENT IS DUE SUNDAY",
             [
-              "Last Ditch is a COVID-conscious lesbian bar in Greenfield. Rent is due Sunday. You ease its strict mask rule for one Saturday; masks remain welcome. The queer group chat splits before you can add a period.",
-              "You took a clown-school class to unwind. Now your student Zoom link hosts the mask-policy town hall, plus the audition class. Nora Ink, a fictional Globe reporter, wants the timeline by midnight.",
-              "Bring the regulars back into one room, pay rent, and survive the final Zoom call. For the compromise: stay at the bar, adjourn, and finish with profit 40+, trust 65+, chaos 60 or less.",
-              "Start with 500 points. Six errands can finish three two-step quests. During each recess, travel free between the bar, Zoom, and clown school. Each has one find worth points. Call-outs drain mask hearts; recess restores one. No clock while choosing.",
+              "Last Ditch is a COVID-conscious lesbian bar in Greenfield. You ease masks for one Saturday to make rent. The group chat splinters. Masks are still welcome; everyone still needs the bar.",
+              "Your roommate's clown-school Zoom link hosts the town hall. Nora Ink wants the story. Take side quests for points, then survive Saturday and the final Zoom. Compromise: stay at the bar; profit 40+, trust 65+, chaos 60 max.",
             ],
             null,
             () => {
@@ -1501,7 +1499,7 @@
         ];
         const ADVENTURE_NEXT = [
           "CLOWN-SCHOOL ZOOM",
-          "BRIDGE THE SPLIT",
+          "GET THE ROOM TALKING",
           "FUND THE BAR",
           "MASK-POLICY VOTE",
           "SATURDAY NIGHT",
@@ -1861,7 +1859,7 @@
                     effect: [0, 4, -5],
                     reason: "Verified timeline",
                     result:
-                      "You show the one-night post: masks still welcome, access plan unfinished. The student Zoom login explains the clowns. Nora asks what happened to the regulars, not the meme.",
+                      "You show the one-night post: masks still welcome, access plan unfinished. Your roommate's clown-school Zoom link explains the clowns. Nora asks what happened to the regulars, not the meme.",
                     apply: () => {
                       adventure.flags.timeline = true;
                     },
@@ -2047,7 +2045,7 @@
             adventureEvent(
               "zoom-open",
               "DOTTIE / HOST, PROBABLY",
-              "Your clown-school student login is hosting the mask-policy town hall. Half the queer regulars want the old rule; half fear the rent gap. Your classmates are here too. Is that tuba a microphone?",
+              "Your roommate's clown-school Zoom link is hosting the town hall. Half the regulars want the old rule; half fear the rent gap. Dottie: 'before I began mediating, meetings took 5-6 hours. Now they only take 4.' Is that tuba a microphone?",
               [
                 {
                   label: "ONE MIC. PUT AUDITIONS IN ROOM 2. [+250]",
@@ -2123,7 +2121,7 @@
                 adventureEvent(
                   "zoom-slides",
                   "PAT / SHARING THE WRONG SCREEN",
-                  "I have 87 slides about the comment section. Slide one is a photograph of slide two. Dottie can give you the floor, but this meeting is exhausting.",
+                  "I have 87 slides about the comment section. Slide one is a photograph of slide two. Dottie: 'EVERYONE AGREES WITH YOU, WHY ARE YOU DOING THIS?' Pat advances to slide three.",
                   [
                     {
                       label: "STAY + ASK ONE USEFUL QUESTION [+300 / 1 ♥]",
@@ -2203,7 +2201,7 @@
                 adventureEvent(
                   "zoom-breakouts",
                   "DOTTIE / THE BREAKOUT ROOMS HAVE UNIONIZED",
-                  "Room One is writing policy. Room Two is auditioning clowns. Both think you promised them Saturday. Pick one sentence for the minutes.",
+                  "Room One is writing policy. Room Two is auditioning clowns. A student asks, 'You guys all have seven sisters?' Both rooms think you promised them Saturday. Pick one sentence for the minutes.",
                   [
                     {
                       label: "BAR FIRST. BENEFIT SHOW HAS A SLOT. [+250]",
@@ -2418,7 +2416,7 @@
           adventureEvent(
             "saturday-reporter",
             "NORA / ONE LAST FOLLOW-UP",
-            "My editor asks whether the eased mask rule split this bar for good, or whether clown school saved it. I said the answer might be the people here tonight. What can I verify?",
+            "My editor asks what changed after the mask rule and the clown-school meeting. I said the answer might be the people here tonight. What can I verify?",
             [
               {
                 label: "USE THE VERIFIED NOTES [+400]",
@@ -2586,7 +2584,7 @@
           ],
           [
             "DOTTIE_SELTZER",
-            "The owner's clown-school student login is hosting the town hall. The invite says MASK LAB because I reused a calendar. Classmates: this is not your final exam.",
+            "Your roommate's clown-school Zoom link is hosting the town hall. The invite says MASK LAB because I reused a calendar. Classmates: this is not your final exam.",
             "8 MIN AGO / 206 REPLIES",
           ],
           [
@@ -2665,7 +2663,7 @@
         const ZOOM = [
           {
             speaker: "DOTTIE SELTZER / MODERATOR",
-            body: "Welcome to the clown school Zoom. I am a trained facilitator. The makeup is also professional. Our calendar now calls your bar Mask Lab. Someone is unmuted inside a tuba.",
+            body: "Welcome to your roommate's clown-school Zoom link. Dottie: 'before I began mediating, meetings took 5-6 hours. Now they only take 4.' Someone is unmuted inside a tuba.",
             options: [
               ["ONE MIC. EVERY VOICE GETS A TURN.", [-2, 9, -8], "care"],
               ["HONK IF YOU CAN HEAR ME.", [2, 2, 10], "clown"],
@@ -2674,7 +2672,7 @@
           },
           {
             speaker: "DOTTIE / BREAKOUT ROOM ENTHUSIAST",
-            body: "Three clown students just joined Balloon Animals 201. Our breakout rooms need names and, apparently, adult supervision.",
+            body: "Three clown students just joined Balloon Animals 201. One asks, 'You guys all have seven sisters?' Our breakout rooms need names and adult supervision.",
             options: [
               ["ACCESS NEEDS + QUIET SPACE", [-3, 10, -6], "care"],
               ["SNACKS + FEELINGS", [3, 5, 4], "clown"],
@@ -2683,7 +2681,7 @@
           },
           {
             speaker: "PAT / UNREQUESTED SLIDESHOW",
-            body: 'I prepared 87 slides. Slide one: "Airflow and feelings: a Venn diagram." Can everyone see my desktop? Please ignore the frog folder.',
+            body: "I prepared 87 slides. Slide one is a Venn diagram. Dottie: 'EVERYONE AGREES WITH YOU, WHY ARE YOU DOING THIS?' Please ignore the frog folder.",
             options: [
               ["TWO SLIDES. THEN ACCESS QUESTIONS.", [-2, 8, -5], "care"],
               ["CAN THE CLOWNS DO THE TRANSITIONS?", [4, 2, 9], "clown"],
@@ -2989,15 +2987,15 @@
             choices: [
               ["POST OPTIONS + FREE MASKS", 2, [0, 8, -6]],
               ["HIDE THE DETAILS IN A FAQ", 1, [0, 1, 2]],
-              ["MUTE BOTH OF THEM", 0, [0, -8, 10]],
+              ["FORM A WORDING SUBCOMMITTEE", 0, [0, -8, 10]],
             ],
             win: "One clear sentence. Free masks at the door. Both nod.",
           },
           {
             place: "zoom", speaker: "DOTTIE + THE TUBA", title: "HONK U. IS UNMUTED",
-            dispute: "A student plays through Willow's question. Captions are working; the mute button is not.",
+            dispute: "A student asks, 'You guys all have seven sisters?' Then the tuba plays through Willow's question. Captions work; the mute button does not.",
             choices: [
-              ["MUTE THE WHOLE ROOM", 0, [0, -9, 8]],
+              ["MAKE THE TUBA MODERATOR", 0, [0, -9, 8]],
               ["MUTE TUBA; KEEP CAPTIONS", 2, [0, 7, -7]],
               ["ASK EVERYONE TO TYPE", 1, [0, 1, 2]],
             ],
@@ -3014,7 +3012,7 @@
             win: "Nora writes down one policy, not six rumors.",
           },
           {
-            place: "zoom", speaker: "TWO BREAKOUT ROOMS", title: "THE GREAT SPLIT",
+            place: "zoom", speaker: "TWO BREAKOUT ROOMS", title: "BREAKOUT ROOM TRAFFIC",
             dispute: "Half the call wants a vote. The other half wants to be heard before voting.",
             choices: [
               ["SORT BY HOTTEST TAKE", 0, [0, -8, 12]],
@@ -3024,14 +3022,14 @@
             win: "Each table returns with one useful sentence.",
           },
           {
-            place: "bar", speaker: "TESS + THE DOOR", title: "THE SIGN IS TOO SMALL",
-            dispute: "Guests want to know their options before entering. Tess has a marker and nine seconds.",
+            place: "bar", speaker: "TESS + THE DOOR", title: "THE WRONG SIGN",
+            dispute: "A draft sign says, 'just because you're crying doesn't mean you're right.' Tess hands you an eraser. Guests need clear mask options.",
             choices: [
               ["EXPLAIN IT ONE BY ONE", 1, [1, 1, 2]],
-              ["HIDE THE SIGN", 0, [2, -9, 10]],
-              ["CLEAR SIGN + FREE MASKS", 2, [4, 7, -6]],
+              ["HANG THE DRAFT SIGN", 0, [2, -9, 10]],
+              ["ERASE IT; POST CLEAR OPTIONS", 2, [4, 7, -6]],
             ],
-            win: "A real sign beats 400 posts. The line moves.",
+            win: "A clear sign and free masks beat 400 posts. The line moves.",
           },
           {
             place: "bar", speaker: "RUTH + THE REGULARS", title: "IS TRIVIA STILL ON?",
@@ -3098,8 +3096,8 @@
           mediator.points = clamp(mediator.points + delta, 0, 7500);
           change(...(answer ? answer[2] : [-3, -7, 9]));
           mediator.result = {
-            title: grade === 2 ? "ROOM STEADIED" : grade === 1 ? "PARTIAL PEACE" : grade === 0 ? "THE CHAT EXPLODES" : "TIME RAN OUT",
-            body: grade === 2 ? issue.win : grade === 1 ? "It helps, but the same question comes back." : grade === 0 ? "The group chat starts a second group chat." : "Silence gets interpreted as a formal position.",
+            title: grade === 2 ? "ROOM STEADIED" : grade === 1 ? "HALFWAY THERE" : grade === 0 ? "ANOTHER THREAD OPENS" : "TIME RAN OUT",
+            body: grade === 2 ? issue.win : grade === 1 ? "It helps, but the same question comes back." : grade === 0 ? "Someone makes a spreadsheet about the first spreadsheet." : "Silence gets interpreted as a formal position.",
             delta,
           };
           setScreen("mediator-result");
@@ -4082,10 +4080,10 @@
             panel(18, 18, 1164, 639, C.night, C.peach);
             text("LAST DITCH", 45, 42, 6, C.cream);
             text("GREENFIELD, MASSACHUSETTS", 1150, 51, 2, C.peach, "right");
-            paragraph("COVID-CONSCIOUS LESBIAN BAR EASES MASK RULE. QUEER GROUP CHAT SPLITS. OWNER ATTENDS CLOWN SCHOOL.", 45, 107, 1100, 2, C.mint, 24);
+            paragraph("COVID-CONSCIOUS LESBIAN BAR EASES MASK RULE. THREE GROUP-CHAT THREADS OPEN. OWNER ATTENDS CLOWN SCHOOL.", 45, 107, 1100, 2, C.mint, 24);
             const memes = [
               ["DRESS FOR THE DISCOURSE", "N95. FLANNEL. EMOTIONAL ARMOR."],
-              ["CLOWN SCHOOL ZOOM", "YOU ARE MUTED. THE TUBA IS NOT."],
+              ["CLOWN SCHOOL ZOOM", "YOUR ROOMMATE'S LINK. THE TUBA IS NOT MUTED."],
               ["THE GLOBE HAS QUESTIONS", "IS THE CLOWN NOSE ON THE RECORD?"],
               ["THE QUEER GROUP CHAT", "40 PARAGRAPHS. ONE SPREADSHEET."],
               ["THE ETERNAL COMMITTEE", "A MOTION TO ADJOURN NEEDS A MEETING."],
@@ -4143,7 +4141,7 @@
           drawShareCard();
           shareStudio.showModal();
           document.getElementById("share-twitter").href = "https://twitter.com/intent/tweet?" + new URLSearchParams({
-            text: "A COVID-conscious lesbian bar. A mask-policy schism. Clown school Zoom. The Boston Globe has questions. I survived LAST DITCH.",
+            text: "A COVID-conscious lesbian bar. Three group-chat threads. Clown school Zoom. The Boston Globe has questions. I survived LAST DITCH.",
             url: "https://last-ditch-bar-saga.lizzie-siegle5086.workers.dev/",
           });
           shareTimer = setInterval(drawShareCard, 100);
@@ -5939,7 +5937,7 @@
         function drawQuests() {
           section(
             "RECESS " + (adventure.round + 1) + "/3 / THE CALL WILL RECONVENE",
-            "TWO ERRANDS. PICK YOUR BATTLES.",
+            "TWO ERRANDS. PICK YOUR PRIORITIES.",
           );
           text(
             "ERRANDS LEFT: " + adventure.remaining + " / 2",
@@ -6158,7 +6156,7 @@
         function drawZoom() {
           section(
             adventure
-              ? "LIVE / CLOWN SCHOOL ACCOUNT / RECORDING ON"
+              ? "LIVE / ROOMMATE'S CLOWN-SCHOOL LINK / RECORDING ON"
               : "CHAPTER 02 / MEETING ID: HONK-HONK",
             adventure
               ? [
@@ -6273,7 +6271,7 @@
             "center",
           );
           footer(
-            "CLOWN SCHOOL PRO ACCOUNT / 6 PARTICIPANTS",
+            "ROOMMATE'S CLOWN SCHOOL ZOOM / 6 PARTICIPANTS",
             "ANY ARROW CONTINUE",
           );
         }
@@ -6402,7 +6400,7 @@
         }
         function drawBoss() {
           section(
-            "FINAL BOSS / DEFEAT THROUGH DIALOGUE",
+            "FINAL AGENDA / FIND COMMON GROUND",
             "THE LISTSERV HAS ARRIVED.",
           );
           text(
@@ -6807,7 +6805,7 @@
             text(body, 253, y + 43, 1, C.blue);
           });
           paragraph(
-            "A COVID-conscious lesbian bar in Greenfield eases one mask rule. Story Mode follows the town hall and Saturday. Chaos Mode is a timed arcade shift. Super Chaos makes you mediate four Zoom disputes and four bar disputes under a clock. Good calls score points; bad calls and silence cost them.",
+            "A COVID-conscious lesbian bar in Greenfield eases one mask rule. Story Mode follows the town hall and Saturday. Keep the room open; nobody is the villain. Chaos Mode is a timed arcade shift. Super Chaos makes you mediate Zoom and bar mix-ups under a clock.",
             62,
             528,
             835,
@@ -7051,7 +7049,7 @@
               "FOR THE PLACES THAT MAKE ROOM.\nAnd the people who keep them open.\nInspired by Annalisa Quinn's Boston Globe reporting. Last Ditch in Greenfield is real; game characters and dialogue are invented.\nThank you for playing. Any arrow returns to the title.";
           else if (screen === "help")
             value =
-              "FOUR KEYS. THAT'S IT.\nA COVID-conscious Greenfield lesbian bar eases one mask rule. Regulars split; your clown-school login hosts the town hall.\nSTORY: finish Zoom, Saturday, and the final call. The top bar tracks progress; no story timer. Six errands can finish three quests and unlock bigger answers.\nStay at the bar, adjourn, then profit 40+, trust 65+, chaos 60 max earns the compromise ending.\n↑↓ chooses. → confirms. ← goes back or opens your notebook.\nCHAOS MODE: the timed arcade shift.\nSUPER CHAOS: mediate Zoom and the bar before each dispute clock expires.\n← or → returns to the title.";
+              "FOUR KEYS. THAT'S IT.\nA COVID-conscious Greenfield lesbian bar eases one mask rule. Regulars want different answers; your roommate's clown-school Zoom link hosts the town hall.\nSTORY: finish Zoom, Saturday, and the final call. The top bar tracks progress; no story timer. Six errands can finish three quests and unlock bigger answers.\nStay at the bar, adjourn, then profit 40+, trust 65+, chaos 60 max earns the compromise ending.\n↑↓ chooses. → confirms. ← goes back or opens your notebook.\nCHAOS MODE: the timed arcade shift.\nSUPER CHAOS: mediate Zoom and the bar before each dispute clock expires.\n← or → returns to the title.";
           if (
             adventure &&
             !["title", "leaderboard", "credits", "help"].includes(screen)
