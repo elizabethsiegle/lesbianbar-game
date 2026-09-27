@@ -1083,7 +1083,8 @@
           boardFromRun = false,
           rank = null,
           requestGeneration = 0;
-        let adventure = null;
+        let adventure = null,
+          mediator = null;
         const MASKS = [
           {
             id: "n95",
@@ -1263,6 +1264,7 @@
         }
         function resetGame() {
           adventure = null;
+          mediator = null;
           meters = { profit: 45, trust: 72, chaos: 12 };
           shown = { ...meters };
           factions = { care: 0, clown: 0, petition: 0 };
@@ -1370,6 +1372,17 @@
             "1 HEART. +200 AT A REHEARSED CLOWN SHOW.",
             "0 HEARTS. EVIDENCE STILL UNLOCKS GOOD ANSWERS.",
           ][mask.base];
+        }
+        function maskModeDetail() {
+          if (adventure) return adventureMaskDetail();
+          if (stage === "mediator-mask")
+            return [
+              "+3 SECONDS PER DISPUTE.",
+              "+10 COMMUNITY TRUST. +1 SECOND PER DISPUTE.",
+              "+100 STARTING POINTS.",
+              "+1 SECOND FOR QUICK REPLIES.",
+            ][mask.base];
+          return MASKS[mask.base].detail;
         }
         function equipAdventureMask() {
           adventure.stamina = MASKS[mask.base].stamina;
@@ -2969,6 +2982,152 @@
           setScreen("mask");
           announce("CHAOS MODE. Pick a mask, then go straight to Saturday.");
         }
+        const MEDIATION = [
+          {
+            place: "zoom", speaker: "WILLOW + PAT", title: "THE INVITE HAS NO RULE",
+            dispute: "Willow needs clear mask options. Pat wants an invite shorter than a grant application.",
+            choices: [
+              ["POST OPTIONS + FREE MASKS", 2, [0, 8, -6]],
+              ["HIDE THE DETAILS IN A FAQ", 1, [0, 1, 2]],
+              ["MUTE BOTH OF THEM", 0, [0, -8, 10]],
+            ],
+            win: "One clear sentence. Free masks at the door. Both nod.",
+          },
+          {
+            place: "zoom", speaker: "DOTTIE + THE TUBA", title: "HONK U. IS UNMUTED",
+            dispute: "A student plays through Willow's question. Captions are working; the mute button is not.",
+            choices: [
+              ["MUTE THE WHOLE ROOM", 0, [0, -9, 8]],
+              ["MUTE TUBA; KEEP CAPTIONS", 2, [0, 7, -7]],
+              ["ASK EVERYONE TO TYPE", 1, [0, 1, 2]],
+            ],
+            win: "The question lands. The tuba accepts a solo later.",
+          },
+          {
+            place: "zoom", speaker: "NORA / THE GLOBE", title: "ONE MORE QUESTION",
+            dispute: "Nora asks what Saturday's rule actually is. Six people answer at once.",
+            choices: [
+              ["PROMISE A LATER UPDATE", 1, [0, 0, 3]],
+              ["CALL IT A VIBE", 0, [1, -9, 11]],
+              ["STATE RULE + ACCESS PLAN", 2, [2, 8, -5]],
+            ],
+            win: "Nora writes down one policy, not six rumors.",
+          },
+          {
+            place: "zoom", speaker: "TWO BREAKOUT ROOMS", title: "THE GREAT SPLIT",
+            dispute: "Half the call wants a vote. The other half wants to be heard before voting.",
+            choices: [
+              ["SORT BY HOTTEST TAKE", 0, [0, -8, 12]],
+              ["MIX GROUPS; SET A CLOCK", 2, [0, 9, -8]],
+              ["KEEP ONE BIG ROOM", 1, [0, 2, 2]],
+            ],
+            win: "Each table returns with one useful sentence.",
+          },
+          {
+            place: "bar", speaker: "TESS + THE DOOR", title: "THE SIGN IS TOO SMALL",
+            dispute: "Guests want to know their options before entering. Tess has a marker and nine seconds.",
+            choices: [
+              ["EXPLAIN IT ONE BY ONE", 1, [1, 1, 2]],
+              ["HIDE THE SIGN", 0, [2, -9, 10]],
+              ["CLEAR SIGN + FREE MASKS", 2, [4, 7, -6]],
+            ],
+            win: "A real sign beats 400 posts. The line moves.",
+          },
+          {
+            place: "bar", speaker: "RUTH + THE REGULARS", title: "IS TRIVIA STILL ON?",
+            dispute: "Ruth brought river facts. A nearby group needs a quieter table.",
+            choices: [
+              ["TRIVIA + QUIET TABLE", 2, [5, 8, -5]],
+              ["MOVE TRIVIA LATER", 1, [0, 2, 1]],
+              ["CANCEL EVERYTHING", 0, [-6, -7, 8]],
+            ],
+            win: "The Connecticut River finally gets its moment.",
+          },
+          {
+            place: "bar", speaker: "DOTTIE + THE CLOWNS", title: "NOSE ATTACHMENT DEBATE",
+            dispute: "The class wants to help. One clown tries to attach a nose to everyone's mask.",
+            choices: [
+              ["LET DOTTIE HANDLE IT", 1, [1, 1, 2]],
+              ["ASK FIRST; HONK OUTSIDE", 2, [3, 7, -6]],
+              ["MAKE NOSES THE POLICY", 0, [1, -8, 11]],
+            ],
+            win: "Consent, clear air, and a tasteful outdoor honk.",
+          },
+          {
+            place: "bar", speaker: "NORA + THE CLIPBOARD", title: "LAST CALL. FINAL QUOTE.",
+            dispute: "Nora wants a quote. The listserv wants receipts. Tess wants rent paid.",
+            choices: [
+              ["BLAME THE TUBA", 0, [0, -8, 12]],
+              ["SCHEDULE A FOLLOW-UP", 1, [0, 2, 2]],
+              ["SHOW RECEIPTS + ONE PLAN", 2, [8, 9, -8]],
+            ],
+            win: "The story is about people keeping a bar together.",
+          },
+        ];
+        function mediatorSeconds() {
+          const maskTime = mask.base === 0 ? 3 : mask.base === 1 || mask.base === 3 ? 1 : 0;
+          return Math.max(10, 18 + maskTime - Math.floor(meters.chaos / 20));
+        }
+        function startSuperChaosMode() {
+          resetGame();
+          dialog = null;
+          stage = "mediator-mask";
+          maskRow = 0;
+          setScreen("mask");
+          announce("SUPER CHAOS. Dress for the discourse, then mediate Zoom and the bar.");
+        }
+        function startMediator() {
+          stage = "mediator";
+          mediator = { round: 0, remaining: mediatorSeconds(), points: 500, streak: 0, saved: 0, result: null };
+          if (mask.base === 1) change(0, 10, 0);
+          if (mask.base === 2) mediator.points += 100;
+          setTheme("clown");
+          setScreen("mediator");
+          announce("Zoom dispute one of four. Mediate before the clock runs out.");
+        }
+        function resolveMediator(index) {
+          if (screen !== "mediator") return;
+          const issue = MEDIATION[mediator.round];
+          const answer = index < 0 ? null : issue.choices[index];
+          const grade = answer ? answer[1] : -1;
+          mediator.streak = grade === 2 ? mediator.streak + 1 : 0;
+          if (grade === 2) mediator.saved++;
+          const delta = grade === 2
+            ? 300 + Math.ceil(mediator.remaining) * 8 + Math.min(mediator.streak * 40, 160)
+            : grade === 1 ? 100 + Math.ceil(mediator.remaining) * 3 : grade === 0 ? -150 : -200;
+          mediator.points = clamp(mediator.points + delta, 0, 7500);
+          change(...(answer ? answer[2] : [-3, -7, 9]));
+          mediator.result = {
+            title: grade === 2 ? "ROOM STEADIED" : grade === 1 ? "PARTIAL PEACE" : grade === 0 ? "THE CHAT EXPLODES" : "TIME RAN OUT",
+            body: grade === 2 ? issue.win : grade === 1 ? "It helps, but the same question comes back." : grade === 0 ? "The group chat starts a second group chat." : "Silence gets interpreted as a formal position.",
+            delta,
+          };
+          setScreen("mediator-result");
+          sfx(grade === 2 ? "level" : "bad");
+          announce(mediator.result.title + ". " + mediator.result.body + " " + (delta > 0 ? "+" : "") + delta + " points.");
+        }
+        function nextMediator() {
+          if (mediator.round === MEDIATION.length - 1) {
+            ending = pickEnding();
+            score = mediator.points + meters.profit * 10 + meters.trust * 10 + (100 - meters.chaos) * 10;
+            tallyAge = 0;
+            setTheme("cozy");
+            setScreen("tally");
+            sfx("level");
+            return;
+          }
+          mediator.round++;
+          mediator.remaining = mediatorSeconds();
+          mediator.result = null;
+          if (mediator.round === 4) {
+            setTheme("boss");
+            setScreen("mediator-break");
+          } else setScreen("mediator");
+        }
+        function updateMediator(dt) {
+          mediator.remaining = Math.max(0, mediator.remaining - dt);
+          if (mediator.remaining === 0) resolveMediator(-1);
+        }
         function arenaFree(x, y, except = null, includePlayer = true) {
           return (
             x >= 1 &&
@@ -3958,7 +4117,7 @@
               }
               paragraph(caption, x + 13, y + 138, 334, 2, C.cream, 17);
             });
-            const currentScore = screen === "ending" || screen === "tally" || screen === "initials" ? score : adventure?.points ?? arcade?.points ?? 0;
+            const currentScore = screen === "ending" || screen === "tally" || screen === "initials" ? score : adventure?.points ?? mediator?.points ?? arcade?.points ?? 0;
             text("SCORE " + currentScore + " / " + (secretHonk ? "SECRET HONK SOCIETY" : mask.base === 2 && mask.accessory === 2 ? "HONK SCHOLAR" : "VERY REAL COMMITTEE ENERGY"), 45, 590, 2, C.peach);
             text("EVERYONE BELONGS. / LAST DITCH: A WESTERN MASS BAR SAGA", 45, 625, 2, C.mint);
           } finally {
@@ -4099,12 +4258,12 @@
               menuIndex = 0;
               sfx("select");
               announce(
-                "Story mode. Chaos mode. High scores. How to play. Sound. Up/down choose, right confirm.",
+                "Story mode. Chaos mode. Super Chaos mediator mode. High scores. How to play. Sound. Up/down choose, right confirm.",
               );
               return;
             }
             if (dir === "up" || dir === "down") {
-              menuIndex = (menuIndex + (dir === "up" ? -1 : 1) + 6) % 6;
+              menuIndex = (menuIndex + (dir === "up" ? -1 : 1) + 7) % 7;
               sfx("move");
             } else if (dir === "left") titleAwake = false;
             else if (dir === "right") {
@@ -4114,7 +4273,8 @@
               else if (menuIndex === 2) openDashboard();
               else if (menuIndex === 3) setScreen("help");
               else if (menuIndex === 4) toggleSound();
-              else openShare();
+              else if (menuIndex === 5) openShare();
+              else startSuperChaosMode();
             }
             return;
           }
@@ -4174,7 +4334,7 @@
             else if (maskRow === 5) {
               if (dir === "right") {
                 if (adventure) equipAdventureMask();
-                else setScreen("ready");
+                else setScreen(stage === "mediator-mask" ? "mediator-ready" : "ready");
                 sfx("select");
               } else maskRow = 4;
             } else {
@@ -4187,7 +4347,7 @@
               "Mask editor. " +
                 MASKS[mask.base].label +
                 ". " +
-                (adventure ? adventureMaskDetail() : MASKS[mask.base].detail) +
+                maskModeDetail() +
                 " Selected " +
                 ["base", "color", "pattern", "accessory", "character: " + (mask.avatar ? "man" : "woman"), "done"][maskRow],
             );
@@ -4198,6 +4358,29 @@
               setScreen("mask");
               maskRow = 5;
             } else if (dir === "right") startArcade();
+            return;
+          }
+          if (screen === "mediator-ready") {
+            if (dir === "left") {
+              setScreen("mask");
+              maskRow = 5;
+            } else if (dir === "right") startMediator();
+            return;
+          }
+          if (screen === "mediator") {
+            if (dir === "up" || dir === "down") {
+              menuIndex = (menuIndex + (dir === "up" ? -1 : 1) + 3) % 3;
+              sfx("move");
+            } else if (dir === "right") resolveMediator(menuIndex);
+            return;
+          }
+          if (screen === "mediator-result") {
+            nextMediator();
+            return;
+          }
+          if (screen === "mediator-break") {
+            setScreen("mediator");
+            announce("Bar dispute one of four. The clock is running.");
             return;
           }
           if (screen === "tally") {
@@ -4339,9 +4522,9 @@
         }
         function pause() {
           held = null;
-          if (screen === "arcade") {
+          if (screen === "arcade" || screen === "mediator") {
             paused = true;
-            announce("Shift paused. Press an arrow to resume.");
+            announce("Game paused. Press an arrow to resume.");
           }
           if (audio.ctx && audio.ctx.state === "running")
             void audio.ctx.suspend().catch(() => {});
@@ -4832,7 +5015,7 @@
               "center",
             );
           } else {
-            panel(314, 420, 332, 171, C.ink, C.plum);
+            panel(314, 401, 332, 190, C.ink, C.plum);
             [
               "STORY MODE",
               "CHAOS MODE",
@@ -4840,15 +5023,16 @@
               "HOW TO PLAY",
               audio.muted ? "SOUND: OFF" : "SOUND: ON",
               "MAKE MEME CARD",
+              "SUPER CHAOS / MEDIATOR",
             ].forEach((label, i) => {
               if (menuIndex === i) {
-                rect(326, 428 + i * 26, 308, 24, C.purple);
-                text("→", 341, 434 + i * 26, 2, C.peach);
+                rect(326, 408 + i * 26, 308, 24, C.purple);
+                text("→", 341, 414 + i * 26, 2, C.peach);
               }
               text(
                 label,
                 480,
-                434 + i * 26,
+                414 + i * 26,
                 2,
                 menuIndex === i ? C.cream : C.blue,
                 "center",
@@ -5688,6 +5872,81 @@
           text("BUMP A PORTAL TO SWITCH. THE EXIT RETURNS TO RECESS.", 80, 570, 1, C.mint);
           footer("FREE TRAVEL / THREE PLACES / NO ERRAND COST", "↑↓←→ MOVE + BUMP");
         }
+        function drawMediatorRoom(x, y, width, height, place) {
+          panel(x, y, width, height, place === "zoom" ? C.teal : C.brown, C.plum);
+          if (place === "zoom") {
+            const names = ["DOTTIE", "WILLOW", "NORA", "PAT"];
+            for (let i = 0; i < 4; i++) {
+              const bx = x + 12 + (i % 2) * ((width - 28) / 2);
+              const by = y + 12 + Math.floor(i / 2) * ((height - 30) / 2);
+              panel(bx, by, (width - 40) / 2, (height - 38) / 2, i % 2 ? C.plum : C.night, C.purple);
+              sprite(bx + 55, by + 16, [C.orange, C.mint, C.blue, C.pink][i], 3, {
+                clown: i === 0, hat: i === 2, character: ["dottie", "willow", "nora", "pat"][i],
+              });
+              text(names[i], bx + 11, by + (height - 38) / 2 - 18, 1, C.cream);
+            }
+            text("HONK U. / CALL LIVE", x + width / 2, y + height - 17, 1, C.peach, "center");
+          } else {
+            lights(x + 17, y + 16, width - 34, 18);
+            rect(x + 25, y + 72, width - 50, 24, C.rust);
+            rect(x + 25, y + 96, width - 50, 8, C.ink);
+            text("LAST DITCH / OPEN", x + width / 2, y + 46, 2, C.cream, "center");
+            sprite(x + 67, y + 126, C.pink, 3, { character: "tess" });
+            sprite(x + width - 120, y + 126, C.orange, 3, { clown: true });
+            sprite(x + width / 2 - 22, y + height - 90, C.pink, 3, { mask, avatar: mask.avatar });
+            text("EVERYONE BELONGS", x + width / 2, y + height - 19, 1, C.mint, "center");
+          }
+        }
+        function drawMediatorReady() {
+          section("SUPER CHAOS / MEDIATOR", "TWO ROOMS. EIGHT DISPUTES.");
+          drawMediatorRoom(59, 182, 401, 250, "zoom");
+          drawMediatorRoom(500, 182, 401, 250, "bar");
+          text("01-04 / CLOWN-SCHOOL ZOOM", 259, 452, 2, C.peach, "center");
+          text("05-08 / LAST DITCH BAR", 700, 452, 2, C.peach, "center");
+          panel(59, 484, 842, 96, C.ink, C.plum);
+          paragraph("Pick a response before the " + mediatorSeconds() + "-second clock expires. More chaos shortens later clocks. Strong mediation scores fast points; weak answers, bad calls, and silence cost points. N95 gives more time; cloth earns trust; novelty starts with bonus points.", 81, 502, 800, 1, C.cream, 18);
+          footer("MASKS WELCOME / " + MASKS[mask.base].label + " EQUIPPED", "← MASK EDITOR  → START");
+        }
+        function drawMediator() {
+          const issue = MEDIATION[mediator.round];
+          const liveRound = screen === "mediator";
+          section("SUPER CHAOS / " + (issue.place === "zoom" ? "CLOWN-SCHOOL ZOOM" : "LAST DITCH BAR"), "MEDIATE THE ROOM.");
+          panel(54, 153, 851, 39, C.ink, C.plum);
+          text("DISPUTE " + (mediator.round + 1) + "/8", 72, 165, 2, C.peach);
+          rect(256, 168, 253, 10, C.purple);
+          rect(256, 168, 253 * ((mediator.round + 1) / MEDIATION.length), 10, C.mint);
+          text("SCORE " + String(mediator.points).padStart(4, "0"), 688, 165, 2, C.cream, "right");
+          text(liveRound ? Math.ceil(mediator.remaining) + "s" : "DONE", 880, 165, 2, liveRound && mediator.remaining <= 5 ? C.pink : C.mint, "right");
+          drawMediatorRoom(54, 208, 369, 301, issue.place);
+          panel(438, 208, 466, 301, C.night, C.plum);
+          text(issue.speaker, 457, 225, 1, C.peach);
+          text(issue.title, 457, 247, 2, C.cream);
+          paragraph(issue.dispute, 458, 281, 426, 1, C.blue, 18);
+          if (liveRound) {
+            issue.choices.forEach((answer, index) => {
+              const y = 355 + index * 43;
+              panel(453, y, 436, 36, menuIndex === index ? C.purple : C.ink, menuIndex === index ? C.peach : C.plum);
+              text((menuIndex === index ? "→ " : "  ") + answer[0], 468, y + 10, 1, menuIndex === index ? C.cream : C.blue);
+            });
+            text("GOOD CALLS BUILD A STREAK", 458, 488, 1, C.mint);
+          } else {
+            text(mediator.result.title, 460, 358, 3, mediator.result.delta > 0 ? C.mint : C.pink);
+            paragraph(mediator.result.body, 460, 406, 421, 1, C.cream, 20);
+            text((mediator.result.delta > 0 ? "+" : "") + mediator.result.delta + " POINTS", 460, 472, 2, mediator.result.delta > 0 ? C.mint : C.pink);
+          }
+          panel(54, 522, 850, 62, C.ink, C.plum);
+          text("STEADIED " + mediator.saved + "/8  /  STREAK " + mediator.streak, 74, 539, 2, C.peach);
+          text(liveRound ? "CLOCK KEEPS TICKING. READ BOTH SIDES." : "THE ROOM IS PAUSED.", 74, 566, 1, C.mint);
+          footer("ZOOM FIRST / THEN THE BAR", liveRound ? "↑↓ CHOOSE  → MEDIATE" : "ANY ARROW CONTINUE");
+        }
+        function drawMediatorBreak() {
+          section("SUPER CHAOS / LOCATION TWO", "THE ZOOM CALL HAS LEFT THE CHAT.");
+          drawMediatorRoom(60, 182, 840, 296, "bar");
+          panel(136, 492, 688, 88, C.ink, C.peach);
+          text("THE BAR NEEDS ITS MEDIATOR.", 480, 508, 2, C.cream, "center");
+          text("FOUR MORE DISPUTES. THE CLOCK RESTARTS.", 480, 544, 1, C.mint, "center");
+          footer("YOUR ZOOM ANSWERS STAY ON THE RECORD", "ANY ARROW ENTER THE BAR");
+        }
         function drawQuests() {
           section(
             "RECESS " + (adventure.round + 1) + "/3 / THE CALL WILL RECONVENE",
@@ -6031,7 +6290,7 @@
         }
         function drawMask() {
           section(
-            "INTERMISSION / YOUR SATURDAY ARMOR",
+            stage === "mediator-mask" ? "SUPER CHAOS / YOUR LOOK" : "INTERMISSION / YOUR SATURDAY ARMOR",
             "DRESS FOR THE DISCOURSE.",
           );
           panel(62, 174, 310, 352, C.purple, C.plum);
@@ -6074,7 +6333,7 @@
               i < MASKS[mask.base].stamina ? C.mint : C.plum,
             );
           paragraph(
-            adventure ? adventureMaskDetail() : MASKS[mask.base].detail,
+            maskModeDetail(),
             410,
             542,
             478,
@@ -6181,9 +6440,9 @@
           );
         }
         function drawTally() {
-          text("SHIFT COMPLETE", 480, 102, 1, C.peach, "center");
+          text(mediator ? "MEDIATION COMPLETE" : "SHIFT COMPLETE", 480, 102, 1, C.peach, "center");
           text(
-            policy === "retreat"
+            mediator ? "MEDIATION: COMPLETE." : policy === "retreat"
               ? "ROOM TWO: SURVIVED."
               : "SATURDAY: SURVIVED.",
             480,
@@ -6196,8 +6455,8 @@
           panel(215, 251, 530, 293, C.night, C.plum);
           const rows = [
             [
-              adventure ? "ADVENTURE POINTS" : "ARCADE POINTS",
-              adventure ? adventure.points : arcade.points,
+              adventure ? "ADVENTURE POINTS" : mediator ? "MEDIATOR POINTS" : "ARCADE POINTS",
+              adventure ? adventure.points : mediator ? mediator.points : arcade.points,
             ],
             ["PROFIT BONUS", meters.profit * 10],
             ["COMMUNITY TRUST", meters.trust * 10],
@@ -6229,6 +6488,8 @@
                   " / LOST " +
                   adventure.lost +
                   " / STARTED WITH 500"
+              : mediator
+                ? "STEADIED " + mediator.saved + "/8 DISPUTES / STARTED WITH 500"
               : "THE LIGHTS ARE STILL ON. THAT COUNTS.",
             480,
             575,
@@ -6558,7 +6819,7 @@
             text(body, 253, y + 43, 1, C.blue);
           });
           paragraph(
-            "A COVID-conscious lesbian bar in Greenfield eases one mask rule. Its regulars split; the owner's clown-school login hosts the town hall. Finish Zoom, Saturday, and the final call. The top bar tracks progress. Clean quests earn points and unlock better answers. Story Mode has no timer; CHAOS MODE is timed.",
+            "A COVID-conscious lesbian bar in Greenfield eases one mask rule. Story Mode follows the town hall and Saturday. Chaos Mode is a timed arcade shift. Super Chaos makes you mediate four Zoom disputes and four bar disputes under a clock. Good calls score points; bad calls and silence cost them.",
             62,
             528,
             835,
@@ -6573,7 +6834,7 @@
           let value = "";
           if (paused)
             value =
-              "TAKE A BREATHER. Your shift is paused.\nAny arrow to resume.";
+              "TAKE A BREATHER. Your game is paused.\nAny arrow to resume.";
           else if (dialog) {
             value = dialog.speaker + "\n" + dialog.pages[dialog.page];
             if (dialog.choices && dialog.page === dialog.pages.length - 1)
@@ -6601,6 +6862,7 @@
                   "HOW TO PLAY",
                   audio.muted ? "SOUND OFF" : "SOUND ON",
                   "MAKE MEME CARD",
+                  "SUPER CHAOS / MEDIATOR",
                 ]
                   .map((label, i) => (menuIndex === i ? "→ " : "  ") + label)
                   .join("\n") + "\n↑↓ choose · → confirm"
@@ -6632,7 +6894,7 @@
                 .map((label, i) => (maskRow === i ? "→ " : "  ") + label)
                 .join("\n") +
               "\n" +
-              (adventure ? adventureMaskDetail() : MASKS[mask.base].detail) +
+              maskModeDetail() +
               "\n↑↓ category · ←→ change · → on DONE";
           else if (screen === "quests")
             value =
@@ -6658,6 +6920,19 @@
             value = LOCATIONS.find((place) => place.id === adventure.location).name +
               "\nBump people to talk. Bump a portal to switch locations. Bump EXIT to return to recess. No errands spent." +
               "\nDiscoveries: " + adventure.locationFinds.size + "/3 · Score " + adventure.points;
+          else if (screen === "mediator-ready")
+            value = "SUPER CHAOS / MEDIATOR\nFour Zoom disputes, then four at the bar. You have " + mediatorSeconds() + " seconds per dispute. Good mediation scores fast points. Weak answers, bad calls, and timeouts cost points.\n← mask editor · → start";
+          else if (screen === "mediator") {
+            const issue = MEDIATION[mediator.round];
+            value = (issue.place === "zoom" ? "CLOWN-SCHOOL ZOOM" : "LAST DITCH BAR") +
+              " · DISPUTE " + (mediator.round + 1) + "/8 · " + Math.ceil(mediator.remaining) + "s · SCORE " + mediator.points +
+              "\n" + issue.speaker + ": " + issue.dispute + "\n" +
+              issue.choices.map((answer, index) => (menuIndex === index ? "→ " : "  ") + answer[0]).join("\n") +
+              "\n↑↓ choose · → mediate";
+          } else if (screen === "mediator-result")
+            value = mediator.result.title + "\n" + mediator.result.body + "\n" + (mediator.result.delta > 0 ? "+" : "") + mediator.result.delta + " points. Score " + mediator.points + ".\nAny arrow continues.";
+          else if (screen === "mediator-break")
+            value = "ZOOM COMPLETE. ENTER THE BAR.\nFour more disputes. The clock restarts.\nAny arrow continues.";
           else if (screen === "ready")
             value =
               (policy === "retreat"
@@ -6718,9 +6993,9 @@
                 .join("\n");
           else if (screen === "tally")
             value =
-              "SHIFT COMPLETE\n" +
-              (adventure ? "Adventure " : "Arcade ") +
-              (adventure ? adventure.points : arcade.points) +
+              (mediator ? "MEDIATION COMPLETE\n" : "SHIFT COMPLETE\n") +
+              (adventure ? "Adventure " : mediator ? "Mediator " : "Arcade ") +
+              (adventure ? adventure.points : mediator ? mediator.points : arcade.points) +
               " + Profit " +
               meters.profit * 10 +
               " + Trust " +
@@ -6789,7 +7064,7 @@
               "FOR THE PLACES THAT MAKE ROOM.\nAnd the people who keep them open.\nInspired by Annalisa Quinn's Boston Globe reporting. Last Ditch in Greenfield is real; game characters and dialogue are invented.\nThank you for playing. Any arrow returns to the title.";
           else if (screen === "help")
             value =
-              "FOUR KEYS. THAT'S IT.\nA COVID-conscious Greenfield lesbian bar eases one mask rule. Regulars split; your clown-school login hosts the town hall.\nSTORY: finish Zoom, Saturday, and the final call. The top bar tracks progress; no story timer. Six errands can finish three quests and unlock bigger answers.\nStay at the bar, adjourn, then profit 40+, trust 65+, chaos 60 max earns the compromise ending.\n↑↓ chooses. → confirms. ← goes back or opens your notebook.\nCHAOS MODE: the timed arcade shift.\n← or → returns to the title.";
+              "FOUR KEYS. THAT'S IT.\nA COVID-conscious Greenfield lesbian bar eases one mask rule. Regulars split; your clown-school login hosts the town hall.\nSTORY: finish Zoom, Saturday, and the final call. The top bar tracks progress; no story timer. Six errands can finish three quests and unlock bigger answers.\nStay at the bar, adjourn, then profit 40+, trust 65+, chaos 60 max earns the compromise ending.\n↑↓ chooses. → confirms. ← goes back or opens your notebook.\nCHAOS MODE: the timed arcade shift.\nSUPER CHAOS: mediate Zoom and the bar before each dispute clock expires.\n← or → returns to the title.";
           if (
             adventure &&
             !["title", "leaderboard", "credits", "help"].includes(screen)
@@ -6831,6 +7106,9 @@
           else if (screen === "quests") drawQuests();
           else if (screen === "locations") drawLocations();
           else if (screen === "explore") drawExplore();
+          else if (screen === "mediator-ready") drawMediatorReady();
+          else if (screen === "mediator" || screen === "mediator-result") drawMediator();
+          else if (screen === "mediator-break") drawMediatorBreak();
           else if (screen === "world") drawWorld();
           else if (screen === "feed") drawFeed();
           else if (screen === "zoom") drawZoom();
@@ -6855,7 +7133,7 @@
           if (paused) {
             panel(239, 244, 482, 137, C.ink, C.peach);
             text("TAKE A BREATHER.", 480, 273, 3, C.cream, "center");
-            text("YOUR SHIFT IS PAUSED.", 480, 315, 1, C.blue, "center");
+            text("YOUR GAME IS PAUSED.", 480, 315, 1, C.blue, "center");
             text("ANY ARROW TO RESUME", 480, 345, 2, C.peach, "center");
           }
           updateMobileReadout();
@@ -6897,6 +7175,7 @@
                   : 135);
             }
             if (screen === "arcade") updateArcade(dt);
+            if (screen === "mediator") updateMediator(dt);
             if (screen === "tally") {
               const previous = Math.floor(tallyAge * 8);
               tallyAge += dt;

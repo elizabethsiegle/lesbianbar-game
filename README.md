@@ -8,7 +8,7 @@ Last Ditch Bar and Arts Venue in Greenfield is real. The game takes inspiration 
 
 A choose-your-own-adventure riff on the meme: a COVID-conscious lesbian bar in Greenfield eases its strict mask rule, the queer group chat splits, and the owner attends clown school. Rent is due Sunday. Fictional Globe reporter Nora Ink wants the timeline. The owner's clown-school login hosts the town hall—and the audition class.
 
-**STORY MODE** follows your choices through recurring Zoom meetings, five side quests, and Saturday night. **CHAOS MODE** is a separate 90-second arcade shift.
+**STORY MODE** follows your choices through recurring Zoom meetings, five side quests, and Saturday night. **CHAOS MODE** is a separate 90-second arcade shift. **SUPER CHAOS** is an eight-dispute mediation rush through Zoom and the bar.
 
 All art uses a 16-color canvas palette and a built-in bitmap font. Four original chiptune loops and sound effects run through Web Audio. No external assets, fonts, or runtime libraries.
 
@@ -62,10 +62,13 @@ The first deployment creates the `Leaderboard` SQLite Durable Object through the
 | Social feed    | Up/down scrolls. Right reads the next post, then continues.                              |
 | Mask editor    | Up/down selects a category. Left/right cycles. Right on DONE confirms.                   |
 | Saturday night | Bump marked incidents or matching tool stations. Dodge flying paperwork.                 |
+| Super Chaos    | Up/down picks a response. Right mediates before the clock runs out.                      |
 | Dance/karaoke  | Copy the displayed arrow sequence before eight seconds expire.                           |
 | Initials       | Up/down changes a letter. Right advances; right on letter three submits. Left goes back. |
 
 Touch devices get the same four directions on a D-pad. Small screens also show readable dialogue, choices, and instructions below the canvas. Sound can be toggled from the header or title menu. Leaving the window pauses the arcade shift; an arrow resumes it. Reduced-motion preferences remove blinking and sprite bobbing and speed up dialogue.
+
+Super Chaos starts with mask selection, then moves through four clown-school Zoom disputes and four bar disputes. Each has a short clock; high chaos shortens later clocks. Strong answers earn speed and streak points; weak answers, bad calls, and timeouts lose points or trust. The final score uses the same meter bonuses and leaderboard as the other modes.
 
 ## Story mode
 
