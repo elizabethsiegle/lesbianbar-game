@@ -357,7 +357,7 @@ test("route progress follows story beats and quest previews show available point
   expect(game.adventureProgress()).toEqual({
     completed: 1,
     total: 7,
-    next: "ACCESS PLAN",
+    next: "BRIDGE THE SPLIT",
   });
   expect(game.questMenu()[0].detail).toContain("Best available: +150");
   game.visitQuest("notes");
@@ -365,6 +365,30 @@ test("route progress follows story beats and quest previews show available point
   expect(game.questMenu()[2].detail).toContain("Best available: +100");
   game.state().adventure.flags.access = true;
   expect(game.questMenu()[2].detail).toContain("Best available: +450");
+});
+
+test("the meme premise connects the mask split, clown class, and reporter to scoring", async () => {
+  const intro = await model();
+  intro.startAdventure();
+  expect(intro.state().dialog.pages[0]).toContain(
+    "COVID-conscious lesbian bar in Greenfield",
+  );
+  expect(intro.state().dialog.pages[1]).toContain("clown-school class");
+
+  const classRoute = await adventureGame();
+  classRoute.visitQuest("clowns");
+  expect(classRoute.state().dialog.pages[0]).toContain("clown class");
+  pick(classRoute);
+  expect(classRoute.state().adventure.points).toBe(900);
+
+  const pressRoute = await adventureGame();
+  pressRoute.visitQuest("notes");
+  expect(pressRoute.state().dialog.pages[0]).toContain(
+    "splintering the queer community",
+  );
+  pick(pressRoute);
+  expect(pressRoute.state().adventure.flags.timeline).toBe(true);
+  expect(pressRoute.state().adventure.points).toBe(950);
 });
 
 test("failed errands lose real points and never grant the successful quest evidence", async () => {

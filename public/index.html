@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#191522" />
     <meta
       name="description"
-      content="One lesbian bar. One policy change. An entire town with reply-all privileges. An arrow-key-only, 8-bit Western Mass RPG."
+      content="A COVID-conscious lesbian bar in Greenfield eases one mask rule. The group chat splits. The owner attends clown school. An 8-bit Western Mass RPG."
     />
     <title>LAST DITCH — A Western Mass Bar Saga</title>
     <style>
@@ -1044,7 +1044,7 @@
             name: "DOTTIE / HONK FOR THE RENT",
             reward: "Clown benefit: ticket money and a school refuge.",
             bestPoints: [150, 350],
-            steps: ["Visit the clown school", "Rehearse the benefit show"],
+            steps: ["Attend clown class", "Rehearse the benefit show"],
           },
           {
             id: "notes",
@@ -1091,9 +1091,9 @@
           talk(
             "TESS / RENT IS DUE SUNDAY",
             [
-              "You own Last Ditch, the town's lesbian bar. Rent is due Sunday. You post a mask-optional Saturday trial, with masks welcome. The replies arrive before the punctuation.",
-              "Nora Ink, a fictional Boston Globe reporter, wants a story by midnight. The clown school lends you its Zoom account. Unfortunately, it also lends you its audition link.",
-              "Finish three Zoom recesses, Saturday, and the final call to reach an ending. For the compromise: stay at the bar, adjourn, and finish with profit 40+, trust 65+, chaos 60 or less.",
+              "Last Ditch is a COVID-conscious lesbian bar in Greenfield. Rent is due Sunday. You ease its strict mask rule for one Saturday; masks remain welcome. The queer group chat splits before you can add a period.",
+              "You took a clown-school class to unwind. Now your student Zoom link hosts the mask-policy town hall, plus the audition class. Nora Ink, a fictional Globe reporter, wants the timeline by midnight.",
+              "Bring the regulars back into one room, pay rent, and survive the final Zoom call. For the compromise: stay at the bar, adjourn, and finish with profit 40+, trust 65+, chaos 60 or less.",
               "Start with 500 points. Six errands can finish three two-step quests. Clean steps earn points and unlock bigger Zoom answers. Final meters add bonuses. Call-outs drain mask hearts; recess restores one. No clock while choosing.",
             ],
             null,
@@ -1227,12 +1227,12 @@
           "zoom-adjourn",
         ];
         const ADVENTURE_NEXT = [
-          "OPENING ZOOM",
-          "ACCESS PLAN",
-          "RENT PLAN",
-          "POLICY VOTE",
-          "SATURDAY",
-          "REPORTER",
+          "CLOWN-SCHOOL ZOOM",
+          "BRIDGE THE SPLIT",
+          "FUND THE BAR",
+          "MASK-POLICY VOTE",
+          "SATURDAY NIGHT",
+          "GLOBE FOLLOW-UP",
           "FINAL ZOOM",
           "FINISHED",
         ];
@@ -1311,7 +1311,7 @@
           talk(
             "YOUR NOTEBOOK / NO ERRAND COST",
             [
-              "GOAL: finish the Zoom rounds, Saturday, and the final call. Any ending completes the game. For the compromise: stay at the bar, adjourn, and finish with profit 40+, trust 65+, chaos 60 or less. Every meter changes your final bonus.",
+              "GOAL: ease one mask rule without losing the bar or the people who made it. Finish the clown-school Zoom calls and Saturday. Any ending completes the game. For the compromise: stay, adjourn, and finish with profit 40+, trust 65+, chaos 60 or less.",
               "POINTS: six errands can finish three quests. Clean quest steps earn 150-450 points; completed plans unlock stronger Zoom and Saturday choices. Use your errands before rejoining. No story clock.",
               "EVIDENCE: " +
                 (completed.join(" ") ||
@@ -1448,15 +1448,15 @@
             clowns: [
               [
                 "DOTTIE / OFFICE HOURS",
-                "The school can stage a benefit show. Our tuition is late too. The admissions essay is a pratfall. Would you like the bar fundraiser or a brochure?",
+                "You came to clown class to stop checking the bar's group chat. Dottie offers a benefit show for the rent gap. Your first assignment: make six students agree on a start time.",
                 [
                   {
-                    label: "BOOK A BENEFIT [+150]",
+                    label: "ATTEND CLASS + BOOK BENEFIT [+150]",
                     points: 150,
                     effect: [3, 2, 3],
                     reason: "Clown partnership",
                     result:
-                      "Dottie books six students and one very small car. Next: rehearse. She underlines that word with a squeaky marker.",
+                      "You attend class. Dottie books six students and one very small car. Next: rehearse. She underlines that word with a squeaky marker.",
                     apply: () => {
                       factions.clown++;
                     },
@@ -1503,7 +1503,7 @@
             notes: [
               [
                 "NORA INK / FICTIONAL GLOBE REPORTER",
-                "My draft says: lesbian bar drops masks, calls clown school. In what order did those things happen? Also, why is your Zoom name Landlord Balloon?",
+                "My draft: 'COVID-conscious lesbian bar in Greenfield, Massachusetts eased its stringent mask mandate, splintering the queer community while the owner attended clown school.' What did that leave out?",
                 [
                   {
                     label: "SHOW THE POST + TIMELINE [+200]",
@@ -1511,7 +1511,7 @@
                     effect: [0, 4, -5],
                     reason: "Verified timeline",
                     result:
-                      "Nora corrects the chronology. The clown school supplied the Zoom account, not medical advice. She schedules a follow-up.",
+                      "You show the one-night post: masks still welcome, access plan unfinished. The student Zoom login explains the clowns. Nora asks what happened to the regulars, not the meme.",
                     apply: () => {
                       adventure.flags.timeline = true;
                     },
@@ -1697,7 +1697,7 @@
             adventureEvent(
               "zoom-open",
               "DOTTIE / HOST, PROBABLY",
-              "Welcome to the mask-policy town hall. This is also the clown-school audition link. Please state your name and whether that tuba is your microphone.",
+              "Your clown-school student login is hosting the mask-policy town hall. Half the queer regulars want the old rule; half fear the rent gap. Your classmates are here too. Is that tuba a microphone?",
               [
                 {
                   label: "ONE MIC. PUT AUDITIONS IN ROOM 2. [+250]",
@@ -2068,7 +2068,7 @@
           adventureEvent(
             "saturday-reporter",
             "NORA / ONE LAST FOLLOW-UP",
-            "My editor asks if this is the end of lesbian bars or the beginning of clown bars. I said it might just be Saturday. Can you give me one detail that proves it?",
+            "My editor asks whether the eased mask rule split this bar for good, or whether clown school saved it. I said the answer might be the people here tonight. What can I verify?",
             [
               {
                 label: "USE THE VERIFIED NOTES [+400]",
@@ -2119,7 +2119,7 @@
               adventureEvent(
                 "zoom-adjourn",
                 "11:58 PM / YOU ARE STILL ON ZOOM",
-                "Marlow from the listserv moves to extend the meeting indefinitely. Dottie offers you a clown-school application instead. The bar is still here. How do you end the night?",
+                "Marlow from the listserv moves to extend the meeting forever. Dottie offers you full-time clown school. The bar and its regulars are still here. How does this story end?",
                 [
                   {
                     label:
@@ -2136,12 +2136,12 @@
                       : "You name what worked and what needs fixing. The community agrees to help with the next fundraiser. Nobody pretends the numbers are better than they are.",
                   },
                   {
-                    label: "RETREAT. ENROLL IN CLOWN SCHOOL. [+300]",
+                    label: "RETREAT. GO FULL-TIME AT CLOWN SCHOOL. [+300]",
                     points: 300,
                     effect: [3, 3, 4],
                     reason: "Higher honk education",
                     result:
-                      "You enroll. Last Ditch becomes the school's evening annex. Your first assignment: fall down, then get back up. Ruth says you have transfer credits.",
+                      "You go full-time. Last Ditch becomes the school's evening annex. Your next assignment: fall down, then get back up. Ruth says you have transfer credits.",
                     apply: () => {
                       policy = "retreat";
                     },
@@ -2236,7 +2236,7 @@
           ],
           [
             "DOTTIE_SELTZER",
-            "Our clown school can host the town hall. The invite says MASK LAB AT LAST DITCH because I reused a calendar. Please do not enroll.",
+            "The owner's clown-school student login is hosting the town hall. The invite says MASK LAB because I reused a calendar. Classmates: this is not your final exam.",
             "8 MIN AGO / 206 REPLIES",
           ],
           [
@@ -4133,7 +4133,7 @@
             if (reduced || Math.floor(time * 1.5) % 2 === 0)
               text("PRESS ANY ARROW", 480, 524, 3, C.cream, "center");
             text(
-              "ONE POLICY CHANGE. EVERYONE HAS NOTES.",
+              "ONE MASK RULE. TWO GROUP CHATS. CLOWN CLASS.",
               480,
               571,
               1,
@@ -4164,7 +4164,7 @@
             });
           }
           footer(
-            "A COZY GAME ABOUT AN UNCOZY GROUP CHAT",
+            "GREENFIELD / ONE BAR / VERY REAL COMMITTEE ENERGY",
             titleAwake ? "↑↓ CHOOSE  → CONFIRM" : "↑ ↓ ← → TO BEGIN",
           );
         }
@@ -4836,7 +4836,7 @@
           );
           drawAdventureBar(240, 171, 480);
           text(
-            "ONE BAR. REAL PEOPLE. EXTREMELY LONG MINUTES.",
+            "GREENFIELD / ONE EASED RULE / TWO GROUP CHATS.",
             480,
             381,
             1,
@@ -5381,12 +5381,12 @@
               (policy === "masked"
                 ? "Masks stay required. "
                 : "Posted hours. Free masks. An actual patio plan. ") +
-              "The rent gets paid. Nora writes about the people who kept a queer space open. Dottie bills you one honk."
+              "The rent gets paid. The two group chats merge, then argue about the name. Nora writes about the people who kept a queer space open."
             );
           if (ending === "clown")
-            return "Last Ditch opens an evening annex at clown school. Masks stay welcome. Ruth runs trivia. You learn to fall down and get up. The rent is now a group project.";
+            return "Last Ditch opens an evening annex at clown school. Masks stay welcome. Ruth runs trivia. You finish class and learn to fall down and get up. The rent is now a group project.";
           if (ending === "viral")
-            return "Nora's article travels. So does your quote. Tess sells shirts to pay the bills. The regulars keep their stools. Dottie declines to comment without her nose.";
+            return "The meme and Nora's article travel. Tess sells shirts to pay the bills. The regulars keep their stools. Dottie declines to comment without her nose.";
           return "The subcommittee books the bar every Tuesday. Snacks become recurring revenue. Nora files. The Zoom call continues. Someone moves to second the friendship.";
         }
         function drawInitials() {
@@ -5678,7 +5678,7 @@
             text(body, 253, y + 43, 1, C.blue);
           });
           paragraph(
-            "Story: finish three Zoom recesses, Saturday, and the final call. The top bar tracks the route; there is no story timer. Use six errands to finish up to three quests. Clean steps score and unlock bigger answers. For the compromise: stay at the bar, adjourn, then profit 40+, trust 65+, chaos 60 max. CHAOS MODE is timed.",
+            "A COVID-conscious lesbian bar in Greenfield eases one mask rule. Its regulars split; the owner's clown-school login hosts the town hall. Finish Zoom, Saturday, and the final call. The top bar tracks progress. Clean quests earn points and unlock better answers. Story Mode has no timer; CHAOS MODE is timed.",
             62,
             528,
             835,
@@ -5723,7 +5723,7 @@
                 ]
                   .map((label, i) => (menuIndex === i ? "→ " : "  ") + label)
                   .join("\n") + "\n↑↓ choose · → confirm"
-              : "LAST DITCH: A WESTERN MASS BAR SAGA\nOne policy change. Everyone has notes.\nPress any arrow to begin.";
+              : "LAST DITCH: A WESTERN MASS BAR SAGA\nOne mask rule. Two group chats. Clown class.\nPress any arrow to begin.";
           else if (screen === "world")
             value =
               stage === "decision"
@@ -5901,7 +5901,7 @@
               "FOR THE PLACES THAT MAKE ROOM.\nAnd the people who keep them open.\nInspired by Annalisa Quinn's Boston Globe reporting. Last Ditch in Greenfield is real; game characters and dialogue are invented.\nThank you for playing. Any arrow returns to the title.";
           else if (screen === "help")
             value =
-              "FOUR KEYS. THAT'S IT.\nSTORY: finish three Zoom recesses, Saturday, and one final call. The top bar tracks progress; no story timer.\nSix errands can finish three quests. Clean steps earn points and unlock bigger answers. Stay at the bar, adjourn, then profit 40+, trust 65+, chaos 60 max earns the compromise ending.\n↑↓ chooses. → confirms. ← goes back or opens your notebook.\nCHAOS MODE: the timed arcade shift.\n← or → returns to the title.";
+              "FOUR KEYS. THAT'S IT.\nA COVID-conscious Greenfield lesbian bar eases one mask rule. Regulars split; your clown-school login hosts the town hall.\nSTORY: finish Zoom, Saturday, and the final call. The top bar tracks progress; no story timer. Six errands can finish three quests and unlock bigger answers.\nStay at the bar, adjourn, then profit 40+, trust 65+, chaos 60 max earns the compromise ending.\n↑↓ chooses. → confirms. ← goes back or opens your notebook.\nCHAOS MODE: the timed arcade shift.\n← or → returns to the title.";
           if (
             adventure &&
             !["title", "leaderboard", "credits", "help"].includes(screen)

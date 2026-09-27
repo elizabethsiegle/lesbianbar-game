@@ -58,18 +58,23 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await press(page, "ArrowRight", 2);
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "COVID-conscious lesbian bar in Greenfield",
+  );
+  await press(page);
+  await page.screenshot({ path: "test-results/adventure-premise.png" });
   await until(page, "BASE: N95");
   await press(page, "ArrowDown", 4);
   await press(page);
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "zoom");
   await expect(page.locator("#mobile-readout")).toContainText(
-    "ROUTE 0/7 · NEXT OPENING ZOOM",
+    "ROUTE 0/7 · NEXT CLOWN-SCHOOL ZOOM",
   );
   await page.screenshot({ path: "test-results/adventure-zoom.png" });
   await choose(page);
   await hub(page);
   await expect(page.locator("#mobile-readout")).toContainText(
-    "ROUTE 1/7 · NEXT ACCESS PLAN",
+    "ROUTE 1/7 · NEXT BRIDGE THE SPLIT",
   );
   await expect(page.locator("#mobile-readout")).toContainText(
     "COMPROMISE: STAY · PROFIT 40+ · TRUST 65+ · CHAOS 60 MAX",
@@ -91,7 +96,7 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await choose(page);
   await hub(page);
   await expect(page.locator("#mobile-readout")).toContainText(
-    "ROUTE 2/7 · NEXT RENT PLAN",
+    "ROUTE 2/7 · NEXT FUND THE BAR",
   );
   await quest(page, 4);
   await quest(page, 4);
@@ -101,9 +106,17 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await choose(page);
   await hub(page);
   await expect(page.locator("#mobile-readout")).toContainText(
-    "ROUTE 3/7 · NEXT POLICY VOTE",
+    "ROUTE 3/7 · NEXT MASK-POLICY VOTE",
   );
-  await quest(page, 2);
+  await press(page, "ArrowDown", 2);
+  await press(page);
+  await expect(page.locator("#mobile-readout")).toContainText(
+    "splintering the queer community",
+  );
+  await press(page);
+  await page.screenshot({ path: "test-results/adventure-reporter.png" });
+  await choose(page);
+  await hub(page);
   await quest(page, 2);
   await rejoin(page);
   await choose(page);
@@ -111,12 +124,12 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await choose(page);
   await until(page, "TESS / THE RENT ENVELOPE");
   await expect(page.locator("#mobile-readout")).toContainText(
-    "ROUTE 4/7 · NEXT SATURDAY",
+    "ROUTE 4/7 · NEXT SATURDAY NIGHT",
   );
   await choose(page, 2);
   await until(page, "NORA / ONE LAST FOLLOW-UP");
   await expect(page.locator("#mobile-readout")).toContainText(
-    "ROUTE 5/7 · NEXT REPORTER",
+    "ROUTE 5/7 · NEXT GLOBE FOLLOW-UP",
   );
   await choose(page);
   await until(page, "11:58 PM");

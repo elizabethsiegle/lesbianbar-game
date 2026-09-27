@@ -1,12 +1,12 @@
 # LAST DITCH: A WESTERN MASS BAR SAGA
 
-One lesbian bar. One policy change. An entire town with reply-all privileges.
+One eased mask rule. Two group chats. Clown school takes attendance.
 
 [Play the deployed game](https://last-ditch-bar-saga.lizzie-siegle5086.workers.dev).
 
 Last Ditch Bar and Arts Venue in Greenfield is real. The game takes inspiration from [Annalisa Quinn's Boston Globe report on the mask-policy dispute and community meeting](https://www.bostonglobe.com/2026/09/22/magazine/greenfield-last-ditch-bar-backlash/). Its characters, dialogue, and outcomes are invented; it is not the bar's account of events.
 
-A choose-your-own-adventure about keeping a lesbian bar open. Rent is due Sunday. Your mask-policy post has started a town debate. Fictional Boston Globe reporter Nora Ink files at midnight. The clown school lends you its Zoom account, but the meeting link also admits its audition class.
+A choose-your-own-adventure riff on the meme: a COVID-conscious lesbian bar in Greenfield eases its strict mask rule, the queer group chat splits, and the owner attends clown school. Rent is due Sunday. Fictional Globe reporter Nora Ink wants the timeline. The owner's clown-school login hosts the town hall—and the audition class.
 
 **STORY MODE** follows your choices through recurring Zoom meetings, five side quests, and Saturday night. **CHAOS MODE** is a separate 90-second arcade shift.
 
@@ -68,7 +68,7 @@ Touch devices get the same four directions on a D-pad. Small screens also show r
 
 ## Story mode
 
-- Start with 500 points. Choose a mask, then join the clown-school Zoom call.
+- Start with 500 points. Choose a mask, then join the town hall on your clown-school student login.
 - The seven-beat route bar tracks the opening call, three recesses, Saturday, the reporter, and the final call. Finish the route for an ending; Story Mode has no timer.
 - Three recesses give you two errands each. Each of five side quests takes two errands; you cannot finish them all. There is no real-time deadline while reading.
 - The quest board previews the best available points for each step. Clean errands earn 150–450 points and unlock higher-value Zoom and Saturday answers. Use all six errands before rejoining.
