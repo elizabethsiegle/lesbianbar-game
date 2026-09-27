@@ -68,6 +68,8 @@ The first deployment creates the `Leaderboard` SQLite Durable Object through the
 
 Touch devices get the same four directions on a D-pad. Small screens also show readable dialogue, choices, and instructions below the canvas. Sound can be toggled from the header or title menu. Leaving the window pauses the arcade shift; an arrow resumes it. Reduced-motion preferences remove blinking and sprite bobbing and speed up dialogue.
 
+The owner is one fixed character. The mask editor still changes mask type, color, pattern, and accessory.
+
 Super Chaos starts with mask selection, then moves through four clown-school Zoom disputes and four bar disputes. Each has a short clock; high chaos shortens later clocks. Strong answers earn speed and streak points; weak answers, bad calls, and timeouts lose points or trust. The final score uses the same meter bonuses and leaderboard as the other modes.
 
 ## Story mode

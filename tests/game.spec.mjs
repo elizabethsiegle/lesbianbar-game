@@ -179,7 +179,7 @@ test("CHAOS MODE skips story, fixes Mask Lab, and wins a dance battle with only 
   await press(page, "ArrowDown");
   await press(page);
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "mask");
-    await press(page, "ArrowDown", 5);
+    await press(page, "ArrowDown", 4);
   await press(page, "ArrowRight", 2);
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "arcade");
   await press(page, "ArrowRight", 2);

@@ -1064,7 +1064,7 @@
           policy = "optional",
           toast = "",
           toastUntil = 0;
-        let mask = { base: 0, color: 1, pattern: 0, accessory: 0, avatar: 0 },
+        let mask = { base: 0, color: 1, pattern: 0, accessory: 0 },
           maskRow = 0,
           arcade = null,
           bossRound = 0,
@@ -1274,7 +1274,7 @@
           stage = "decision";
           world = "bar";
           player = { x: 10, y: 6, dir: "down" };
-          mask = { base: 0, color: 1, pattern: 0, accessory: 0, avatar: 0 };
+          mask = { base: 0, color: 1, pattern: 0, accessory: 0 };
           arcade = null;
           score = 0;
           rank = null;
@@ -4113,7 +4113,7 @@
                 raccoon(x + 165, y + 80);
                 text(secretHonk ? "RACCOON: TENURED" : "COAT CHECK INTERN", x + 112, y + 112, 2, C.mint);
               } else {
-                paragraph(i === 0 ? (mask.avatar ? "MAN" : "WOMAN") + " / " + MASKS[mask.base].label : i === 2 ? "ONE LAST FOLLOW-UP..." : "WE HAVE FORMED A SUBCOMMITTEE.", x + 111, y + 62, 225, 2, C.cream, 23);
+                paragraph(i === 0 ? "OWNER / " + MASKS[mask.base].label : i === 2 ? "ONE LAST FOLLOW-UP..." : "WE HAVE FORMED A SUBCOMMITTEE.", x + 111, y + 62, 225, 2, C.cream, 23);
               }
               paragraph(caption, x + 13, y + 138, 334, 2, C.cream, 17);
             });
@@ -4330,16 +4330,16 @@
           }
           if (screen === "mask") {
             if (dir === "up" || dir === "down")
-              maskRow = (maskRow + (dir === "up" ? -1 : 1) + 6) % 6;
-            else if (maskRow === 5) {
+              maskRow = (maskRow + (dir === "up" ? -1 : 1) + 5) % 5;
+            else if (maskRow === 4) {
               if (dir === "right") {
                 if (adventure) equipAdventureMask();
                 else setScreen(stage === "mediator-mask" ? "mediator-ready" : "ready");
                 sfx("select");
-              } else maskRow = 4;
+              } else maskRow = 3;
             } else {
-              const key = ["base", "color", "pattern", "accessory", "avatar"][maskRow];
-              const max = [4, 5, 4, 4, 2][maskRow];
+              const key = ["base", "color", "pattern", "accessory"][maskRow];
+              const max = [4, 5, 4, 4][maskRow];
               mask[key] = (mask[key] + (dir === "left" ? -1 : 1) + max) % max;
             }
             sfx("move");
@@ -4349,21 +4349,21 @@
                 ". " +
                 maskModeDetail() +
                 " Selected " +
-                ["base", "color", "pattern", "accessory", "character: " + (mask.avatar ? "man" : "woman"), "done"][maskRow],
+                ["base", "color", "pattern", "accessory", "done"][maskRow],
             );
             return;
           }
           if (screen === "ready") {
             if (dir === "left") {
               setScreen("mask");
-              maskRow = 5;
+              maskRow = 4;
             } else if (dir === "right") startArcade();
             return;
           }
           if (screen === "mediator-ready") {
             if (dir === "left") {
               setScreen("mask");
-              maskRow = 5;
+              maskRow = 4;
             } else if (dir === "right") startMediator();
             return;
           }
@@ -4590,7 +4590,6 @@
           text(title, 52, 111, 3, C.cream);
         }
         function sprite(x, y, color = C.pink, s = 2, options = {}) {
-          const avatar = options.avatar ?? (options.mask === mask ? mask.avatar : null);
           const style = options.character || (options.clown ? "dottie" : options.hat ? "nora" : color === C.mint ? "willow" : color === C.blue ? "pat" : "owner");
           const skin = options.skin || C.peach,
             hair = options.hair || (style === "pat" || style === "ruth" ? C.blue : style === "willow" ? C.ink : C.brown);
@@ -4610,15 +4609,10 @@
           r(3, 3, 7, 6, skin);
           r(2, 4, 1, 5, hair);
           r(10, 4, 1, 5, hair);
-          if (avatar === 0) {
+          if (style === "owner") {
             r(1, 3, 1, 7, hair);
             r(11, 3, 1, 7, hair);
             r(9, -1, 2, 2, hair);
-          } else if (avatar === 1) {
-            r(2, 0, 8, 2, hair);
-            r(2, 2, 2, 2, hair);
-            r(2, 6, 1, 3, skin);
-            r(10, 6, 1, 3, skin);
           }
           r(3, 1, 6, 0.5, C.plum);
           r(3, 2, 3, 1.5, hair);
@@ -4659,10 +4653,6 @@
           r(4, 10, 1, 6, C.plum);
           r(8, 10, 1, 6, C.plum);
           r(2, 12, 9, 1, C.plum);
-          if (avatar === 1) {
-            r(2, 10, 2, 6, C.night);
-            r(9, 10, 2, 6, C.night);
-          }
           r(2, 15, 9, 1, C.plum);
           r(2, 10, 2, 0.5, C.cream);
           r(9, 10, 2, 0.5, C.cream);
@@ -5603,7 +5593,6 @@
               3 +
               (held && !reduced ? Math.floor(Math.sin(time * 18) * 1.5) : 0);
           sprite(px, py, C.pink, 2, {
-            avatar: mask.avatar,
             walking: Boolean(held),
             dir: player.dir,
             mask: isArcade ? mask : null,
@@ -5865,7 +5854,7 @@
             }
           });
           const px = x + player.x * tile + 6, py = y + player.y * tile - 3;
-          sprite(px, py, C.pink, 2, { mask, avatar: mask.avatar, hair: C.ink, dir: player.dir, walking: Boolean(held) });
+          sprite(px, py, C.pink, 2, { mask, hair: C.ink, dir: player.dir, walking: Boolean(held) });
           text("YOU", px + 13, py - 14, 1, C.peach, "center");
           panel(62, 530, 836, 57, C.ink, C.plum);
           text("BAR  /  ZOOM  /  CLOWN SCHOOL", 80, 546, 2, C.peach);
@@ -5893,7 +5882,7 @@
             text("LAST DITCH / OPEN", x + width / 2, y + 46, 2, C.cream, "center");
             sprite(x + 67, y + 126, C.pink, 3, { character: "tess" });
             sprite(x + width - 120, y + 126, C.orange, 3, { clown: true });
-            sprite(x + width / 2 - 22, y + height - 90, C.pink, 3, { mask, avatar: mask.avatar });
+            sprite(x + width / 2 - 22, y + height - 90, C.pink, 3, { mask });
             text("EVERYONE BELONGS", x + width / 2, y + height - 19, 1, C.mint, "center");
           }
         }
@@ -6297,18 +6286,17 @@
           rect(83, 195, 268, 280, C.plum);
           rect(102, 217, 229, 257, C.purple);
           sprite(137, 218, C.pink, 12, { mask, hair: C.ink });
-          text(MASKS[mask.base].label, 217, 495, 2, C.cream, "center");
-          const labels = ["BASE TYPE", "COLOR", "PATTERN", "ACCESSORY", "CHARACTER", "DONE"];
+          text("OWNER / " + MASKS[mask.base].label, 217, 495, 2, C.cream, "center");
+          const labels = ["BASE TYPE", "COLOR", "PATTERN", "ACCESSORY", "DONE"];
           const values = [
             MASKS[mask.base].label,
             COLOR_OPTIONS[mask.color][0],
             PATTERNS[mask.pattern],
             ACCESSORIES[mask.accessory],
-            mask.avatar ? "MAN" : "WOMAN",
             "LOOK GOOD. DO GOOD.",
           ];
-          for (let i = 0; i < 6; i++) {
-            const y = 175 + i * 58;
+          for (let i = 0; i < 5; i++) {
+            const y = 175 + i * 70;
             panel(
               410,
               y,
@@ -6320,7 +6308,7 @@
             text(labels[i], 430, y + 12, 1, i === maskRow ? C.peach : C.blue);
             text(values[i], 653, y + 32, 2, C.cream, "center");
             if (i === maskRow) {
-              if (i !== 5) text("←", 427, y + 31, 2, C.peach);
+              if (i !== 4) text("←", 427, y + 31, 2, C.peach);
               text("→", 867, y + 31, 2, C.peach);
             }
           }
@@ -6888,7 +6876,6 @@
                 "COLOR: " + COLOR_OPTIONS[mask.color][0],
                 "PATTERN: " + PATTERNS[mask.pattern],
                 "ACCESSORY: " + ACCESSORIES[mask.accessory],
-                "CHARACTER: " + (mask.avatar ? "MAN" : "WOMAN"),
                 "DONE",
               ]
                 .map((label, i) => (maskRow === i ? "→ " : "  ") + label)

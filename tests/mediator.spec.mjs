@@ -16,7 +16,7 @@ async function start(page) {
   await press(page);
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "mask");
   await expect(page.locator("#mobile-readout")).toContainText("+3 SECONDS PER DISPUTE");
-  await press(page, "ArrowDown", 5);
+  await press(page, "ArrowDown", 4);
   await press(page);
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "mediator-ready");
   await page.screenshot({ path: "test-results/mediator-ready.png" });

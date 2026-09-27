@@ -93,7 +93,7 @@ test("each selected mask stays distinct on the gameplay character, including rea
     await press(page, "ArrowRight", base);
     const preview = await headPixels(page, 137, 218, 12);
     await page.screenshot({ path: `test-results/mask-base-${base}.png` });
-    await press(page, "ArrowDown", 5);
+    await press(page, "ArrowDown", 4);
     await press(page, "ArrowRight");
     await expect(page.locator("#game")).toHaveAttribute("data-screen", "ready");
     await press(page, "ArrowLeft");
