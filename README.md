@@ -6,7 +6,7 @@ One eased mask rule. Two group chats. Clown school takes attendance.
 
 Last Ditch Bar and Arts Venue in Greenfield is real. The game takes inspiration from [Annalisa Quinn's Boston Globe report on the mask-policy dispute and community meeting](https://www.bostonglobe.com/2026/09/22/magazine/greenfield-last-ditch-bar-backlash/). Its characters, dialogue, and outcomes are invented; it is not the bar's account of events.
 
-A choose-your-own-adventure riff on the meme: a COVID-conscious lesbian bar in Greenfield eases its strict mask rule, the group chat opens three threads, and the owner attends clown school. Rent is due Sunday. Fictional Globe reporter Nora Ink wants the timeline. The owner's clown-school login hosts the town hall—and the audition class.
+A choose-your-own-adventure riff on the meme: a COVID-conscious lesbian bar in Greenfield eases its strict mask rule, the group chat opens three threads, and the owner attends clown school. Rent is due Sunday. Fictional Globe reporter Nora Ink wants the timeline. The owner's roommate's clown-school Zoom link hosts the town hall—and an accidental audition class.
 
 **STORY MODE** follows your choices through recurring Zoom meetings, five side quests, and Saturday night. **CHAOS MODE** is a separate 90-second arcade shift. **SUPER CHAOS** is an eight-dispute mediation rush through Zoom and the bar.
 
