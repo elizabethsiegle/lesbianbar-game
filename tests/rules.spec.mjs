@@ -328,6 +328,14 @@ function completeQuest(game, id) {
   }
 }
 
+test("first-run quest suggestion yields to the player's chosen path", async () => {
+  const game = await adventureGame();
+  expect(game.questMenu()[0].label).toContain("START HERE / ASK WILLOW");
+  game.visitQuest("clowns");
+  pick(game);
+  expect(game.questMenu()[0].label).not.toContain("START HERE");
+});
+
 test("quests spend finite errands, back is free, and repeat visits cannot farm points", async () => {
   const game = await adventureGame();
   game.visitQuest("access");
@@ -378,7 +386,9 @@ test("the meme premise connects the mask split, clown class, and reporter to sco
   );
   expect(intro.state().dialog.pages).toHaveLength(2);
   expect(intro.state().dialog.pages[1]).toContain("roommate's clown-school Zoom link");
-  expect(intro.state().dialog.pages[1]).toContain("profit 40+, trust 65+, chaos 60 max");
+  expect(intro.state().dialog.pages[1]).toContain("Helpful choices earn points; chaos costs you.");
+  intro.adventureNotebook();
+  expect(intro.state().dialog.pages[0]).toContain("profit 40+, trust 65+, chaos 60 or less");
 
   const classRoute = await adventureGame();
   classRoute.visitQuest("clowns");

@@ -145,6 +145,15 @@
       .dashboard-action:hover {
         background: #654655;
       }
+      .play-button {
+        margin-right: auto;
+        border-color: var(--green);
+        background: var(--green);
+        color: var(--ink);
+      }
+      .play-button:hover {
+        background: var(--cream);
+      }
       .dashboard-dialog {
         width: min(860px, calc(100vw - 24px));
         max-height: calc(100dvh - 24px);
@@ -564,6 +573,7 @@
       </header>
       <main>
         <div class="home-actions">
+          <button class="leaderboard-button play-button" id="play-story" type="button">▶ PLAY STORY / START HERE</button>
           <button class="leaderboard-button" id="open-share" type="button">MAKE MEME CARD ↗</button>
           <button class="leaderboard-button" id="open-dashboard" type="button">
             ★ GLOBAL LEADERBOARD →
@@ -1049,6 +1059,7 @@
           repeatAt = 0,
           paused = false,
           titleAwake = false,
+          titleExtras = false,
           menuIndex = 0,
           dialog = null,
           feedIndex = 0,
@@ -1159,9 +1170,15 @@
           canvas.dataset.stage = stage;
           held = null;
           menuIndex = 0;
+          if (value === "title") titleExtras = false;
           announce(
             value === "title" ? "Last Ditch. Press an arrow or Enter to start." : value,
           );
+        }
+        function titleOptions() {
+          return titleExtras
+            ? ["SUPER CHAOS / MEDIATOR", "MAKE MEME CARD", audio.muted ? "SOUND: OFF" : "SOUND: ON", "BACK"]
+            : ["PLAY STORY / START HERE", "PLAY ARCADE", "HIGH SCORES", "HOW TO PLAY", "MORE"];
         }
         function notify(value) {
           toast = value;
@@ -1354,7 +1371,7 @@
             "TESS / RENT IS DUE SUNDAY",
             [
               "Last Ditch is a COVID-conscious lesbian bar in Greenfield. You ease masks for one Saturday to make rent. The group chat splinters. Masks are still welcome; everyone still needs the bar.",
-              "Your roommate's clown-school Zoom link hosts the town hall. Nora Ink wants the story. Take side quests for points, then survive Saturday and the final Zoom. Compromise: stay at the bar; profit 40+, trust 65+, chaos 60 max.",
+              "Your roommate's clown-school Zoom link hosts the town hall. First, pick a mask. Then get the call under control and use two errands to make a plan. Helpful choices earn points; chaos costs you.",
             ],
             null,
             () => {
@@ -1363,6 +1380,7 @@
             },
           );
         }
+        document.getElementById("play-story").addEventListener("click", startAdventure);
         function adventureMaskDetail() {
           return [
             "5 HEARTS FOR CALL-OUTS AND LONG FOLLOW-UPS.",
@@ -1538,7 +1556,9 @@
                 label:
                   progress === 2
                     ? (adventure.flags[q.id] ? "DONE / " : "CLOSED / ") + q.name
-                    : q.name,
+                    : adventure.round === 0 && q.id === "access" && adventure.remaining && (progress === 1 || adventure.remaining === 2)
+                      ? progress === 0 ? "START HERE / ASK WILLOW" : "NEXT / FINISH WILLOW'S PLAN"
+                      : q.name,
                 detail:
                   progress === 2
                     ? adventure.flags[q.id]
@@ -1579,6 +1599,14 @@
               action: openLocations,
             },
           ];
+        }
+        function questGuidance() {
+          if (adventure.remaining === 0) return "ERRANDS DONE. REJOIN ZOOM.";
+          if (adventure.round === 0 && adventure.remaining === 2) return "START HERE: HELP WILLOW PLAN A MASKED HOUR.";
+          if (adventure.round === 0 && adventure.progress.access === 1) return "NEXT: FINISH WILLOW'S ACCESS PLAN.";
+          if (adventure.round === 1) return "NEXT: FIND A WAY TO PAY THE RENT.";
+          if (adventure.round === 2) return "NEXT: BRING FACTS TO THE FINAL VOTE.";
+          return "FINISH A TWO-STEP QUEST FOR A STRONGER ANSWER.";
         }
         const LOCATIONS = [
           { id: "bar", name: "LAST DITCH BAR", detail: "Warm lights, receipts, and the people keeping the doors open." },
@@ -2045,7 +2073,7 @@
             adventureEvent(
               "zoom-open",
               "DOTTIE / HOST, PROBABLY",
-              "Your roommate's clown-school Zoom link is hosting the town hall. Half the regulars want the old rule; half fear the rent gap. Dottie: 'before I began mediating, meetings took 5-6 hours. Now they only take 4.' Is that tuba a microphone?",
+              "Your roommate's clown-school Zoom link hosts the town hall. The rule and rent both matter. Dottie: 'before I began mediating, meetings took 5-6 hours. Now they only take 4.' The tuba is unmuted. First job: get one mic and a Saturday plan.",
               [
                 {
                   label: "ONE MIC. PUT AUDITIONS IN ROOM 2. [+250]",
@@ -4254,26 +4282,41 @@
           if (screen === "title") {
             if (!titleAwake) {
               titleAwake = true;
+              titleExtras = false;
               menuIndex = 0;
               sfx("select");
               announce(
-                "Story mode. Chaos mode. Super Chaos mediator mode. High scores. How to play. Sound. Up/down choose, right or Enter confirms.",
+                "Start with Play Story. Up/down choose; right or Enter confirms. More has Super Chaos, sound, and the meme card.",
               );
               return;
             }
             if (dir === "up" || dir === "down") {
-              menuIndex = (menuIndex + (dir === "up" ? -1 : 1) + 7) % 7;
+              const count = titleOptions().length;
+              menuIndex = (menuIndex + (dir === "up" ? -1 : 1) + count) % count;
               sfx("move");
-            } else if (dir === "left") titleAwake = false;
-            else if (confirm) {
+            } else if (dir === "left") {
+              if (titleExtras) {
+                titleExtras = false;
+                menuIndex = 4;
+              } else titleAwake = false;
+            } else if (confirm) {
               sfx("select");
-              if (menuIndex === 0) startAdventure();
+              if (titleExtras) {
+                if (menuIndex === 0) startSuperChaosMode();
+                else if (menuIndex === 1) openShare();
+                else if (menuIndex === 2) toggleSound();
+                else {
+                  titleExtras = false;
+                  menuIndex = 4;
+                }
+              } else if (menuIndex === 0) startAdventure();
               else if (menuIndex === 1) startChaosMode();
               else if (menuIndex === 2) openDashboard();
               else if (menuIndex === 3) setScreen("help");
-              else if (menuIndex === 4) toggleSound();
-              else if (menuIndex === 5) openShare();
-              else startSuperChaosMode();
+              else {
+                titleExtras = true;
+                menuIndex = 0;
+              }
             }
             return;
           }
@@ -5009,23 +5052,17 @@
             );
           } else {
             panel(314, 401, 332, 190, C.ink, C.plum);
-            [
-              "STORY MODE",
-              "CHAOS MODE",
-              "HIGH SCORES",
-              "HOW TO PLAY",
-              audio.muted ? "SOUND: OFF" : "SOUND: ON",
-              "MAKE MEME CARD",
-              "SUPER CHAOS / MEDIATOR",
-            ].forEach((label, i) => {
+            text(titleExtras ? "MORE WAYS TO PLAY" : "NEW HERE? START WITH STORY.", 480, 410, 1, C.mint, "center");
+            titleOptions().forEach((label, i) => {
+              const y = 431 + i * 32;
               if (menuIndex === i) {
-                rect(326, 408 + i * 26, 308, 24, C.purple);
-                text("→", 341, 414 + i * 26, 2, C.peach);
+                rect(326, y - 6, 308, 27, C.purple);
+                text("→", 341, y, 2, C.peach);
               }
               text(
                 label,
                 480,
-                414 + i * 26,
+                y,
                 2,
                 menuIndex === i ? C.cream : C.blue,
                 "center",
@@ -5034,7 +5071,7 @@
           }
           footer(
             "GREENFIELD / ONE BAR / VERY REAL COMMITTEE ENERGY",
-            titleAwake ? "↑↓ CHOOSE  →/ENTER CONFIRM" : "ARROW / ENTER TO BEGIN",
+            titleAwake ? titleExtras ? "↑↓ CHOOSE  →/ENTER GO  ← BACK" : "↑↓ CHOOSE  →/ENTER GO" : "ARROW / ENTER TO BEGIN",
           );
         }
         function mug(x, y, color = C.peach) {
@@ -5942,7 +5979,7 @@
         function drawQuests() {
           section(
             "RECESS " + (adventure.round + 1) + "/3 / THE CALL WILL RECONVENE",
-            "TWO ERRANDS. PICK YOUR PRIORITIES.",
+            questGuidance(),
           );
           text(
             "ERRANDS LEFT: " + adventure.remaining + " / 2",
@@ -5952,22 +5989,20 @@
             adventure.remaining ? C.mint : C.pink,
           );
           text(
-            "COMPROMISE: STAY / PROFIT 40+ / TRUST 65+ / CHAOS 60 MAX",
+            "TWO ERRANDS. FINISH A QUEST FOR A STRONGER ZOOM ANSWER.",
             370,
             153,
             1,
             C.mint,
           );
           text(
-            "RECESS +" +
-              adventure.recessRecovery +
-              " HEART / 2 ERRANDS NOW / 6 TOTAL / NO CLOCK",
+            "GOOD CHOICES EARN POINTS. MISSTEPS LOSE THEM.",
             53,
             178,
             1,
             C.blue,
           );
-          text("QUESTS UNLOCK +450 ZOOM ANSWERS", 675, 178, 1, C.mint);
+          text("NO CLOCK / NOTEBOOK HAS DETAILS", 675, 178, 1, C.mint);
           const entries = questMenu();
           entries.forEach((entry, i) => {
             const y = 190 + i * 37;
@@ -6282,8 +6317,8 @@
         }
         function drawMask() {
           section(
-            stage === "mediator-mask" ? "SUPER CHAOS / YOUR LOOK" : "INTERMISSION / YOUR SATURDAY ARMOR",
-            "DRESS FOR THE DISCOURSE.",
+            adventure ? "STEP 1 / BEFORE THE TOWN HALL" : stage === "mediator-mask" ? "SUPER CHAOS / YOUR LOOK" : "INTERMISSION / YOUR SATURDAY ARMOR",
+            adventure ? "PICK A MASK. THEN JOIN ZOOM." : "DRESS FOR THE DISCOURSE.",
           );
           panel(62, 174, 310, 352, C.purple, C.plum);
           rect(83, 195, 268, 280, C.plum);
@@ -6332,8 +6367,8 @@
             C.mint,
             17,
           );
-          text(mask.base === 2 && mask.accessory === 2 ? "SECRET DEGREE: HONK SCHOLAR ♥" : "YOUR STYLE STAYS ON YOUR SPRITE.", 64, 579, 1, C.peach);
-          footer("MASKS WELCOME. ALWAYS.", "↑↓ CATEGORY  ←→ CHANGE  ENTER NEXT");
+          text(mask.base === 2 && mask.accessory === 2 ? "SECRET DEGREE: HONK SCHOLAR ♥" : adventure ? "ANY MASK CAN FINISH THE STORY." : "YOUR STYLE STAYS ON YOUR SPRITE.", 64, 579, 1, C.peach);
+          footer(adventure ? "NEXT: CLOWN-SCHOOL ZOOM" : "MASKS WELCOME. ALWAYS.", "↑↓ ROW  ←→ STYLE  →/ENTER DONE");
         }
         function drawReady() {
           section(
@@ -6810,7 +6845,7 @@
             text(body, 253, y + 43, 1, C.blue);
           });
           paragraph(
-            "A COVID-conscious lesbian bar in Greenfield eases one mask rule. Story Mode follows the town hall and Saturday. Keep the room open; nobody is the villain. Chaos Mode is a timed arcade shift. Super Chaos makes you mediate Zoom and bar mix-ups under a clock.",
+            "Story: pick a mask, answer Zoom, and use two errands per recess to build a plan. Helpful answers earn points; the notebook has the full win targets. Chaos Mode is a timed shift. Super Chaos is in More.",
             62,
             528,
             835,
@@ -6818,7 +6853,7 @@
             C.mint,
             18,
           );
-          footer("SOUND STARTS WITH YOUR FIRST ARROW", "← BACK  → BACK");
+          footer("SOUND STARTS WITH YOUR FIRST KEY", "←/→/ENTER BACK");
         }
         function updateMobileReadout() {
           const readout = document.getElementById("mobile-readout");
@@ -6828,6 +6863,8 @@
               "TAKE A BREATHER. Your game is paused.\nAny arrow or Enter to resume.";
           else if (dialog) {
             value = dialog.speaker + "\n" + dialog.pages[dialog.page];
+            if (adventure && screen === "zoom" && adventure.round === 0 && !adventure.resolved.has("zoom-open"))
+              value = "GOAL: GET ONE MIC AND A SATURDAY PLAN.\n" + value;
             if (dialog.choices && dialog.page === dialog.pages.length - 1)
               value +=
                 "\n" +
@@ -6846,17 +6883,9 @@
                   : "Any arrow or Enter continues.");
           } else if (screen === "title")
             value = titleAwake
-              ? [
-                  "STORY MODE",
-                  "CHAOS MODE",
-                  "HIGH SCORES",
-                  "HOW TO PLAY",
-                  audio.muted ? "SOUND OFF" : "SOUND ON",
-                  "MAKE MEME CARD",
-                  "SUPER CHAOS / MEDIATOR",
-                ]
+              ? titleOptions()
                   .map((label, i) => (menuIndex === i ? "→ " : "  ") + label)
-                  .join("\n") + "\n↑↓ choose · →/Enter confirm"
+                  .join("\n") + "\n↑↓ choose · →/Enter go" + (titleExtras ? " · ← back" : "")
               : "LAST DITCH: A WESTERN MASS BAR SAGA\nOne mask rule. Two group chats. Clown class.\nPress an arrow or Enter to begin.";
           else if (screen === "world")
             value =
@@ -6874,6 +6903,7 @@
               (feedIndex === FEED.length - 1 ? "continue" : "next post");
           else if (screen === "mask")
             value =
+              (adventure ? "NEXT: PICK A MASK, THEN JOIN THE ZOOM.\n" : "") +
               [
                 "BASE: " + MASKS[mask.base].label,
                 "COLOR: " + COLOR_OPTIONS[mask.color][0],
@@ -6895,7 +6925,7 @@
               "/2 · RESTORED " +
               adventure.recessRecovery +
               " HEART\n" +
-              "COMPROMISE: STAY · PROFIT 40+ · TRUST 65+ · CHAOS 60 MAX\n" +
+              questGuidance() + "\n" +
               questMenu()
                 .map(
                   (entry, i) => (i === menuIndex ? "→ " : "  ") + entry.label,

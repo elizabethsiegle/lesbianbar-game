@@ -10,7 +10,9 @@ async function start(page) {
   await page.clock.pauseAt(new Date("2026-09-26T12:00:01Z"));
   await page.goto("/");
   await press(page);
-  await press(page, "ArrowDown", 6);
+  await press(page, "ArrowDown", 4);
+  await expect(page.locator("#mobile-readout")).toContainText("→ MORE");
+  await press(page);
   await expect(page.locator("#mobile-readout")).toContainText("SUPER CHAOS / MEDIATOR");
   await page.screenshot({ path: "test-results/mediator-title.png" });
   await press(page);
@@ -101,7 +103,8 @@ test("Enter can start and mediate Super Chaos", async ({ page }) => {
   await page.clock.pauseAt(new Date("2026-09-26T12:00:01Z"));
   await page.goto("/");
   await press(page, "Enter");
-  await press(page, "ArrowDown", 6);
+  await press(page, "ArrowDown", 4);
+  await press(page, "Enter");
   await press(page, "Enter");
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "mask");
   await press(page, "ArrowDown", 4);

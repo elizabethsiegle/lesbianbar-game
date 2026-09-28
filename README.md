@@ -10,6 +10,8 @@ A choose-your-own-adventure riff on the meme: a COVID-conscious lesbian bar in G
 
 **STORY MODE** follows your choices through recurring Zoom meetings, five side quests, and Saturday night. **CHAOS MODE** is a separate 90-second arcade shift. **SUPER CHAOS** is an eight-dispute mediation rush through Zoom and the bar.
 
+New players can use **PLAY STORY / START HERE**. The title's **MORE** menu holds Super Chaos, the meme card, and sound controls. Story Mode gives a short next-step hint at the mask editor, first Zoom call, and each recess; Help and the notebook hold the detailed rules.
+
 The jokes target meeting process and crossed wires, not health needs or the neighbors who bring them. People can disagree and still belong at Last Ditch.
 
 All art uses a 16-color canvas palette and a built-in bitmap font. Four original chiptune loops and sound effects run through Web Audio. No external assets, fonts, or runtime libraries.

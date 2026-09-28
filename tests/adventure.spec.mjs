@@ -119,7 +119,7 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await page.screenshot({ path: "test-results/adventure-premise.png" });
   await press(page);
   await expect(page.locator("#mobile-readout")).toContainText("roommate's clown-school Zoom link");
-  await expect(page.locator("#mobile-readout")).toContainText("profit 40+, trust 65+, chaos 60 max");
+  await expect(page.locator("#mobile-readout")).toContainText("Helpful choices earn points; chaos costs you.");
   await until(page, "BASE: N95");
   await press(page, "ArrowDown", 4);
   await press(page);
@@ -137,7 +137,7 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
     "ROUTE 1/7 · NEXT GET THE ROOM TALKING",
   );
   await expect(page.locator("#mobile-readout")).toContainText(
-    "COMPROMISE: STAY · PROFIT 40+ · TRUST 65+ · CHAOS 60 MAX",
+    "START HERE: HELP WILLOW PLAN A MASKED HOUR.",
   );
   await expect(page.locator("#mobile-readout")).toContainText(
     "Best available: +150 this step",
