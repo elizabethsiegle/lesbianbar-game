@@ -385,7 +385,7 @@ test("the meme premise connects the mask split, clown class, and reporter to sco
     "COVID-conscious lesbian bar in Greenfield",
   );
   expect(intro.state().dialog.pages).toHaveLength(2);
-  expect(intro.state().dialog.pages[1]).toContain("roommate's clown-school Zoom link");
+  expect(intro.state().dialog.pages[1]).toContain("Each recess offers two optional errands");
   expect(intro.state().dialog.pages[1]).toContain("Helpful choices earn points; chaos costs you.");
   intro.adventureNotebook();
   expect(intro.state().dialog.pages[0]).toContain("profit 40+, trust 65+, chaos 60 or less");

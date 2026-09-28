@@ -35,15 +35,25 @@ async function hub(page) {
 }
 
 async function quest(page, index) {
-  await press(page, "ArrowDown", index);
+  await selectQuestEntry(page, index);
   await press(page);
   await choose(page);
   await hub(page);
 }
 
 async function rejoin(page) {
-  await press(page, "ArrowDown", 5);
+  await selectQuestEntry(page, 5);
   await press(page);
+}
+
+async function selectQuestEntry(page, index) {
+  const lines = (await page.locator("#mobile-readout").textContent())
+    .split("\n")
+    .filter((line) => line.startsWith("→ ") || line.startsWith("  "));
+  expect(lines).toHaveLength(8);
+  const current = lines.findIndex((line) => line.startsWith("→ "));
+  expect(current).toBeGreaterThanOrEqual(0);
+  await press(page, "ArrowDown", (index - current + lines.length) % lines.length);
 }
 
 test.beforeEach(async ({ page }) => {
@@ -118,7 +128,7 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await press(page);
   await page.screenshot({ path: "test-results/adventure-premise.png" });
   await press(page);
-  await expect(page.locator("#mobile-readout")).toContainText("roommate's clown-school Zoom link");
+  await expect(page.locator("#mobile-readout")).toContainText("Each recess offers two optional errands");
   await expect(page.locator("#mobile-readout")).toContainText("Helpful choices earn points; chaos costs you.");
   await until(page, "BASE: N95");
   await press(page, "ArrowDown", 4);
@@ -130,6 +140,7 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await expect(page.locator("#mobile-readout")).toContainText(
     "before I began mediating, meetings took 5-6 hours. Now they only take 4.",
   );
+  await expect(page.locator("#mobile-readout")).toContainText("roommate's clown-school Zoom link");
   await page.screenshot({ path: "test-results/adventure-zoom.png" });
   await choose(page);
   await hub(page);
@@ -149,8 +160,10 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   );
   await quest(page, 0);
   await expect(page.locator("#mobile-readout")).toContainText("ERRANDS 0/2");
+  await expect(page.locator("#mobile-readout")).toContainText("→ REJOIN ZOOM");
   await page.screenshot({ path: "test-results/adventure-quests.png" });
-  await rejoin(page);
+  await press(page);
+  await expect(page.locator("#game")).toHaveAttribute("data-screen", "zoom");
   await choose(page);
   await until(page, "PAT / SHARING THE WRONG SCREEN");
   await expect(page.locator("#mobile-readout")).toContainText(
@@ -161,6 +174,7 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await expect(page.locator("#mobile-readout")).toContainText(
     "ROUTE 2/7 · NEXT FUND THE BAR",
   );
+  await expect(page.locator("#mobile-readout")).toContainText("→ NEXT / TESS / THE RENT IS NOT A VIBE");
   await quest(page, 4);
   await quest(page, 4);
   await rejoin(page);
@@ -174,7 +188,7 @@ test("arrow-only adventure carries quest evidence through Zoom, Saturday, score 
   await expect(page.locator("#mobile-readout")).toContainText(
     "ROUTE 3/7 · NEXT MASK-POLICY VOTE",
   );
-  await press(page, "ArrowDown", 2);
+  await selectQuestEntry(page, 2);
   await press(page);
   await expect(page.locator("#mobile-readout")).toContainText(
     "splintering the queer community",

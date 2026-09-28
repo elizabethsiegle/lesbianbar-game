@@ -1371,7 +1371,7 @@
             "TESS / RENT IS DUE SUNDAY",
             [
               "Last Ditch is a COVID-conscious lesbian bar in Greenfield. You ease masks for one Saturday to make rent. The group chat splinters. Masks are still welcome; everyone still needs the bar.",
-              "Your roommate's clown-school Zoom link hosts the town hall. First, pick a mask. Then get the call under control and use two errands to make a plan. Helpful choices earn points; chaos costs you.",
+              "Pick a mask, then settle the Saturday plan on Zoom. Each recess offers two optional errands; rejoin Zoom to move on. Helpful choices earn points; chaos costs you.",
             ],
             null,
             () => {
@@ -1494,6 +1494,7 @@
           adventure.scene = "ZOOM RECESS";
           setTheme("cozy");
           setScreen("quests");
+          menuIndex = nextQuestIndex();
         }
         function beginRecess() {
           adventure.remaining = 2;
@@ -1548,16 +1549,31 @@
             return 100;
           return quest.bestPoints[step];
         }
+        function nextQuestIndex() {
+          if (adventure.remaining === 0) return QUESTS.length;
+          const priorities = [
+            ["access", "clowns", "trivia", "tickets", "notes"],
+            ["tickets", "clowns", "trivia", "notes", "access"],
+            ["notes", "access", "tickets", "clowns", "trivia"],
+          ][adventure.round];
+          const nextId =
+            priorities.find((id) => adventure.progress[id] === 1) ||
+            priorities.find((id) => adventure.progress[id] === 0);
+          return QUESTS.findIndex((quest) => quest.id === nextId);
+        }
         function questMenu() {
+          const nextIndex = nextQuestIndex();
           return [
-            ...QUESTS.map((q) => {
+            ...QUESTS.map((q, index) => {
               const progress = adventure.progress[q.id];
               return {
                 label:
                   progress === 2
                     ? (adventure.flags[q.id] ? "DONE / " : "CLOSED / ") + q.name
-                    : adventure.round === 0 && q.id === "access" && adventure.remaining && (progress === 1 || adventure.remaining === 2)
-                      ? progress === 0 ? "START HERE / ASK WILLOW" : "NEXT / FINISH WILLOW'S PLAN"
+                    : index === nextIndex
+                      ? adventure.round === 0 && q.id === "access"
+                        ? progress === 0 ? "START HERE / ASK WILLOW" : "NEXT / FINISH WILLOW'S PLAN"
+                        : "NEXT / " + q.name
                       : q.name,
                 detail:
                   progress === 2
@@ -1583,8 +1599,8 @@
                   adventure.round
                 ],
               detail: adventure.remaining
-                ? "End this recess early. Unused errands are lost."
-                : "Your two errands are used. Time to answer for them.",
+                ? "Continue the story now. Unused errands are lost."
+                : "Your errands are done. Continue the story.",
               action: rejoinZoom,
             },
             {
@@ -1601,12 +1617,17 @@
           ];
         }
         function questGuidance() {
-          if (adventure.remaining === 0) return "ERRANDS DONE. REJOIN ZOOM.";
-          if (adventure.round === 0 && adventure.remaining === 2) return "START HERE: HELP WILLOW PLAN A MASKED HOUR.";
-          if (adventure.round === 0 && adventure.progress.access === 1) return "NEXT: FINISH WILLOW'S ACCESS PLAN.";
-          if (adventure.round === 1) return "NEXT: FIND A WAY TO PAY THE RENT.";
-          if (adventure.round === 2) return "NEXT: BRING FACTS TO THE FINAL VOTE.";
-          return "FINISH A TWO-STEP QUEST FOR A STRONGER ANSWER.";
+          if (adventure.remaining === 0) return "ERRANDS DONE. REJOIN ZOOM TO MOVE ON.";
+          const quest = QUESTS[nextQuestIndex()];
+          if (adventure.progress[quest.id] === 1)
+            return "NEXT: " + quest.steps[1].toUpperCase() + ".";
+          if (adventure.round === 0 && quest.id === "access")
+            return "START HERE: HELP WILLOW PLAN A MASKED HOUR.";
+          if (adventure.round === 1 && quest.id === "tickets")
+            return "NEXT: SELL TICKETS TO COVER THE RENT.";
+          if (adventure.round === 2 && quest.id === "notes")
+            return "NEXT: VERIFY NORA'S NOTES BEFORE THE VOTE.";
+          return "NEXT: " + quest.steps[0].toUpperCase() + ".";
         }
         const LOCATIONS = [
           { id: "bar", name: "LAST DITCH BAR", detail: "Warm lights, receipts, and the people keeping the doors open." },
@@ -2081,7 +2102,7 @@
                   effect: [0, 5, -5],
                   reason: "A meeting with an agenda",
                   result:
-                    "The tuba mutes. Nora asks what Saturday will actually look like. Take two errands, then return with an answer.",
+                    "The tuba mutes. Nora asks what Saturday will actually look like. You can use two errands before returning with an answer.",
                 },
                 {
                   label: "HONK TO ESTABLISH A QUORUM [+100]",
@@ -5989,7 +6010,7 @@
             adventure.remaining ? C.mint : C.pink,
           );
           text(
-            "TWO ERRANDS. FINISH A QUEST FOR A STRONGER ZOOM ANSWER.",
+            "ERRANDS ARE OPTIONAL. REJOIN ZOOM TO MOVE THE STORY ON.",
             370,
             153,
             1,

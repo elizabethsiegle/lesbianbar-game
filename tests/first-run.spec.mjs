@@ -31,7 +31,7 @@ test("keyboard cues guide a new player from mask to a point-earning quest", asyn
   await page.goto("/");
   await press(page, "Enter", 2);
   await press(page, "Enter", 2);
-  await expect(page.locator("#mobile-readout")).toContainText("First, pick a mask.");
+  await expect(page.locator("#mobile-readout")).toContainText("Pick a mask, then settle the Saturday plan on Zoom.");
   await expect(page.locator("#mobile-readout")).toContainText("Helpful choices earn points; chaos costs you.");
   await press(page, "Enter", 2);
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "mask");
