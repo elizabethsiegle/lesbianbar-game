@@ -157,7 +157,7 @@ test("touch D-pad controls the same title menu and arrows do not scroll", async 
   await down.click();
   await right.click();
   await expect(page.locator("#game")).toHaveAttribute("data-screen", "help");
-  await expect(page.locator("#mobile-readout")).toContainText("FOUR KEYS");
+  await expect(page.locator("#mobile-readout")).toContainText("FOUR ARROWS + ENTER");
   await page.screenshot({ path: "test-results/mobile.png", fullPage: true });
   const before = await page.evaluate(() => window.scrollY);
   await press(page, "ArrowDown", 10);
@@ -165,6 +165,33 @@ test("touch D-pad controls the same title menu and arrows do not scroll", async 
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
     390,
   );
+});
+
+test("Enter confirms menus, dialogue, mask setup, and a Zoom choice", async ({ page }) => {
+  await page.goto("/");
+  await press(page, "Enter");
+  await press(page, "ArrowDown", 3);
+  await press(page, "Enter");
+  await expect(page.locator("#game")).toHaveAttribute("data-screen", "help");
+  await press(page, "Enter");
+  await press(page, "Enter");
+  await expect(page.locator("#game")).toHaveAttribute("data-screen", "adventure");
+  await press(page, "Enter", 4);
+  await expect(page.locator("#game")).toHaveAttribute("data-screen", "mask");
+  await press(page, "Enter");
+  await expect(page.locator("#mobile-readout")).toContainText("BASE: N95");
+  await expect(page.locator("#mobile-readout")).toContainText("→ COLOR");
+  await press(page, "Enter", 4);
+  await expect(page.locator("#game")).toHaveAttribute("data-screen", "zoom");
+  await press(page, "Enter", 2);
+  await expect(page.locator("#mobile-readout")).toContainText("+250 POINTS");
+});
+
+test("Enter keeps native page buttons keyboard-accessible", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "GLOBAL LEADERBOARD" }).focus();
+  await press(page, "Enter");
+  await expect(page.getByRole("dialog", { name: "HALL OF FAME" })).toBeVisible();
 });
 
 test("CHAOS MODE skips story, fixes Mask Lab, and wins a dance battle with only arrows", async ({

@@ -95,3 +95,19 @@ test("a chaotic answer shortens the next dispute clock", async ({ page }) => {
   await press(page);
   await expect(page.locator("#mobile-readout")).toContainText("DISPUTE 2/8 · 20s");
 });
+
+test("Enter can start and mediate Super Chaos", async ({ page }) => {
+  await page.clock.install({ time: new Date("2026-09-26T12:00:00Z") });
+  await page.clock.pauseAt(new Date("2026-09-26T12:00:01Z"));
+  await page.goto("/");
+  await press(page, "Enter");
+  await press(page, "ArrowDown", 6);
+  await press(page, "Enter");
+  await expect(page.locator("#game")).toHaveAttribute("data-screen", "mask");
+  await press(page, "ArrowDown", 4);
+  await press(page, "Enter", 2);
+  await expect(page.locator("#game")).toHaveAttribute("data-screen", "mediator");
+  await press(page, "Enter");
+  await expect(page.locator("#game")).toHaveAttribute("data-screen", "mediator-result");
+  await expect(page.locator("#mobile-readout")).toContainText("ROOM STEADIED");
+});

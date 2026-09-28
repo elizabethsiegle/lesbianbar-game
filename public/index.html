@@ -578,7 +578,7 @@
               height="640"
               tabindex="0"
               role="application"
-              aria-label="Last Ditch. An 8-bit choose-your-own-adventure. Up and down choose, right confirms, left goes back or opens your notebook. Chaos Mode uses arrows to move and bump."
+              aria-label="Last Ditch. An 8-bit choose-your-own-adventure. Up and down choose, right or Enter confirms, left goes back or opens your notebook. Chaos Mode uses arrows to move and bump."
               aria-describedby="game-status"
               >Your browser needs canvas to play Last Ditch.</canvas
             >
@@ -602,7 +602,7 @@
           </div>
           <div class="controls">
             <span><kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd></span>
-            FOUR KEYS. ALL THE DRAMA.
+            FOUR ARROWS. ENTER CONFIRMS.
           </div>
         </div>
         <nav class="dpad" aria-label="Touch game controls">
@@ -640,7 +640,7 @@
       <p class="dashboard-status" id="dashboard-status" role="status" aria-live="polite"></p>
       <ol class="dashboard-scores" id="dashboard-scores" aria-label="Global top ten scores"></ol>
       <div class="dashboard-actions">
-        <span class="dashboard-hint">↑↓ BROWSE · → REFRESH · ← BACK</span>
+        <span class="dashboard-hint">↑↓ BROWSE · →/ENTER REFRESH · ← BACK</span>
         <button class="dashboard-action" id="refresh-dashboard" type="button">↻ REFRESH</button>
       </div>
       <nav class="dashboard-pad" aria-label="Leaderboard arrow controls">
@@ -659,7 +659,7 @@
         <button class="dashboard-action" id="download-clip">SAVE 6-SECOND CLIP</button>
         <a class="dashboard-action" id="share-twitter" target="_blank" rel="noopener noreferrer">POST ON X / TWITTER</a>
       </div>
-      <p id="share-status" role="status" class="dashboard-status">Attach the saved image or clip to your post. ← back · → save PNG.</p>
+      <p id="share-status" role="status" class="dashboard-status">Attach the saved image or clip to your post. ← back · →/Enter save PNG.</p>
     </dialog>
     <footer class="credit-footer">
       <span>made w/ &lt;3 in ATL 🍑</span>
@@ -1160,7 +1160,7 @@
           held = null;
           menuIndex = 0;
           announce(
-            value === "title" ? "Last Ditch. Press any arrow to start." : value,
+            value === "title" ? "Last Ditch. Press an arrow or Enter to start." : value,
           );
         }
         function notify(value) {
@@ -4235,6 +4235,7 @@
 
         function input(dir) {
           startAudio();
+          const confirm = dir === "right" || dir === "confirm";
           if (paused) {
             paused = false;
             held = null;
@@ -4243,11 +4244,11 @@
             return;
           }
           if (dialog) {
-            chooseDialog(dir);
+            chooseDialog(dir === "confirm" ? "right" : dir);
             return;
           }
           if (screen === "arcade" && arcade.challenge) {
-            challengeInput(dir);
+            if (dir !== "confirm") challengeInput(dir);
             return;
           }
           if (screen === "title") {
@@ -4256,7 +4257,7 @@
               menuIndex = 0;
               sfx("select");
               announce(
-                "Story mode. Chaos mode. Super Chaos mediator mode. High scores. How to play. Sound. Up/down choose, right confirm.",
+                "Story mode. Chaos mode. Super Chaos mediator mode. High scores. How to play. Sound. Up/down choose, right or Enter confirms.",
               );
               return;
             }
@@ -4264,7 +4265,7 @@
               menuIndex = (menuIndex + (dir === "up" ? -1 : 1) + 7) % 7;
               sfx("move");
             } else if (dir === "left") titleAwake = false;
-            else if (dir === "right") {
+            else if (confirm) {
               sfx("select");
               if (menuIndex === 0) startAdventure();
               else if (menuIndex === 1) startChaosMode();
@@ -4277,26 +4278,26 @@
             return;
           }
           if (screen === "help") {
-            if (dir === "left" || dir === "right") {
+            if (dir === "left" || confirm) {
               setScreen("title");
               titleAwake = true;
             }
             return;
           }
           if (screen === "world" || screen === "arcade") {
-            move(dir);
+            if (dir !== "confirm") move(dir);
             return;
           }
           if (screen === "locations") {
             if (dir === "up" || dir === "down") {
               menuIndex = (menuIndex + (dir === "up" ? -1 : 1) + LOCATIONS.length) % LOCATIONS.length;
               sfx("move");
-            } else if (dir === "right") enterLocation(LOCATIONS[menuIndex].id);
+            } else if (confirm) enterLocation(LOCATIONS[menuIndex].id);
             else openQuestHub();
             return;
           }
           if (screen === "explore") {
-            moveLocation(dir);
+            if (dir !== "confirm") moveLocation(dir);
             return;
           }
           if (screen === "quests") {
@@ -4309,7 +4310,7 @@
               announce(
                 entries[menuIndex].label + ". " + entries[menuIndex].detail,
               );
-            } else if (dir === "right") entries[menuIndex].action();
+            } else if (confirm) entries[menuIndex].action();
             else if (dir === "left") adventureNotebook();
             return;
           }
@@ -4318,7 +4319,7 @@
               feedIndex = Math.max(0, feedIndex - 1);
             else if (dir === "down")
               feedIndex = Math.min(FEED.length - 1, feedIndex + 1);
-            else if (dir === "right") {
+            else if (confirm) {
               if (feedIndex === FEED.length - 1) toTown();
               else feedIndex++;
             }
@@ -4329,8 +4330,9 @@
           if (screen === "mask") {
             if (dir === "up" || dir === "down")
               maskRow = (maskRow + (dir === "up" ? -1 : 1) + 5) % 5;
+            else if (dir === "confirm" && maskRow !== 4) maskRow++;
             else if (maskRow === 4) {
-              if (dir === "right") {
+              if (confirm) {
                 if (adventure) equipAdventureMask();
                 else setScreen(stage === "mediator-mask" ? "mediator-ready" : "ready");
                 sfx("select");
@@ -4355,21 +4357,21 @@
             if (dir === "left") {
               setScreen("mask");
               maskRow = 4;
-            } else if (dir === "right") startArcade();
+            } else if (confirm) startArcade();
             return;
           }
           if (screen === "mediator-ready") {
             if (dir === "left") {
               setScreen("mask");
               maskRow = 4;
-            } else if (dir === "right") startMediator();
+            } else if (confirm) startMediator();
             return;
           }
           if (screen === "mediator") {
             if (dir === "up" || dir === "down") {
               menuIndex = (menuIndex + (dir === "up" ? -1 : 1) + 3) % 3;
               sfx("move");
-            } else if (dir === "right") resolveMediator(menuIndex);
+            } else if (confirm) resolveMediator(menuIndex);
             return;
           }
           if (screen === "mediator-result") {
@@ -4404,11 +4406,11 @@
             if (submitStatus === "error") {
               if (dir === "up" || dir === "down")
                 submitChoice = 1 - submitChoice;
-              if (dir === "left" || (dir === "right" && submitChoice === 1)) {
+              if (dir === "left" || (confirm && submitChoice === 1)) {
                 void showBoard(true);
                 return;
               }
-              if (dir === "right") void submitScore();
+              if (confirm) void submitScore();
               return;
             }
             if (dir === "up" || dir === "down")
@@ -4431,7 +4433,7 @@
               void showBoard(boardFromRun);
               return;
             }
-            if (dir === "left" || dir === "right") {
+            if (dir === "left" || confirm) {
               requestGeneration++;
               if (boardFromRun) setScreen("credits");
               else {
@@ -4452,14 +4454,15 @@
           ArrowDown: "down",
           ArrowLeft: "left",
           ArrowRight: "right",
+          Enter: "confirm",
         };
         function press(dir) {
           if (shareStudio.open) {
             if (dir === "left") closeShare();
-            if (dir === "right") saveCard();
+            if (dir === "right" || dir === "confirm") saveCard();
             return;
           }
-          if (screen === "title" && !dashboard.open) {
+          if (screen === "title" && !dashboard.open && dir !== "confirm") {
             secretKeys = (secretKeys + { up: "U", down: "D", left: "L", right: "R" }[dir]).slice(-8);
             if (secretKeys === "UUDDLRLR") {
               secretHonk = true;
@@ -4470,7 +4473,7 @@
           }
           if (dashboard.open) {
             if (dir === "left") closeDashboard();
-            else if (dir === "right") void loadDashboard();
+            else if (dir === "right" || dir === "confirm") void loadDashboard();
             else selectDashboardRow(
               dashboardSelection + (dir === "down" ? 1 : -1),
             );
@@ -4478,6 +4481,7 @@
           }
           input(dir);
           if (
+            dir !== "confirm" &&
             (screen === "world" || screen === "arcade" || screen === "explore") &&
             !(screen === "arcade" && arcade.challenge) &&
             !dialog &&
@@ -4492,6 +4496,7 @@
           (event) => {
             const dir = KEY_DIR[event.key];
             if (!dir) return;
+            if (dir === "confirm" && event.target instanceof Element && event.target.closest("button:not([data-dir]), a, input, select, textarea")) return;
             event.preventDefault();
             if (!event.repeat) press(dir);
           },
@@ -4522,7 +4527,7 @@
           held = null;
           if (screen === "arcade" || screen === "mediator") {
             paused = true;
-            announce("Game paused. Press an arrow to resume.");
+            announce("Game paused. Press an arrow or Enter to resume.");
           }
           if (audio.ctx && audio.ctx.state === "running")
             void audio.ctx.suspend().catch(() => {});
@@ -4993,7 +4998,7 @@
           if (!titleAwake) {
             panel(297, 511, 366, 40, C.ink, C.plum);
             if (reduced || Math.floor(time * 1.5) % 2 === 0)
-              text("PRESS ANY ARROW", 480, 524, 3, C.cream, "center");
+              text("PRESS ARROW / ENTER", 480, 524, 3, C.cream, "center");
             text(
               "ONE MASK RULE. TWO GROUP CHATS. CLOWN CLASS.",
               480,
@@ -5029,7 +5034,7 @@
           }
           footer(
             "GREENFIELD / ONE BAR / VERY REAL COMMITTEE ENERGY",
-            titleAwake ? "↑↓ CHOOSE  → CONFIRM" : "↑ ↓ ← → TO BEGIN",
+            titleAwake ? "↑↓ CHOOSE  →/ENTER CONFIRM" : "ARROW / ENTER TO BEGIN",
           );
         }
         function mug(x, y, color = C.peach) {
@@ -5770,7 +5775,7 @@
           );
           footer(
             "POINTS + PROMISES CARRY THROUGH THE STORY",
-            "ANY ARROW CONTINUE",
+            "ARROW / ENTER CONTINUE",
           );
         }
         function drawLocations() {
@@ -5795,7 +5800,7 @@
             text((menuIndex === index ? "→ " : "  ") + place.name, 181, y + 21, 3, menuIndex === index ? C.cream : C.blue);
             paragraph(place.detail, 185, y + 65, 675, 1, C.mint, 15);
           });
-          footer("TRAVEL IS FREE / ERRANDS STAY PUT", "↑↓ CHOOSE  → VISIT  ← RECESS");
+          footer("TRAVEL IS FREE / ERRANDS STAY PUT", "↑↓ CHOOSE  →/ENTER VISIT  ← RECESS");
         }
         function drawExplore() {
           const place = LOCATIONS.find((item) => item.id === adventure.location);
@@ -5892,7 +5897,7 @@
           text("05-08 / LAST DITCH BAR", 700, 452, 2, C.peach, "center");
           panel(59, 484, 842, 96, C.ink, C.plum);
           paragraph("Pick a response before the " + mediatorSeconds() + "-second clock expires. More chaos shortens later clocks. Strong mediation scores fast points; weak answers, bad calls, and silence cost points. N95 gives more time; cloth earns trust; novelty starts with bonus points.", 81, 502, 800, 1, C.cream, 18);
-          footer("MASKS WELCOME / " + MASKS[mask.base].label + " EQUIPPED", "← MASK EDITOR  → START");
+          footer("MASKS WELCOME / " + MASKS[mask.base].label + " EQUIPPED", "← MASK EDITOR  →/ENTER START");
         }
         function drawMediator() {
           const issue = MEDIATION[mediator.round];
@@ -5924,7 +5929,7 @@
           panel(54, 522, 850, 62, C.ink, C.plum);
           text("STEADIED " + mediator.saved + "/8  /  STREAK " + mediator.streak, 74, 539, 2, C.peach);
           text(liveRound ? "CLOCK KEEPS TICKING. READ BOTH SIDES." : "THE ROOM IS PAUSED.", 74, 566, 1, C.mint);
-          footer("ZOOM FIRST / THEN THE BAR", liveRound ? "↑↓ CHOOSE  → MEDIATE" : "ANY ARROW CONTINUE");
+          footer("ZOOM FIRST / THEN THE BAR", liveRound ? "↑↓ CHOOSE  →/ENTER MEDIATE" : "ARROW / ENTER CONTINUE");
         }
         function drawMediatorBreak() {
           section("SUPER CHAOS / LOCATION TWO", "THE ZOOM CALL HAS LEFT THE CHAT.");
@@ -5932,7 +5937,7 @@
           panel(136, 492, 688, 88, C.ink, C.peach);
           text("THE BAR NEEDS ITS MEDIATOR.", 480, 508, 2, C.cream, "center");
           text("FOUR MORE DISPUTES. THE CLOCK RESTARTS.", 480, 544, 1, C.mint, "center");
-          footer("YOUR ZOOM ANSWERS STAY ON THE RECORD", "ANY ARROW ENTER THE BAR");
+          footer("YOUR ZOOM ANSWERS STAY ON THE RECORD", "ARROW / ENTER TO THE BAR");
         }
         function drawQuests() {
           section(
@@ -6032,7 +6037,7 @@
             1,
             receipt.delta < 0 ? C.pink : C.mint,
           );
-          footer("← NOTEBOOK / PROMISES + SCORE HISTORY", "↑↓ CHOOSE  → GO");
+          footer("← NOTEBOOK / PROMISES + SCORE HISTORY", "↑↓ CHOOSE  →/ENTER GO");
         }
         function drawDialogue() {
           const full = dialog.pages[dialog.page],
@@ -6101,14 +6106,14 @@
             });
             footer(
               "EVERY CHOICE CHANGES THE ROOM",
-              "↑↓ CHOOSE  → CONFIRM  ← BACK",
+              "↑↓ CHOOSE  →/ENTER CONFIRM  ← BACK",
             );
           } else {
             if (done && (reduced || Math.floor(time * 2) % 2 === 0))
               text("↓", 876, y + height - 24, 2, C.peach);
             footer(
               "TAKE YOUR TIME. WE CAN WAIT.",
-              "ANY ARROW " + (done ? "CONTINUE" : "REVEAL"),
+              "ARROW / ENTER " + (done ? "CONTINUE" : "REVEAL"),
             );
           }
         }
@@ -6272,7 +6277,7 @@
           );
           footer(
             "ROOMMATE'S CLOWN SCHOOL ZOOM / 6 PARTICIPANTS",
-            "ANY ARROW CONTINUE",
+            "ARROW / ENTER CONTINUE",
           );
         }
         function drawMask() {
@@ -6328,7 +6333,7 @@
             17,
           );
           text(mask.base === 2 && mask.accessory === 2 ? "SECRET DEGREE: HONK SCHOLAR ♥" : "YOUR STYLE STAYS ON YOUR SPRITE.", 64, 579, 1, C.peach);
-          footer("MASKS WELCOME. ALWAYS.", "↑↓ CATEGORY  ←→ CHANGE");
+          footer("MASKS WELCOME. ALWAYS.", "↑↓ CATEGORY  ←→ CHANGE  ENTER NEXT");
         }
         function drawReady() {
           section(
@@ -6395,7 +6400,7 @@
           text("→ OPEN THE DOORS", 480, 559, 3, C.mint, "center");
           footer(
             MASKS[mask.base].label + " EQUIPPED",
-            "← MASK EDITOR  → START",
+            "← MASK EDITOR  →/ENTER START",
           );
         }
         function drawBoss() {
@@ -6422,7 +6427,7 @@
           text("LET'S TALK.", 610, 261, 2, C.cream, "center");
           footer(
             "THE PEN IS MIGHTIER THAN THE REPLY-ALL",
-            "↑↓ CHOOSE  → CONFIRM",
+            "↑↓ CHOOSE  →/ENTER CONFIRM",
           );
         }
         function drawTally() {
@@ -6485,7 +6490,7 @@
           );
           footer(
             "NOT BAD FOR A BAR WITH ONE WORKING PRINTER",
-            tallyAge < 4.6 ? "ANY ARROW TALLY" : "ANY ARROW YOUR ENDING",
+            tallyAge < 4.6 ? "ARROW / ENTER TALLY" : "ARROW / ENTER ENDING",
           );
         }
         function drawEnding() {
@@ -6498,7 +6503,7 @@
           paragraph(endingBody(), 111, 506, 738, 2, C.cream, 23);
           footer(
             "THE COMMUNITY IS STILL HERE. SO ARE YOU.",
-            "ANY ARROW CONTINUE",
+            "ARROW / ENTER CONTINUE",
           );
         }
         function endingBody() {
@@ -6580,10 +6585,10 @@
               ),
             );
           } else {
-            text("↑↓ LETTER   → NEXT   ← BACK", 480, 514, 2, C.cream, "center");
+            text("↑↓ LETTER  →/ENTER NEXT  ← BACK", 480, 514, 2, C.cream, "center");
             text(
               initialPos === 2
-                ? "→ ONE MORE TIME TO SUBMIT"
+                ? "→/ENTER TO SUBMIT"
                 : "THREE LETTERS. A SMALL-TOWN LEGEND.",
               480,
               553,
@@ -6597,8 +6602,8 @@
             submitStatus === "sending"
               ? "← SKIP"
               : submitStatus === "error"
-                ? "↑↓ CHOOSE  → CONFIRM"
-                : "↑↓ LETTER  → NEXT",
+                ? "↑↓ CHOOSE  →/ENTER CONFIRM"
+                : "↑↓ LETTER  →/ENTER NEXT",
           );
         }
         function drawLeaderboard() {
@@ -6768,11 +6773,11 @@
             "center",
           );
           text("THANK YOU FOR PLAYING ♥", 480, 556, 2, C.cream, "center");
-          footer("THE END / PENDING COMMUNITY REVIEW", "ANY ARROW TITLE");
+          footer("THE END / PENDING COMMUNITY REVIEW", "ARROW / ENTER TITLE");
         }
         function drawHelp() {
           section(
-            "FIELD GUIDE / FOUR KEYS. THAT'S IT.",
+            "FIELD GUIDE / FOUR ARROWS + ENTER.",
             "HOW TO KEEP A LITTLE BAR ALIVE.",
           );
           const rows = [
@@ -6784,17 +6789,17 @@
             [
               "↑↓ →",
               "CHOOSE + CONFIRM",
-              "Up/down picks a choice. Right confirms. Left goes back.",
+              "Up/down picks a choice. Right or Enter confirms. Left goes back.",
             ],
             [
               "ANY ↑",
               "READ THE ROOM",
-              "Any arrow reveals dialogue. Press again to continue.",
+              "Any arrow or Enter reveals dialogue. Press again to continue.",
             ],
             [
               "← →",
               "FIND YOUR LOOK",
-              "In the mask editor, up/down picks a row. Left/right cycles.",
+              "In the mask editor, up/down picks a row. Left/right cycles; Enter advances.",
             ],
           ];
           rows.forEach(([keys, label, body], i) => {
@@ -6820,7 +6825,7 @@
           let value = "";
           if (paused)
             value =
-              "TAKE A BREATHER. Your game is paused.\nAny arrow to resume.";
+              "TAKE A BREATHER. Your game is paused.\nAny arrow or Enter to resume.";
           else if (dialog) {
             value = dialog.speaker + "\n" + dialog.pages[dialog.page];
             if (dialog.choices && dialog.page === dialog.pages.length - 1)
@@ -6835,10 +6840,10 @@
             value +=
               "\n" +
               (dialog.chars < dialog.pages[dialog.page].length
-                ? "Any arrow reveals the text."
+                ? "Any arrow or Enter reveals the text."
                 : dialog.choices && dialog.page === dialog.pages.length - 1
-                  ? "↑↓ choose · → confirm · ← back"
-                  : "Any arrow continues.");
+                  ? "↑↓ choose · →/Enter confirm · ← back"
+                  : "Any arrow or Enter continues.");
           } else if (screen === "title")
             value = titleAwake
               ? [
@@ -6851,8 +6856,8 @@
                   "SUPER CHAOS / MEDIATOR",
                 ]
                   .map((label, i) => (menuIndex === i ? "→ " : "  ") + label)
-                  .join("\n") + "\n↑↓ choose · → confirm"
-              : "LAST DITCH: A WESTERN MASS BAR SAGA\nOne mask rule. Two group chats. Clown class.\nPress any arrow to begin.";
+                  .join("\n") + "\n↑↓ choose · →/Enter confirm"
+              : "LAST DITCH: A WESTERN MASS BAR SAGA\nOne mask rule. Two group chats. Clown class.\nPress an arrow or Enter to begin.";
           else if (screen === "world")
             value =
               stage === "decision"
@@ -6880,7 +6885,7 @@
                 .join("\n") +
               "\n" +
               maskModeDetail() +
-              "\n↑↓ category · ←→ change · → on DONE";
+              "\n↑↓ category · ←→ change · Enter next · →/Enter on DONE";
           else if (screen === "quests")
             value =
               "ZOOM RECESS " +
@@ -6898,32 +6903,32 @@
                 .join("\n") +
               "\n" +
               questMenu()[menuIndex].detail +
-              "\n↑↓ choose · → go · ← notebook";
+              "\n↑↓ choose · →/Enter go · ← notebook";
           else if (screen === "locations")
-            value = LOCATIONS.map((place, index) => (index === menuIndex ? "→ " : "  ") + place.name + " / " + place.detail).join("\n") + "\nFree travel. ↑↓ choose · → visit · ← recess.";
+            value = LOCATIONS.map((place, index) => (index === menuIndex ? "→ " : "  ") + place.name + " / " + place.detail).join("\n") + "\nFree travel. ↑↓ choose · →/Enter visit · ← recess.";
           else if (screen === "explore")
             value = LOCATIONS.find((place) => place.id === adventure.location).name +
               "\nBump people to talk. Bump a portal to switch locations. Bump EXIT to return to recess. No errands spent." +
               "\nDiscoveries: " + adventure.locationFinds.size + "/3 · Score " + adventure.points;
           else if (screen === "mediator-ready")
-            value = "SUPER CHAOS / MEDIATOR\nFour Zoom disputes, then four at the bar. You have " + mediatorSeconds() + " seconds per dispute. Good mediation scores fast points. Weak answers, bad calls, and timeouts cost points.\n← mask editor · → start";
+            value = "SUPER CHAOS / MEDIATOR\nFour Zoom disputes, then four at the bar. You have " + mediatorSeconds() + " seconds per dispute. Good mediation scores fast points. Weak answers, bad calls, and timeouts cost points.\n← mask editor · →/Enter start";
           else if (screen === "mediator") {
             const issue = MEDIATION[mediator.round];
             value = (issue.place === "zoom" ? "CLOWN-SCHOOL ZOOM" : "LAST DITCH BAR") +
               " · DISPUTE " + (mediator.round + 1) + "/8 · " + Math.ceil(mediator.remaining) + "s · SCORE " + mediator.points +
               "\n" + issue.speaker + ": " + issue.dispute + "\n" +
               issue.choices.map((answer, index) => (menuIndex === index ? "→ " : "  ") + answer[0]).join("\n") +
-              "\n↑↓ choose · → mediate";
+              "\n↑↓ choose · →/Enter mediate";
           } else if (screen === "mediator-result")
-            value = mediator.result.title + "\n" + mediator.result.body + "\n" + (mediator.result.delta > 0 ? "+" : "") + mediator.result.delta + " points. Score " + mediator.points + ".\nAny arrow continues.";
+            value = mediator.result.title + "\n" + mediator.result.body + "\n" + (mediator.result.delta > 0 ? "+" : "") + mediator.result.delta + " points. Score " + mediator.points + ".\nAny arrow or Enter continues.";
           else if (screen === "mediator-break")
-            value = "ZOOM COMPLETE. ENTER THE BAR.\nFour more disputes. The clock restarts.\nAny arrow continues.";
+            value = "ZOOM COMPLETE. ENTER THE BAR.\nFour more disputes. The clock restarts.\nAny arrow or Enter continues.";
           else if (screen === "ready")
             value =
               (policy === "retreat"
                 ? "CLASSROOM TWO POP-UP.\n"
                 : "LAST DITCH PRESS NIGHT.\n") +
-              "Fix nine Mask Lab mix-ups. The Globe reporter asks three questions and follows you. Fast fixes and chains earn more. Wild quotes win clown allies but raise chaos. Dodge paperwork. Copy arrows in dance battles.\n← mask editor · → start the shift";
+              "Fix nine Mask Lab mix-ups. The Globe reporter asks three questions and follows you. Fast fixes and chains earn more. Wild quotes win clown allies but raise chaos. Dodge paperwork. Copy arrows in dance battles.\n← mask editor · →/Enter start the shift";
           else if (screen === "arcade" && arcade.challenge) {
             const challenge = arcade.challenge;
             const arrows = { up: "↑", down: "↓", left: "←", right: "→" };
@@ -6989,13 +6994,13 @@
               (100 - meters.chaos) * 10 +
               "\nTotal: " +
               score +
-              "\nAny arrow tallies, then continues.";
+              "\nAny arrow or Enter tallies, then continues.";
           else if (screen === "ending")
             value =
               ENDINGS[ending].title +
               "\n" +
               endingBody() +
-              "\nAny arrow continues.";
+              "\nAny arrow or Enter continues.";
           else if (screen === "initials")
             value =
               "YOUR SCORE: " +
@@ -7016,10 +7021,10 @@
                   (submitChoice === 0
                     ? "→ RETRY\n  CONTINUE WITHOUT SAVING"
                     : "  RETRY\n→ CONTINUE WITHOUT SAVING") +
-                  "\n↑↓ choose · → confirm"
+                  "\n↑↓ choose · →/Enter confirm"
                 : submitStatus === "sending"
                   ? "Saving your legend. ← skip"
-                  : "↑↓ letter · → next · ← back\nRight on letter three submits.");
+                  : "↑↓ letter · →/Enter next · ← back\nRight or Enter on letter three submits.");
           else if (screen === "leaderboard")
             value =
               "GLOBAL HIGH SCORES\n" +
@@ -7046,10 +7051,10 @@
               (boardFromRun ? "credits" : "title");
           else if (screen === "credits")
             value =
-              "FOR THE PLACES THAT MAKE ROOM.\nAnd the people who keep them open.\nInspired by Annalisa Quinn's Boston Globe reporting. Last Ditch in Greenfield is real; game characters and dialogue are invented.\nThank you for playing. Any arrow returns to the title.";
+              "FOR THE PLACES THAT MAKE ROOM.\nAnd the people who keep them open.\nInspired by Annalisa Quinn's Boston Globe reporting. Last Ditch in Greenfield is real; game characters and dialogue are invented.\nThank you for playing. Any arrow or Enter returns to the title.";
           else if (screen === "help")
             value =
-              "FOUR KEYS. THAT'S IT.\nA COVID-conscious Greenfield lesbian bar eases one mask rule. Regulars want different answers; your roommate's clown-school Zoom link hosts the town hall.\nSTORY: finish Zoom, Saturday, and the final call. The top bar tracks progress; no story timer. Six errands can finish three quests and unlock bigger answers.\nStay at the bar, adjourn, then profit 40+, trust 65+, chaos 60 max earns the compromise ending.\n↑↓ chooses. → confirms. ← goes back or opens your notebook.\nCHAOS MODE: the timed arcade shift.\nSUPER CHAOS: mediate Zoom and the bar before each dispute clock expires.\n← or → returns to the title.";
+              "FOUR ARROWS + ENTER.\nA COVID-conscious Greenfield lesbian bar eases one mask rule. Regulars want different answers; your roommate's clown-school Zoom link hosts the town hall.\nSTORY: finish Zoom, Saturday, and the final call. The top bar tracks progress; no story timer. Six errands can finish three quests and unlock bigger answers.\nStay at the bar, adjourn, then profit 40+, trust 65+, chaos 60 max earns the compromise ending.\n↑↓ chooses. → or Enter confirms. ← goes back or opens your notebook.\nCHAOS MODE: the timed arcade shift.\nSUPER CHAOS: mediate Zoom and the bar before each dispute clock expires.\n←, →, or Enter returns to the title.";
           if (
             adventure &&
             !["title", "leaderboard", "credits", "help"].includes(screen)
@@ -7119,7 +7124,7 @@
             panel(239, 244, 482, 137, C.ink, C.peach);
             text("TAKE A BREATHER.", 480, 273, 3, C.cream, "center");
             text("YOUR GAME IS PAUSED.", 480, 315, 1, C.blue, "center");
-            text("ANY ARROW TO RESUME", 480, 345, 2, C.peach, "center");
+            text("ARROW / ENTER TO RESUME", 480, 345, 2, C.peach, "center");
           }
           updateMobileReadout();
         }

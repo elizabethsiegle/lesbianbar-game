@@ -230,6 +230,9 @@ test("dance sequences pause the shift, accept all arrows, and remain retryable a
   game.updateArcade(2);
   expect(game.state().arcade.elapsed).toBe(0);
   expect(game.state().arcade.challenge.remaining).toBe(6);
+  game.input("confirm");
+  expect(game.state().arcade.challenge.progress).toBe(0);
+  expect(game.state().arcade.challenge.mistakes).toBe(0);
   const pattern = [...game.state().arcade.challenge.pattern];
   const position = { ...game.state().player };
   for (const dir of pattern) game.input(dir);

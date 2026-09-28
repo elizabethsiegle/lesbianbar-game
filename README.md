@@ -29,7 +29,7 @@ All art uses a 16-color canvas palette and a built-in bitmap font. Four original
    npx wrangler dev
    ```
 
-4. Open `http://localhost:8787`. Press an arrow to enable audio and open the menu.
+4. Open `http://localhost:8787`. Press an arrow or Enter to enable audio and open the menu.
 
 Local scores persist in `.wrangler/state`. They do not affect the deployed leaderboard.
 
@@ -54,21 +54,21 @@ The first deployment creates the `Leaderboard` SQLite Durable Object through the
 
 ## Controls
 
-| Screen         | Arrows                                                                                   |
-| -------------- | ---------------------------------------------------------------------------------------- |
-| Bar or town    | Move on the grid. Bump people, doors, or objects.                                        |
-| Dialogue       | Any arrow reveals text; another advances.                                                |
-| Choices        | Up/down chooses. Right confirms. Left goes back.                                         |
-| Quest board    | Up/down selects an errand. Right visits. Left opens the free notebook.                   |
-| Free travel    | From a Zoom recess, choose TRAVEL. Walk into people, finds, or doorways to interact.      |
-| Social feed    | Up/down scrolls. Right reads the next post, then continues.                              |
-| Mask editor    | Up/down selects a category. Left/right cycles. Right on DONE confirms.                   |
-| Saturday night | Bump marked incidents or matching tool stations. Dodge flying paperwork.                 |
-| Super Chaos    | Up/down picks a response. Right mediates before the clock runs out.                      |
-| Dance/karaoke  | Copy the displayed arrow sequence before eight seconds expire.                           |
-| Initials       | Up/down changes a letter. Right advances; right on letter three submits. Left goes back. |
+| Screen         | Controls                                                                                  |
+| -------------- | ----------------------------------------------------------------------------------------- |
+| Bar or town    | Arrows move on the grid. Bump people, doors, or objects.                                  |
+| Dialogue       | Any arrow or Enter reveals text; press again to advance.                                 |
+| Choices        | Up/down chooses. Right or Enter confirms. Left goes back.                                |
+| Quest board    | Up/down selects an errand. Right or Enter visits. Left opens the free notebook.            |
+| Free travel    | From a Zoom recess, choose TRAVEL. Bump people, finds, or doorways to interact.            |
+| Social feed    | Up/down scrolls. Right or Enter reads the next post, then continues.                      |
+| Mask editor    | Up/down selects a category. Left/right cycles. Enter advances; right or Enter on DONE confirms. |
+| Saturday night | Arrows bump marked incidents or matching tool stations. Dodge flying paperwork.           |
+| Super Chaos    | Up/down picks a response. Right or Enter mediates before the clock runs out.              |
+| Dance/karaoke  | Copy the displayed arrow sequence before eight seconds expire. Enter is not an arrow.     |
+| Initials       | Up/down changes a letter. Right or Enter advances and submits on letter three; left goes back. |
 
-Touch devices get the same four directions on a D-pad. Small screens also show readable dialogue, choices, and instructions below the canvas. Sound can be toggled from the header or title menu. Leaving the window pauses the arcade shift; an arrow resumes it. Reduced-motion preferences remove blinking and sprite bobbing and speed up dialogue.
+Touch devices get the same four directions on a D-pad. Small screens also show readable dialogue, choices, and instructions below the canvas. Sound can be toggled from the header or title menu. Leaving the window pauses the arcade shift; an arrow or Enter resumes it. Reduced-motion preferences remove blinking and sprite bobbing and speed up dialogue.
 
 The owner is one fixed character. The mask editor still changes mask type, color, pattern, and accessory.
 
