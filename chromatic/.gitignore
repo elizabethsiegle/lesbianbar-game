@@ -1,0 +1,14 @@
+build/*.asm
+build/*.lst
+build/*.noi
+build/*.sym
+build/*.map
+build/*.ihx
+build/*.lk
+build/*.ram
+build/*.rtc
+build/*.sav
+build/*.o
+build/*.rel
+__pycache__/
+.venv/

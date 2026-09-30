@@ -4,6 +4,11 @@ One eased mask rule. Two group chats. Clown school takes attendance.
 
 [Play the deployed game](https://last-ditch-bar-saga.lizzie-siegle5086.workers.dev).
 
+[Download the Chromatic ROM](https://last-ditch-bar-saga.lizzie-siegle5086.workers.dev/chromatic/last-ditch.gbc).
+The native Game Boy Color edition has three locations, five optional quests,
+mask customization, a 60-second Saturday shift, four endings, and battery-backed
+local scores. See [build and cartridge instructions](chromatic/README.md).
+
 Last Ditch Bar and Arts Venue in Greenfield is real. The game takes inspiration from [Annalisa Quinn's Boston Globe report on the mask-policy dispute and community meeting](https://www.bostonglobe.com/2026/09/22/magazine/greenfield-last-ditch-bar-backlash/). Its characters, dialogue, and outcomes are invented; it is not the bar's account of events.
 
 A choose-your-own-adventure riff on the meme: a COVID-conscious lesbian bar in Greenfield eases its strict mask rule, the group chat opens three threads, and the owner attends clown school. Rent is due Sunday. Fictional Globe reporter Nora Ink wants the timeline. The owner's roommate's clown-school Zoom link hosts the town hall—and an accidental audition class.

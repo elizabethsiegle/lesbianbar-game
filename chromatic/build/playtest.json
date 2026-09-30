@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "rom": "last-ditch.gbc",
+  "sha256": "6f4aebc14d6fad782958f408e0925e3149b161e80162a3f40bfa60b74b188603",
+  "checks": [
+    "CGB boot and cartridge header",
+    "four visible masks and stamina",
+    "three locations",
+    "points gain and loss",
+    "quests cannot loop or farm points",
+    "Zoom to Saturday",
+    "all nine arcade arrivals and pause",
+    "all four endings and bounded scores",
+    "initials and battery leaderboard reboot"
+  ]
+}
