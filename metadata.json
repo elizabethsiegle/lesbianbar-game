@@ -1,0 +1,54 @@
+{
+  "cli_version": "0.11.2",
+  "checkpoint_id": "01M3TTPKVYSXH34H7RA0R2NCC4",
+  "strategy": "manual-commit",
+  "branch": "feat/wnba-clutch-explorer",
+  "checkpoints_count": 30,
+  "files_touched": [
+    "lesbianbar-game/chromatic/Makefile",
+    "lesbianbar-game/chromatic/README.md",
+    "lesbianbar-game/chromatic/build/clips/balloon-union-plus-350.gif",
+    "lesbianbar-game/chromatic/build/clips/ticket-meme-minus-300.gif",
+    "lesbianbar-game/chromatic/build/clips/verified-reporting-plus-400.gif",
+    "lesbianbar-game/chromatic/build/last-ditch.gbc",
+    "lesbianbar-game/chromatic/build/playtest.json",
+    "lesbianbar-game/chromatic/build/screenshots/bar.png",
+    "lesbianbar-game/chromatic/build/screenshots/initials.png",
+    "lesbianbar-game/chromatic/build/screenshots/mask-0.png",
+    "lesbianbar-game/chromatic/build/screenshots/mask-1.png",
+    "lesbianbar-game/chromatic/build/screenshots/mask-2.png",
+    "lesbianbar-game/chromatic/build/screenshots/mask-3.png",
+    "lesbianbar-game/chromatic/build/screenshots/saturday.png",
+    "lesbianbar-game/chromatic/build/screenshots/school.png",
+    "lesbianbar-game/chromatic/build/screenshots/shirt-0.png",
+    "lesbianbar-game/chromatic/build/screenshots/shirt-1.png",
+    "lesbianbar-game/chromatic/build/screenshots/shirt-2.png",
+    "lesbianbar-game/chromatic/build/screenshots/shirt-3.png",
+    "lesbianbar-game/chromatic/build/screenshots/tally.png",
+    "lesbianbar-game/chromatic/build/screenshots/zoom.png",
+    "lesbianbar-game/chromatic/src/assets.h",
+    "lesbianbar-game/chromatic/src/assets_large_a.c",
+    "lesbianbar-game/chromatic/src/assets_large_b.c",
+    "lesbianbar-game/chromatic/src/main.c",
+    "lesbianbar-game/chromatic/tools/assets.mjs",
+    "lesbianbar-game/chromatic/tools/create_clips.py",
+    "lesbianbar-game/chromatic/tools/playtest.py"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 702308,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 30972416,
+    "output_tokens": 123286,
+    "api_call_count": 305,
+    "subagent_tokens_complete": true
+  }
+}

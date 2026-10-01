@@ -1,0 +1,483 @@
+{
+  "cli_version": "0.11.2",
+  "checkpoint_id": "01M3TTPKVYSXH34H7RA0R2NCC4",
+  "session_id": "01a0f508-0d72-7273-8d66-e640ec215b16",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-01T04:14:00.691796Z",
+  "branch": "feat/wnba-clutch-explorer",
+  "checkpoints_count": 30,
+  "save_step_count": 15,
+  "files_touched": [
+    "lesbianbar-game/chromatic/Makefile",
+    "lesbianbar-game/chromatic/README.md",
+    "lesbianbar-game/chromatic/build/clips/balloon-union-plus-350.gif",
+    "lesbianbar-game/chromatic/build/clips/ticket-meme-minus-300.gif",
+    "lesbianbar-game/chromatic/build/clips/verified-reporting-plus-400.gif",
+    "lesbianbar-game/chromatic/build/last-ditch.gbc",
+    "lesbianbar-game/chromatic/build/playtest.json",
+    "lesbianbar-game/chromatic/build/screenshots/bar.png",
+    "lesbianbar-game/chromatic/build/screenshots/initials.png",
+    "lesbianbar-game/chromatic/build/screenshots/mask-0.png",
+    "lesbianbar-game/chromatic/build/screenshots/mask-1.png",
+    "lesbianbar-game/chromatic/build/screenshots/mask-2.png",
+    "lesbianbar-game/chromatic/build/screenshots/mask-3.png",
+    "lesbianbar-game/chromatic/build/screenshots/saturday.png",
+    "lesbianbar-game/chromatic/build/screenshots/school.png",
+    "lesbianbar-game/chromatic/build/screenshots/shirt-0.png",
+    "lesbianbar-game/chromatic/build/screenshots/shirt-1.png",
+    "lesbianbar-game/chromatic/build/screenshots/shirt-2.png",
+    "lesbianbar-game/chromatic/build/screenshots/shirt-3.png",
+    "lesbianbar-game/chromatic/build/screenshots/tally.png",
+    "lesbianbar-game/chromatic/build/screenshots/zoom.png",
+    "lesbianbar-game/chromatic/src/assets.h",
+    "lesbianbar-game/chromatic/src/assets_large_a.c",
+    "lesbianbar-game/chromatic/src/assets_large_b.c",
+    "lesbianbar-game/chromatic/src/main.c",
+    "lesbianbar-game/chromatic/tools/assets.mjs",
+    "lesbianbar-game/chromatic/tools/create_clips.py",
+    "lesbianbar-game/chromatic/tools/playtest.py"
+  ],
+  "agent": "Codex",
+  "model": "gpt-6-luna",
+  "turn_id": "38029558c61c",
+  "checkpoint_transcript_start": 679,
+  "transcript_lines_at_start": 679,
+  "compact_transcript_start": 90,
+  "token_usage": {
+    "input_tokens": 702308,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 30972416,
+    "output_tokens": 123286,
+    "api_call_count": 305,
+    "subagent_tokens_complete": true
+  },
+  "session_metrics": {
+    "turn_count": 46
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-01T04:14:00.562136Z",
+    "agent_lines": 1868,
+    "agent_removed": 31,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 1868,
+    "total_lines_changed": 1899,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1279148,
+      "agent_lines_removed": 54,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1279148,
+      "agent_lines_removed": 54,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1279148,
+      "agent_lines_removed": 54,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1279951,
+      "agent_lines_removed": 65,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1281695,
+      "agent_lines_removed": 64,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1281695,
+      "agent_lines_removed": 64,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    },
+    {
+      "checkpoint_number": 8,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1281789,
+      "agent_lines_removed": 85,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    },
+    {
+      "checkpoint_number": 9,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1281789,
+      "agent_lines_removed": 85,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    },
+    {
+      "checkpoint_number": 10,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1281789,
+      "agent_lines_removed": 85,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    },
+    {
+      "checkpoint_number": 11,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1281789,
+      "agent_lines_removed": 85,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    },
+    {
+      "checkpoint_number": 12,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1281789,
+      "agent_lines_removed": 85,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    },
+    {
+      "checkpoint_number": 13,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1281789,
+      "agent_lines_removed": 85,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    },
+    {
+      "checkpoint_number": 14,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1281789,
+      "agent_lines_removed": 85,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    },
+    {
+      "checkpoint_number": 15,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1281789,
+      "agent_lines_removed": 85,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    },
+    {
+      "checkpoint_number": 16,
+      "user_lines_added": 921,
+      "user_lines_removed": 8,
+      "agent_lines_added": 1281789,
+      "agent_lines_removed": 85,
+      "user_added_per_file": {
+        ".claude/settings.json": 90,
+        ".codex/hooks.json": 88,
+        ".cursor/hooks.json": 40,
+        ".factory/settings.json": 85,
+        ".gemini/settings.json": 141,
+        ".github/hooks/entire.json": 61,
+        ".opencode/plugins/entire.ts": 269,
+        ".pi/extensions/entire/index.ts": 147
+      },
+      "user_removed_per_file": {
+        "leaderboards/trails-leaderboard/node_modules/.bin/cf-wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/esbuild": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/semver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsc": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/tsserver": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/workerd": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler": 1,
+        "leaderboards/trails-leaderboard/node_modules/.bin/wrangler2": 1
+      }
+    }
+  ]
+}
