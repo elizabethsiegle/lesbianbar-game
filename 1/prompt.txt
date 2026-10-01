@@ -83,3 +83,7 @@ configure `.gbsproj` and approve
 ---
 
 configure `.gbsproj` and approve
+
+---
+
+put it on the device and push commit to github and entire
