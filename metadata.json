@@ -1,0 +1,49 @@
+{
+  "cli_version": "0.11.2",
+  "checkpoint_id": "01M3TK9RZXN3PBFR64TPXW364N",
+  "strategy": "manual-commit",
+  "branch": "feat/wnba-clutch-explorer",
+  "checkpoints_count": 16,
+  "files_touched": [
+    "lesbianbar-game/chromatic/.gitignore",
+    "lesbianbar-game/chromatic/Makefile",
+    "lesbianbar-game/chromatic/README.md",
+    "lesbianbar-game/chromatic/build/last-ditch.gbc",
+    "lesbianbar-game/chromatic/build/playtest.json",
+    "lesbianbar-game/chromatic/build/screenshots/bar.png",
+    "lesbianbar-game/chromatic/build/screenshots/initials.png",
+    "lesbianbar-game/chromatic/build/screenshots/leaderboard.png",
+    "lesbianbar-game/chromatic/build/screenshots/mask-0.png",
+    "lesbianbar-game/chromatic/build/screenshots/mask-1.png",
+    "lesbianbar-game/chromatic/build/screenshots/mask-2.png",
+    "lesbianbar-game/chromatic/build/screenshots/mask-3.png",
+    "lesbianbar-game/chromatic/build/screenshots/saturday.png",
+    "lesbianbar-game/chromatic/build/screenshots/school.png",
+    "lesbianbar-game/chromatic/build/screenshots/tally.png",
+    "lesbianbar-game/chromatic/build/screenshots/title.png",
+    "lesbianbar-game/chromatic/build/screenshots/zoom.png",
+    "lesbianbar-game/chromatic/src/assets.c",
+    "lesbianbar-game/chromatic/src/assets.h",
+    "lesbianbar-game/chromatic/src/main.c",
+    "lesbianbar-game/chromatic/tools/assets.mjs",
+    "lesbianbar-game/chromatic/tools/playtest.py",
+    "lesbianbar-game/chromatic/tools/requirements.txt"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 3417900,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 130935296,
+    "output_tokens": 554933,
+    "api_call_count": 71,
+    "subagent_tokens_complete": true
+  }
+}
