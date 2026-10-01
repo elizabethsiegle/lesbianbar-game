@@ -1,0 +1,85 @@
+[@ModRetro Chromatic Plugin](plugin://modretro-chromatic@openai-curated-remote) add tyhis game to the chromatic
+
+---
+
+connnected'
+
+---
+
+connnected'
+
+---
+
+connnected'
+
+---
+
+authorize the repo as the plugin workspace
+
+---
+
+set it
+
+---
+
+set it
+
+---
+
+what command
+
+---
+
+enable entire and Create and select a lesbian bar game remix at ~/Desktop/demos3-idkman/lesbianbargamecodexchromatic. 
+
+Build a complete, playable Game Boy Color ROM called “LAST DITCH: A WESTERN MASS BAR SAGA” for the ModRetro Chromatic. Use GBDK-2020. Deliver source code, generated pixel-art assets, a Makefile, a .gbc ROM, tests, and a README with emulator and cartridge-loading instructions. Do not wrap the browser game in a web view.
+
+Premise: You run Last Ditch, a COVID-conscious lesbian bar in Greenfield, Massachusetts. Easing its mask rule for one Saturday splits the group chat. Rent is due, a fictional Boston Globe reporter keeps asking questions, and the town hall uses your roommate’s clown-school Zoom link. The humor comes from escalating committee procedure and crossed wires—not from illness, disability, or genuine access needs. Everyone belongs.
+
+Make the first action obvious. The player picks a mask, handles an unmuted Zoom call, optionally gathers evidence, chooses a Saturday policy, survives a 60-second shift, and answers the neighborhood listserv’s final questions. Never leave the player on a completed quest or in a dialogue loop. Show a short next-step hint on every screen.
+
+Include three explorable locations: the cozy pixel-art bar, a grid of clown-school Zoom tiles, and the clown school. Use D-pad movement and bump-to-interact. A reveals dialogue and confirms; B backs out; Select switches locations during exploration; Start pauses the timed shift. All menus must work without a keyboard.
+
+Create one owner character with a visibly changing mask. Let players choose N95, cloth, novelty, or no mask, plus color, pattern, and accessory. N95 gives high stamina; cloth adds trust; novelty boosts the clown benefit; no mask moves faster. Every choice must be viable.
+
+Offer five optional, one-time quests: Willow’s masked hour and accessible patio, Tess’s ticket sales, Nora’s verified reporting, Dottie’s clown benefit, and Ruth’s trivia night. Good choices earn points and useful Saturday options; poor choices lose points or raise chaos. Keep a visible PROFIT, TRUST, and CHAOS HUD.
+
+Saturday must be about resolving escalating mix-ups, not mainly serving drinks. Spawn petitioners, clowns, reporter questions, and flying paperwork. Give each incident a patience clock and a practical response versus a funny but costly escalation. Add snacks and a line dance as cooldown-based recovery tools. Finish with a three-round dialogue battle against Marlow from the listserv.
+
+Score = earned points + profit × 10 + trust × 10 + (100 − chaos) × 10, capped at 10,500. Show a counting tally, then one of four warm endings: compromise, clown-school annex, national virality, or permanent subcommittee. Follow with three-letter initials and a battery-backed local top-five leaderboard. Do not promise access to the browser game’s online leaderboard; the cartridge is offline.
+
+Art and sound: readable 160×144 pixel scenes, expressive flannel-clad characters, autumn foliage, string lights, an OPEN sign, chunky dialogue boxes, letter-by-letter text, chiptune music, and short sound effects. Use original art and dialogue. Work in lines such as “EVERYONE AGREES WITH YOU, WHY ARE YOU DOING THIS” and “before I began mediating, meetings took 5–6 hours. Now they only take 4.”
+
+Build the ROM, validate its header, play through every major path in a Game Boy Color emulator, test mask sprites and SRAM persistence after reboot, and report anything that still needs testing on physical Chromatic hardware. No placeholders or unimplemented menu options
+
+---
+
+enable entire and Create and select a lesbian bar game remix at ~/Desktop/demos3-idkman/lesbianbargamecodexchromatic. 
+
+Build a complete, playable Game Boy Color ROM called “LAST DITCH: A WESTERN MASS BAR SAGA” for the ModRetro Chromatic. Use GBDK-2020. Deliver source code, generated pixel-art assets, a Makefile, a .gbc ROM, tests, and a README with emulator and cartridge-loading instructions. Do not wrap the browser game in a web view.
+
+Premise: You run Last Ditch, a COVID-conscious lesbian bar in Greenfield, Massachusetts. Easing its mask rule for one Saturday splits the group chat. Rent is due, a fictional Boston Globe reporter keeps asking questions, and the town hall uses your roommate’s clown-school Zoom link. The humor comes from escalating committee procedure and crossed wires—not from illness, disability, or genuine access needs. Everyone belongs.
+
+Make the first action obvious. The player picks a mask, handles an unmuted Zoom call, optionally gathers evidence, chooses a Saturday policy, survives a 60-second shift, and answers the neighborhood listserv’s final questions. Never leave the player on a completed quest or in a dialogue loop. Show a short next-step hint on every screen.
+
+Include three explorable locations: the cozy pixel-art bar, a grid of clown-school Zoom tiles, and the clown school. Use D-pad movement and bump-to-interact. A reveals dialogue and confirms; B backs out; Select switches locations during exploration; Start pauses the timed shift. All menus must work without a keyboard.
+
+Create one owner character with a visibly changing mask. Let players choose N95, cloth, novelty, or no mask, plus color, pattern, and accessory. N95 gives high stamina; cloth adds trust; novelty boosts the clown benefit; no mask moves faster. Every choice must be viable.
+
+Offer five optional, one-time quests: Willow’s masked hour and accessible patio, Tess’s ticket sales, Nora’s verified reporting, Dottie’s clown benefit, and Ruth’s trivia night. Good choices earn points and useful Saturday options; poor choices lose points or raise chaos. Keep a visible PROFIT, TRUST, and CHAOS HUD.
+
+Saturday must be about resolving escalating mix-ups, not mainly serving drinks. Spawn petitioners, clowns, reporter questions, and flying paperwork. Give each incident a patience clock and a practical response versus a funny but costly escalation. Add snacks and a line dance as cooldown-based recovery tools. Finish with a three-round dialogue battle against Marlow from the listserv.
+
+Score = earned points + profit × 10 + trust × 10 + (100 − chaos) × 10, capped at 10,500. Show a counting tally, then one of four warm endings: compromise, clown-school annex, national virality, or permanent subcommittee. Follow with three-letter initials and a battery-backed local top-five leaderboard. Do not promise access to the browser game’s online leaderboard; the cartridge is offline.
+
+Art and sound: readable 160×144 pixel scenes, expressive flannel-clad characters, autumn foliage, string lights, an OPEN sign, chunky dialogue boxes, letter-by-letter text, chiptune music, and short sound effects. Use original art and dialogue. Work in lines such as “EVERYONE AGREES WITH YOU, WHY ARE YOU DOING THIS” and “before I began mediating, meetings took 5–6 hours. Now they only take 4.”
+
+Build the ROM, validate its header, play through every major path in a Game Boy Color emulator, test mask sprites and SRAM persistence after reboot, and report anything that still needs testing on physical Chromatic hardware. No placeholders or unimplemented menu options
+
+---
+
+configure `.gbsproj` and approve
+
+---
+
+configure `.gbsproj` and approve
